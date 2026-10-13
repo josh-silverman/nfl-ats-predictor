@@ -1,0 +1,6 @@
+# Python >= 3.10 required (nflreadpy). Install into the `nfl-ats` conda env.
+nflreadpy
+pandas
+scikit-learn
+seaborn
+pyarrow

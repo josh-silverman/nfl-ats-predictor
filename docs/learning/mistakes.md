@@ -16,3 +16,8 @@ What broke, and what it taught me.
 - **What happened:** For the spread-sign check, I said Denver was a 3-point favorite in the 2016 opener. That came from an early article about the opening line. The line moved, and Carolina closed at -3.
 - **Lesson:** Opening and closing lines can differ, sometimes flipping the favorite. This project uses the **closing** line, so verify facts against the closing number.
 - **Fix:** Cross-checked against the data's moneylines and win rates. The sign convention is now an assertion in `check_spread_sign()`.
+
+## 4. Notebook used a feature that needs an uninstalled package (Phase 3)
+- **What happened:** I wrote a push-rate table with `df.style.format(...)`. pandas' `.style` needs `jinja2`, which isn't in the env. It only surfaced when I ran the whole notebook top to bottom.
+- **Lesson:** Building cells one at a time hides missing dependencies and stale state. Run the full notebook from a clean start before committing.
+- **Fix:** Used `.round(3)` instead of adding a package.

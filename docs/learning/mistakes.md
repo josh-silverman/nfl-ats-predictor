@@ -21,3 +21,8 @@ What broke, and what it taught me.
 - **What happened:** I wrote a push-rate table with `df.style.format(...)`. pandas' `.style` needs `jinja2`, which isn't in the env. It only surfaced when I ran the whole notebook top to bottom.
 - **Lesson:** Building cells one at a time hides missing dependencies and stale state. Run the full notebook from a clean start before committing.
 - **Fix:** Used `.round(3)` instead of adding a package.
+
+## 5. Claimed more than the evidence showed (Phase 4)
+- **What happened:** Decision #14 said shrinkage "still helps late in the season". The skeptic re-ran it: at 13+ games the gain was 0.0403 → 0.0402, essentially zero. My table had lumped weeks 6–16 together, which hid that.
+- **Lesson:** Report results for each range of games, and don't summarize past what the numbers show. Coarse buckets can hide where an effect disappears.
+- **Fix:** Corrected decision #14 with the per-range numbers. Results now go in `reports/experiments.md` with the actual table.

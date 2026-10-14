@@ -44,19 +44,23 @@ Before this phase, decide whether to add Jupyter (it needs Josh's agreement).
 ## Phase 5: Baselines
 1. Always home, always favorite, and coin flip on 2019–2025.
 2. Bootstrap confidence-interval helper.
+3. Report the count of neutral-site games (46) alongside "always home". Their "home" team has no real home field.
 
 **Log:** bootstrap confidence intervals, the edge rule.
 
 ## Phase 6: Logistic regression
 1. Build the Pipeline (scaler + logistic regression). Fit it on one fold and inspect the coefficients.
 2. Fit and predict, then interpret the coefficient signs.
-3. Experiment-log template (`reports/experiments.md`).
+3. Log the first ATS result in `reports/experiments.md` (the log was started in Phase 4).
 4. Single-change experiment: add `spread_line` as a feature. Josh decides keep or reject.
 
 **Log:** coefficient interpretation, scaling.
 
 ## Phase 7: Walk-forward backtest and calibration
-1. Walk-forward loop (2019–2025).
+1. Walk-forward loop (2019–2025). **Requirements from the Phase 4 skeptic review:**
+   - Inside each fold, call `fit_shrinkage` → `add_shrunk_features` → `build_game_features` using only that fold's training seasons. If an inner split ever tunes C, refit shrinkage inside it too.
+   - Build `X` only as `df[FEATURES]`. Never select columns by dtype, because `margin` and `home_cover` sit in the same table.
+   - Tests: `X.columns == FEATURES`, and wrecking the test season leaves the fold's params and training features unchanged.
 2. Metrics with confidence intervals vs. baselines.
 3. Reliability plot and Brier score decomposition.
 4. Single-change experiments, each one logged. Josh decides keep or reject.
@@ -66,6 +70,8 @@ Before this phase, decide whether to add Jupyter (it needs Josh's agreement).
 
 ## Phase 8: Weekly live predictions with a locked ledger
 1. Weekly script: pull the latest data, build features as of kickoff, predict, write a timestamped ledger file.
+   - Unplayed games need an explicit **as-of path**: latest to-date values plus the prior. `build_game_features` raises on missing features by design, so don't patch around it with a shift shortcut.
+   - Record which line was used and when it was pulled. A line pulled before kickoff is not the closing line.
 2. Lock procedure: commit the ledger before the first kickoff.
 3. Pseudo-live backfill for the weeks already played, labeled separately.
 4. Weekly scoring of locked predictions.
@@ -74,7 +80,10 @@ Before this phase, decide whether to add Jupyter (it needs Josh's agreement).
 **Log:** what makes a ledger trustworthy.
 
 ## Phase 9: Portfolio write-up
-1. README case study: question, data, method, honest results, limits.
+1. README case study: question, data, method, honest results, limits. The limits must include:
+   - EPA comes from the nflfastR model, which was trained partly on the test seasons.
+   - That `spread_line` is the closing line is assumed from nflverse, not verified.
+   - The shrinkage league mean is an unweighted average of team means.
 2. Key figures: calibration, accuracy with confidence intervals vs. baselines, the live record.
 3. "What I'd do next" section.
 

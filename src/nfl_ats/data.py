@@ -10,9 +10,10 @@ PROJECT_ROOT = Path(__file__).resolve().parents[2]
 RAW_DIR = PROJECT_ROOT / "data" / "raw"
 
 HISTORY_SEASONS = list(range(2016, 2026))  # 2016-2025; 2026 is live
+PRIOR_SEASON = 2015  # loaded only to give 2016 a prior-season carryover
 
 # Relocated franchises -> current abbreviation, so each team keeps one ID across seasons.
-TEAM_MAP = {"OAK": "LV", "SD": "LAC"}
+TEAM_MAP = {"OAK": "LV", "SD": "LAC", "STL": "LA"}
 
 # 2022 BUF @ CIN (Week 17) was canceled after Damar Hamlin's injury.
 CANCELED_GAMES = {2022: 1}

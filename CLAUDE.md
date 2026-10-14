@@ -58,6 +58,7 @@ Run the `skeptic` subagent (`.claude/agents/skeptic.md`) at the end of **Phases 
 
 ## Layout
 - `src/nfl_ats/`: library code.
+- `tests/`: unit tests (stdlib `unittest`). Run with `conda run -n nfl-ats python -m unittest discover tests`.
 - `notebooks/`: EDA and lessons.
 - `data/raw/`, `data/processed/`: data, gitignored.
 - `reports/`: experiment log and figures.

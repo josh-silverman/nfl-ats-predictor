@@ -8,7 +8,7 @@ Every result goes here, including failures (CLAUDE.md, single-change rule). Each
 
 - **Baseline:** a reference bar, not an experiment. Not counted.
 
-**Running count:** ATS experiments: **0**. Design checks: **2**.
+**Running count:** ATS experiments: **2**. Design checks: **2**.
 
 ---
 
@@ -50,3 +50,32 @@ Every result goes here, including failures (CLAUDE.md, single-change rule). Each
 - **Change:** use regular-season `pass` and `run` plays with EPA. Drop kneels, spikes, no-play penalties, and 2-pt tries. No garbage-time filter.
 - **Result:** **not tested.** Chosen by convention. Recorded so it's clear this choice was never measured.
 - **Decision:** kept for v1. A garbage-time filter is a candidate single-change ATS experiment for Phase 7.
+
+## #3 · 2026-10-14 · ATS · v1 model, single fold (train 2016–18 → test 2019)
+- **Change:** first fit of `make_model()` (StandardScaler + LogisticRegression, C = 1) on `FEATURES`. Shrinkage refit inside the fold. This is a sanity check on one season, **not** the evaluation. Phase 7 runs all seven folds.
+- **Result, 2019 (246 graded games, 10 pushes excluded):**
+
+  | Metric | Model | 95% CI | Reference |
+  |---|---|---|---|
+  | ATS accuracy | 49.6% | 43.1–55.7% | coin 48.8%, home 43.1%, favorite 45.9% |
+  | Log loss | 0.6982 | 0.6870–0.7101 | 0.6931 (constant 0.5) |
+  | Brier | 0.2525 | 0.2470–0.2584 | 0.2500 (constant 0.5) |
+
+  In-sample on 2016–18: 52.7% accuracy, log loss 0.6899. That's the usual train-vs-test gap: the fit looks better on data it has seen.
+- **Decision:** no keep or reject (no change was compared). The **out-of-sample log loss and Brier are slightly worse than predicting 0.5**: the features as weighted here add no usable signal on 2019. One season is ±6 points, so this is not a verdict on the model. That comes from the full walk-forward in Phase 7.
+
+## #4 · 2026-10-14 · ATS · Add `spread_line` as a feature (single change vs. v1)
+- **Change:** v1 `FEATURES` + `spread_line`. Everything else identical: C = 1, shrinkage refit per fold.
+- **Setup:** walk-forward 2019–2025 (`model.walk_forward`). Each season is predicted by a model trained on 2016 through the prior season. 1,828 graded games, both versions scored on the same games.
+- **Result:**
+
+  | | v1 (kept) | v1 + spread | New − v1 (paired 95% CI) |
+  |---|---|---|---|
+  | ATS accuracy | 51.3% [48.9, 53.5] | 51.3% [48.9, 53.5] | +0.0 pts [−0.7, +0.7] |
+  | Log loss | 0.6947 [0.6920, 0.6975] | 0.6949 [0.6921, 0.6977] | +0.0002 [−0.0001, +0.0005] |
+  | Brier | 0.2508 [0.2494, 0.2521] | 0.2509 [0.2495, 0.2523] | +0.0001 [−0.0000, +0.0002] |
+
+  The `spread_line` coefficient in the 2025 fold is −0.027 per SD, essentially 0. Per-season accuracy moves by at most 1.6 points either way.
+- **Also learned (the v1 baseline):** over 7 seasons, v1 hits 51.3%, with a CI that includes 50% and sits below 52.4%. Its log loss of 0.6947 is **worse than a constant 0.5 (0.6931)**. No edge.
+- **Decision:** **Rejected** (Josh, 2026-10-14). The paired difference is 0 on every metric, so it adds a feature for no gain. v1 stays the kept version. See decision #16.
+

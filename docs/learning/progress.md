@@ -1,7 +1,7 @@
 # Progress
 
-**Current phase:** Phase 5 ✅ done. Waiting for Josh's go to start Phase 6.
-**Next:** Phase 6, Logistic regression. Pipeline (StandardScaler + LogisticRegression), fit on one fold, inspect the coefficients.
+**Current phase:** Phase 6 ✅ done. Waiting for Josh's go to start Phase 7.
+**Next:** Phase 7, Walk-forward backtest and calibration. `walk_forward()` already exists. Add the leakage tests from the skeptic requirements, metrics vs. baselines, a reliability plot, and single-change experiments.
 **Last updated:** 2026-10-14
 
 ## Done
@@ -26,6 +26,9 @@
 - Phase 4 step 4: `build_game_features()` + `FEATURES` list (decision #15). 2,639 games × 23 cols, no feature nulls. Corr with spread: off 0.74, def −0.46. Corr with home_cover is about 0 for all four (expected, since the market prices them). 8 tests pass, including an end-to-end "own game never reaches its features" test.
 - Phase 4 step 5: skeptic PASS, no blockers. Applied: decision #14 corrected (mistake #5), `reports/experiments.md` started (2 design entries), `build_game_features` raises on missing features (9 tests). Phase 7, 8, and 9 requirements added to the roadmap.
 - Phase 5: `src/nfl_ats/evaluate.py` (accuracy, log loss, Brier, vectorized `bootstrap_ci`, `baseline_table`). `tests/test_evaluate.py` cross-checks against sklearn and the CI-width formula (12 tests total). Baselines 2019–25: home 48.7%, favorite 48.2%, coin 50.8%, all far from an edge. Logged in experiments.md.
+- Phase 6 step 1: `src/nfl_ats/model.py` (`make_model`, `fold_data` with per-fold shrinkage, `coefficients`). Fold 1 (train 2016–18, 746 games): coefs per SD are def +0.12, rest +0.07, off +0.06, pace +0.02. Train probabilities 35–63%, SD 0.04. The model is barely confident.
+- Phase 6 step 2: `evaluate.score()`. 2019 out-of-sample: 49.6% [43.1, 55.7], log loss 0.698 (worse than 0.693), Brier 0.2525. In-sample 52.7%. Logged as ATS experiment #3 in experiments.md (count 1).
+- Phase 6 step 4: `model.walk_forward` + `evaluate.paired_diff` (15 tests). v1 walk-forward 2019–25: 51.3% [48.9, 53.5], log loss 0.6947 (worse than 0.6931). Adding `spread_line` changes nothing (paired diffs about 0). Experiment #4: rejected by Josh (decision #16).
 
 ## Open items
 - The 2026 live ledger starts with the next unplayed week. Weeks already played are a pseudo-live backfill, always labeled as backfill. As of mid-October that is more than weeks 1–4. Revisit in Phase 8.
@@ -56,3 +59,7 @@
 - 2026-10-13: Phase 4 skeptic review: PASS, no blockers. Awaiting Josh's call on should-fix items.
 - 2026-10-14: Applied skeptic findings and closed Phase 4. Note: the shell lost `CONDA_EXE` this session, so use `/Users/joshsilverman/opt/anaconda3/bin/conda run -n nfl-ats` if `conda run` errors.
 - 2026-10-14: Phase 5 done (baselines + bootstrap).
+- 2026-10-14: Phase 6 step 1 done (pipeline + fold-1 coefficients).
+- 2026-10-14: Phase 6 step 2 done (first out-of-sample score).
+- 2026-10-14: Phase 6 step 4 run. Awaiting Josh's keep or reject.
+- 2026-10-14: Phase 6 done. `spread_line` rejected, and v1 stays kept.

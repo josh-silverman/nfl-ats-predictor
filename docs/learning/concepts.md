@@ -44,3 +44,11 @@ At the end of each phase, Claude adds 3–6 bullets with the points worth rememb
 - **The bootstrap is vectorized:** `rng.integers(0, n, size=(n_boot, n))` draws all 2,000 resamples at once, and metrics take the mean over `axis=-1`, so one function handles both a single sample and every resample. That's fast and has no loop.
 - **The CI width matches the math:** at n ≈ 1,900 and 50%, the half-width is 1.96·√(0.25/n) ≈ 2.25 points. A unit test checks the bootstrap against that formula, and our metrics against sklearn's.
 - **The coin flip is a sanity anchor:** pure randomness landed 0.8 points above 50%. Any model result within about 2 points of 50% is indistinguishable from it.
+
+## Phase 6: Logistic regression
+- **Pipeline = scaler + model, fit together:** `Pipeline([("scale", StandardScaler()), ("logreg", LogisticRegression(C=1))])`. `.fit()` learns the scaling and the weights from training rows only, so the test season can't leak in through the scaler.
+- **Reading coefficients:** after scaling, each weight is the change in log-odds per 1 SD of a feature. A weight of 0.12 moves the probability about 3 points away from 50%. All of ours are under 0.13, so the model is barely confident (probabilities mostly 46–54%), which is correct for a market this efficient.
+- **In-sample flatters:** fold 1 scored 52.7% on its training years and 49.6% on 2019. Only out-of-sample results count, and one season (±6 points) can't separate a good model from a useless one.
+- **v1 over 7 seasons has no edge:** 51.3% [48.9, 53.5], log loss 0.6947, which is *worse* than the constant-0.5 bar of 0.6931. Watch log loss and Brier, not just accuracy.
+- **Compare models with paired bootstraps:** resample the same games for both models. The CI on the difference (±0.7 points) is far tighter than either model's own CI (±2.3). Adding `spread_line` changed nothing, so it was rejected (decision #16).
+- **Experiment hygiene:** one change at a time, every result logged with a running count (2 ATS so far), and Josh makes the keep or reject call.

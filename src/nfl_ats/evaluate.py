@@ -50,3 +50,35 @@ def baseline_table(games: pd.DataFrame, seasons: list[int] = TEST_SEASONS) -> pd
         rows.append({"baseline": name, "games": len(graded), "accuracy": acc, "ci_low": lo, "ci_high": hi,
                      "edge": lo > BREAKEVEN})
     return pd.DataFrame(rows).set_index("baseline")
+
+
+def score(y, p, n_boot=2000, seed=0) -> pd.DataFrame:
+    """ATS accuracy (pick home when p > 0.5), log loss, and Brier, each with a bootstrap 95% CI."""
+    y, p = np.asarray(y, dtype=float), np.asarray(p, dtype=float)
+    pick = (p > 0.5).astype(float)
+    rows = {
+        "accuracy": bootstrap_ci(accuracy, y, pick, n_boot, seed),
+        "log_loss": bootstrap_ci(log_loss, y, p, n_boot, seed),
+        "brier": bootstrap_ci(brier, y, p, n_boot, seed),
+    }
+    return pd.DataFrame(rows, index=["estimate", "ci_low", "ci_high"]).T
+
+
+def paired_diff(y, p_base, p_new, n_boot=2000, seed=0) -> pd.DataFrame:
+    """New minus base for each metric, with a CI from resampling the SAME games for both models.
+
+    Pairing removes the shared game-to-game noise, so the CI on the difference is much tighter
+    than comparing two separate CIs. Accuracy: higher is better. Log loss, Brier: lower is better.
+    """
+    y = np.asarray(y, dtype=float)
+    p_base, p_new = np.asarray(p_base, dtype=float), np.asarray(p_new, dtype=float)
+    pick_base, pick_new = (p_base > 0.5).astype(float), (p_new > 0.5).astype(float)
+    idx = np.random.default_rng(seed).integers(0, len(y), size=(n_boot, len(y)))
+    diffs = {
+        "accuracy": lambda i: accuracy(y[i], pick_new[i]) - accuracy(y[i], pick_base[i]),
+        "log_loss": lambda i: log_loss(y[i], p_new[i]) - log_loss(y[i], p_base[i]),
+        "brier": lambda i: brier(y[i], p_new[i]) - brier(y[i], p_base[i]),
+    }
+    everything = np.arange(len(y))
+    rows = {name: (float(f(everything)), *np.quantile(f(idx), [0.025, 0.975])) for name, f in diffs.items()}
+    return pd.DataFrame(rows, index=["diff", "ci_low", "ci_high"]).T

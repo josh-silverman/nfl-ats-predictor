@@ -1,7 +1,7 @@
 # Progress
 
-**Current phase:** Phase 4 ✅ done. Waiting for Josh's go to start Phase 5.
-**Next:** Phase 5, Baselines. Always home, always favorite, and coin flip on 2019–2025, with a bootstrap CI helper and the neutral-site count.
+**Current phase:** Phase 5 ✅ done. Waiting for Josh's go to start Phase 6.
+**Next:** Phase 6, Logistic regression. Pipeline (StandardScaler + LogisticRegression), fit on one fold, inspect the coefficients.
 **Last updated:** 2026-10-14
 
 ## Done
@@ -25,6 +25,7 @@
 - Phase 4 step 3: `prior_season`, `add_shrunk_features`, `fit_shrinkage` (decision #14). 2015 pbp added as the 2016 prior, with STL → LA. 7 tests pass, including "fit ignores non-training seasons". Out-of-sample off-EPA MSE after 1–2 games: 0.063 raw vs. 0.041 shrunk. In Phase 7, refit params inside each fold.
 - Phase 4 step 4: `build_game_features()` + `FEATURES` list (decision #15). 2,639 games × 23 cols, no feature nulls. Corr with spread: off 0.74, def −0.46. Corr with home_cover is about 0 for all four (expected, since the market prices them). 8 tests pass, including an end-to-end "own game never reaches its features" test.
 - Phase 4 step 5: skeptic PASS, no blockers. Applied: decision #14 corrected (mistake #5), `reports/experiments.md` started (2 design entries), `build_game_features` raises on missing features (9 tests). Phase 7, 8, and 9 requirements added to the roadmap.
+- Phase 5: `src/nfl_ats/evaluate.py` (accuracy, log loss, Brier, vectorized `bootstrap_ci`, `baseline_table`). `tests/test_evaluate.py` cross-checks against sklearn and the CI-width formula (12 tests total). Baselines 2019–25: home 48.7%, favorite 48.2%, coin 50.8%, all far from an edge. Logged in experiments.md.
 
 ## Open items
 - The 2026 live ledger starts with the next unplayed week. Weeks already played are a pseudo-live backfill, always labeled as backfill. As of mid-October that is more than weeks 1–4. Revisit in Phase 8.
@@ -54,3 +55,4 @@
 - 2026-10-13: Phase 4 step 4 done (game-level features).
 - 2026-10-13: Phase 4 skeptic review: PASS, no blockers. Awaiting Josh's call on should-fix items.
 - 2026-10-14: Applied skeptic findings and closed Phase 4. Note: the shell lost `CONDA_EXE` this session, so use `/Users/joshsilverman/opt/anaconda3/bin/conda run -n nfl-ats` if `conda run` errors.
+- 2026-10-14: Phase 5 done (baselines + bootstrap).

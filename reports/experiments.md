@@ -6,7 +6,26 @@ Every result goes here, including failures (CLAUDE.md, single-change rule). Each
 - **ATS:** a walk-forward backtest of the model. These are the only results that can support an edge claim, and they count toward the multiple-testing total.
 - **Design:** a feature-construction check, not an ATS result. Recorded for honesty, but it makes no claim about beating the spread.
 
+- **Baseline:** a reference bar, not an experiment. Not counted.
+
 **Running count:** ATS experiments: **0**. Design checks: **2**.
+
+---
+
+## Baselines · 2026-10-14 · 2019–2025 walk-forward test window
+1,871 games: **43 pushes excluded**, leaving 1,828 graded. 34 are neutral-site and 0 are pick'em. Bootstrap 95% CIs, 2,000 resamples, seed 0 (`evaluate.baseline_table`).
+
+| Baseline | ATS accuracy | 95% CI | Edge (lower bound > 52.4%)? |
+|---|---|---|---|
+| Always home | 48.7% | 46.5–51.0% | No |
+| Always favorite | 48.2% | 45.9–50.6% | No |
+| Coin flip (seeded random picks) | 50.8% | 48.5–53.1% | No |
+| Constant p = 0.5 | log loss 0.6931, Brier 0.2500 | (constant) | n/a |
+
+- **Underdogs covered 51.8%** (the mirror of "always favorite"), and the CI includes 50%. That's not an angle. By season, favorites ranged from 44.5% (2020) to 53.4% (2024).
+- **The coin flip landing at 50.8%** is a reminder that random picks wander ±2.3 points over 1,800 games.
+- **Probability bar for the model:** log loss must beat 0.693 and Brier must beat 0.250. Those are the "know nothing" scores.
+- **Neutral-site games:** 34 in the test window, where the "home" team covered 58.8% (n = 34, pure noise).
 
 ---
 

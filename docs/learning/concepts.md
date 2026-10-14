@@ -37,3 +37,10 @@ At the end of each phase, Claude adds 3–6 bullets with the points worth rememb
 - **Game rows are home − away diffs:** `off_epa_diff`, `def_epa_diff` (EPA *allowed*, so negative favors home), `pace_diff`, and `rest_diff`. They track the spread strongly (off 0.74) but not the cover (about 0). The market already prices them, so any edge must come from combinations.
 - **One route into the model:** select model inputs only with the `FEATURES` list, because `margin` and `home_cover` live in the same table. `build_game_features` raises if any feature is missing rather than passing NaN along.
 - **Skeptic review passed:** it checked 2020 COVID reshuffles (week order equals date order), a real-data wreck from Week 9 onward (nothing earlier moved), and the target logic on all 2,639 games. Its should-fix items are now requirements in the roadmap for Phases 5, 7, 8, and 9.
+
+## Phase 5: Baselines
+- **Simple strategies all fail at the close:** in 2019–2025 (1,828 graded games, 43 pushes), always home hit 48.7% [46.5, 51.0], always favorite 48.2% [45.9, 50.6], and a coin flip 50.8% [48.5, 53.1]. None has a lower bound near 52.4%. The model must clear the **breakeven**, not just these.
+- **Probability bars:** a constant 0.5 gives log loss 0.693 and Brier 0.250. A model whose log loss is above 0.693 is worse than knowing nothing, even if its accuracy looks fine.
+- **The bootstrap is vectorized:** `rng.integers(0, n, size=(n_boot, n))` draws all 2,000 resamples at once, and metrics take the mean over `axis=-1`, so one function handles both a single sample and every resample. That's fast and has no loop.
+- **The CI width matches the math:** at n ≈ 1,900 and 50%, the half-width is 1.96·√(0.25/n) ≈ 2.25 points. A unit test checks the bootstrap against that formula, and our metrics against sklearn's.
+- **The coin flip is a sanity anchor:** pure randomness landed 0.8 points above 50%. Any model result within about 2 points of 50% is indistinguishable from it.

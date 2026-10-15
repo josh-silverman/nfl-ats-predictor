@@ -5,35 +5,50 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Josh's NFL Elo</title>
   <meta name="description" content="Weekly NFL win chances from a simple Elo rating model, locked before kickoff and compared with Vegas.">
+  <meta property="og:title" content="Josh's NFL Elo">
+  <meta property="og:description" content="Who's likely to win each NFL game this week, from a simple rating model. Locked before kickoff, compared with Vegas.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://josh-silverman.github.io/nfl-ats-predictor/">
+  <meta name="theme-color" content="#ffffff">
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&display=swap">
   <link rel="stylesheet" href="assets/style.css">
 </head>
 <body>
-  <header class="site-header">
-    <div class="brand">
-      <span class="brand-mark" aria-hidden="true">◆</span>
-      <div>
-        <h1>Josh's NFL Elo</h1>
-        <p class="tagline">Who's likely to win this week, from a simple rating model, locked before kickoff.</p>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header" id="site-header">
+    <div class="wrap">
+      <div class="brand">
+        <span class="brand-mark" aria-hidden="true"></span>
+        <div>
+          <h1>Josh's NFL Elo</h1>
+          <p class="tagline">Who's likely to win each game, locked before kickoff</p>
+        </div>
       </div>
+      <nav class="tabs" role="tablist" aria-label="Sections">
+        <button role="tab" data-tab="week">This week</button>
+        <button role="tab" data-tab="record">Record</button>
+        <button role="tab" data-tab="rankings">Rankings</button>
+        <button role="tab" data-tab="how">How it works</button>
+      </nav>
+      <div class="week-bar" id="week-bar" hidden></div>
     </div>
-    <nav class="tabs" role="tablist" aria-label="Sections">
-      <button role="tab" data-tab="week">This Week</button>
-      <button role="tab" data-tab="record">Record</button>
-      <button role="tab" data-tab="rankings">Rankings</button>
-      <button role="tab" data-tab="how">How It Works</button>
-    </nav>
   </header>
 
-  <main>
-    <section id="tab-week" class="panel" role="tabpanel" aria-label="This Week"></section>
+  <main id="main" class="wrap">
+    <section id="tab-week" class="panel" role="tabpanel" aria-label="This week"></section>
     <section id="tab-record" class="panel" role="tabpanel" aria-label="Record" hidden></section>
     <section id="tab-rankings" class="panel" role="tabpanel" aria-label="Rankings" hidden></section>
-    <section id="tab-how" class="panel" role="tabpanel" aria-label="How It Works" hidden></section>
+    <section id="tab-how" class="panel" role="tabpanel" aria-label="How it works" hidden></section>
   </main>
 
   <footer class="site-footer">
-    <p>Educational project, not betting advice. Vegas is about 3 points more accurate than this model.</p>
-    <p><a id="repo-link" href="#">Code and locked predictions on GitHub</a> · <span id="generated"></span></p>
+    <div class="wrap">
+      <p>Educational project, not betting advice. Vegas is about 3 points more accurate than this model.</p>
+      <p><a id="repo-link" href="https://github.com/josh-silverman/nfl-ats-predictor">Code and locked predictions on GitHub</a> · <span id="generated"></span></p>
+    </div>
   </footer>
 
   <div id="tooltip" class="tooltip" role="tooltip" hidden></div>

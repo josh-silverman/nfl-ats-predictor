@@ -73,8 +73,62 @@ def _earliest_files(mode: str, season: int) -> dict[int, object]:
     return files
 
 
-def game_cards(scored: pd.DataFrame) -> list[dict]:
-    """One plain dict per game for the cards."""
+MINUS = "\u2212"
+
+
+def format_line(home_margin, home: str, away: str) -> str | None:
+    """A spread in the usual 'FAVORITE −x' form. Input is the expected HOME margin (positive = home favored)."""
+    if home_margin is None or pd.isna(home_margin):
+        return None
+    m = float(home_margin)
+    if abs(m) < 0.05:
+        return "Pick'em"
+    return f"{home if m > 0 else away} {MINUS}{abs(m):.1f}"
+
+
+def confidence(p_home: float) -> str:
+    """Plain label for how sure we are about the favorite."""
+    c = max(p_home, 1 - p_home)
+    return "Toss-up" if c < 0.55 else "Lean" if c < 0.65 else "Favored" if c < 0.75 else "High confidence"
+
+
+def day_group(kick: pd.Timestamp) -> str:
+    """Broadcast-style slot from the Eastern kickoff time."""
+    day, hour = kick.day_name(), kick.hour
+    if day == "Sunday":
+        return "International" if hour < 12 else "Sunday early" if hour < 15 else "Sunday late" if hour < 19 else "Sunday night"
+    if hour < 12:
+        return "International"
+    return {"Thursday": "Thursday night", "Monday": "Monday night"}.get(day, day)
+
+
+def team_context(reg: pd.DataFrame, history: pd.DataFrame, season: int, week: int) -> dict:
+    """Each team's rank, record, and last game using ONLY weeks before `week` (what was known at lock)."""
+    h = history[(history["season"] == season) & (history["week"] < week)]
+    snap = h[h["week"] == h["week"].max()].set_index("team")["rating"] if not h.empty else pd.Series(dtype=float)
+    rank = snap.rank(ascending=False, method="first").astype(int).to_dict()
+
+    past = reg[(reg["season"] == season) & (reg["week"] < week) & reg["home_score"].notna()].sort_values("week")
+    ctx = {t: {"rank": rank.get(t), "w": 0, "l": 0, "t": 0, "last": None} for t in TEAMS}
+    for g in past.itertuples(index=False):
+        for team, opp, pf, pa, at_home in [(g.home_team, g.away_team, g.home_score, g.away_score, True),
+                                           (g.away_team, g.home_team, g.away_score, g.home_score, False)]:
+            c = ctx.setdefault(team, {"rank": rank.get(team), "w": 0, "l": 0, "t": 0, "last": None})
+            res = "W" if pf > pa else "L" if pf < pa else "T"
+            c[{"W": "w", "L": "l", "T": "t"}[res]] += 1
+            c["last"] = f"{res} {int(pf)}{chr(8211)}{int(pa)} {'vs' if at_home else '@'} {opp}"
+    return {t: {"rank": c["rank"], "record": f"{c['w']}-{c['l']}" + (f"-{c['t']}" if c["t"] else ""),
+                "last": c["last"]} for t, c in ctx.items()}
+
+
+def game_cards(scored: pd.DataFrame, context: dict | None = None, closing: dict | None = None,
+               now: pd.Timestamp | None = None) -> list[dict]:
+    """One plain dict per game for the cards.
+
+    context: team_context() for this week (as of lock). closing: {game_id: current schedule spread_line};
+    the closing line is only shown once the game has kicked off or has a result.
+    """
+    context, closing = context or {}, closing or {}
     cards = []
     for g in scored.sort_values(["kickoff_et", "game_id"]).itertuples(index=False):
         p_home, p_mkt = float(g.p_elo), _num(g.p_market_at_pull)
@@ -86,13 +140,22 @@ def game_cards(scored: pd.DataFrame) -> list[dict]:
                       "we_were_right": None if winner is None else bool(fav == winner),
                       "vegas_was_right": None if winner is None or p_mkt is None
                       else bool((g.home_team if p_mkt >= 0.5 else g.away_team) == winner)}
-        kick = pd.Timestamp(g.kickoff_et)
+        kick = pd.Timestamp(g.kickoff_et).tz_localize(EASTERN)
+        started = result is not None or (now is not None and kick <= now)
+        hfa = 0 if g.location == "Neutral" else HOME_FIELD
+        side = lambda t: {"team": t, **context.get(t, {"rank": None, "record": None, "last": None})}
         cards.append({
             "game_id": g.game_id, "home": g.home_team, "away": g.away_team, "neutral": g.location == "Neutral",
-            "kickoff": kick.strftime("%a %b %-d · %-I:%M %p ET"),
+            "kickoff": kick.strftime("%a %b %-d · %-I:%M %p ET"), "day_group": day_group(kick),
             "p_home": round(p_home, 3), "p_vegas_home": None if p_mkt is None else round(p_mkt, 3),
-            "our_line": f"{fav} by {abs(float(g.elo_spread)):.1f}" if abs(float(g.elo_spread)) >= 0.05 else "Even",
+            "favorite": fav, "confidence": confidence(p_home),
+            "our_line": format_line(g.elo_spread, g.home_team, g.away_team),
+            "vegas_line_at_lock": format_line(_num(getattr(g, "spread_line_at_pull", np.nan)), g.home_team, g.away_team),
+            "closing_line": format_line(closing.get(g.game_id), g.home_team, g.away_team) if started else None,
             "big_gap": p_mkt is not None and abs(p_home - p_mkt) >= BIG_GAP,
+            "home_side": side(g.home_team), "away_side": side(g.away_team),
+            "why": {"home_rating": round(float(g.home_elo)), "away_rating": round(float(g.away_elo)), "home_field": hfa,
+                    "edge": round(float(g.home_elo) + hfa - float(g.away_elo))},
             "result": result,
         })
     return cards
@@ -180,6 +243,8 @@ def build_site_data(schedules: pd.DataFrame, season: int = 2026, backtest: dict 
     history = rating_history(reg[reg["season"].between(2015, season)])
     first_kick = kickoff_times(reg[reg["season"] == season]).groupby(reg.loc[reg["season"] == season, "week"]).min()
 
+    closing = reg.loc[reg["season"] == season].set_index("game_id")["spread_line"].to_dict()
+    now = pd.Timestamp.now(tz=EASTERN)
     weeks, scored_by_mode = [], {}
     for mode in ["backfill", "live"]:
         ledger = load_ledger(mode, season)
@@ -188,7 +253,8 @@ def build_site_data(schedules: pd.DataFrame, season: int = 2026, backtest: dict 
             s = scored_by_mode[mode]
             weeks.append({"week": week, "mode": mode,
                           "lock": lock_status(first_commit(path), first_kick[week]) if mode == "live" else None,
-                          "games": game_cards(s[s["week"] == week])})
+                          "games": game_cards(s[s["week"] == week], team_context(reg, history, season, week),
+                                              closing, now)})
     weeks.sort(key=lambda w: w["week"])
     live_weeks = [w for w in weeks if w["mode"] == "live"]
     current = (live_weeks or weeks)[-1] if weeks else None

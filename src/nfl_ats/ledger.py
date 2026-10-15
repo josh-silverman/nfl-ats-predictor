@@ -117,3 +117,49 @@ def score_ledger(ledger: pd.DataFrame, schedules: pd.DataFrame) -> pd.DataFrame:
 def load_schedules_for_ledger(season: int, refresh: bool = True) -> pd.DataFrame:
     """2015 .. season schedules. Live runs always refresh so results and lines are current."""
     return load_schedules(list(range(FIRST_SEASON, season + 1)), refresh=refresh)
+
+
+def live_report(scored: pd.DataFrame, n_sims: int = 1000, seed: int = 0) -> dict:
+    """The checks pre-registered in CLAUDE.md for 2026, on decided games of a scored ledger.
+
+    For raw Elo (p_elo) and v2 (p_v2): log loss / Brier / accuracy with bootstrap CIs; paired log loss vs.
+    raw Elo and vs. the pull-time market; calibration-in-the-large with a CI; and Brier reliability
+    (5 equal-count bins) vs. the 95th percentile for a perfectly calibrated model with the same predictions.
+    """
+    from nfl_ats.evaluate import bootstrap_ci, brier_decomposition, paired_diff, score
+
+    d = scored[scored["home_win"].notna()].reset_index(drop=True)
+    info = {"games_locked": len(scored), "games_decided": len(d), "ties": int(scored["is_tie"].sum()),
+            "weeks": sorted(scored["week"].unique().tolist())}
+    if len(d) < 10:
+        return {**info, "note": "Too few decided games to score yet."}
+
+    y = d["home_win"].to_numpy()
+    market_ok = d["p_market_at_pull"].notna().to_numpy()
+    rng = np.random.default_rng(seed)
+    models = {}
+    for col, label in {**MODEL_COLUMNS, "p_market_at_pull": "market at pull time"}.items():
+        p = d[col].to_numpy()
+        ok = ~np.isnan(p)
+        s = score(y[ok], p[ok])
+        citl = bootstrap_ci(lambda yy, pp: pp.mean(axis=-1) - yy.mean(axis=-1), y[ok], p[ok])
+        n_bins = 5
+        rel = brier_decomposition(y[ok], p[ok], n_bins)["reliability"]
+        sims = [brier_decomposition((rng.uniform(size=ok.sum()) < p[ok]).astype(float), p[ok], n_bins)["reliability"]
+                for _ in range(n_sims)]
+        null95 = float(np.quantile(sims, 0.95))
+        models[label] = {
+            "games": int(ok.sum()),
+            "log_loss": tuple(s.loc["log_loss"].round(4)), "brier": tuple(s.loc["brier"].round(4)),
+            "accuracy": tuple(s.loc["accuracy"].round(3)),
+            "calibration_in_the_large_pts": tuple(round(v * 100, 1) for v in citl),
+            "reliability": round(float(rel), 5), "reliability_null95": round(null95, 5),
+            "consistent_with_calibration": bool(citl[1] <= 0 <= citl[2] and rel <= null95),
+        }
+    paired = {}
+    for col, label in MODEL_COLUMNS.items():
+        if col != "p_elo":
+            paired[f"{label} − raw Elo"] = tuple(paired_diff(y, d["p_elo"], d[col]).loc["log_loss"].round(4))
+        paired[f"{label} − market"] = tuple(
+            paired_diff(y[market_ok], d.loc[market_ok, "p_market_at_pull"], d.loc[market_ok, col]).loc["log_loss"].round(4))
+    return {**info, "models": models, "paired_log_loss (diff, ci_low, ci_high)": paired}

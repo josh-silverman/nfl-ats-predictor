@@ -110,7 +110,7 @@ CLAUDE.md (new question, success criteria, archived ATS rules), design section 9
 
 **Log:** as-of data sourcing.
 
-### M5: Write-up and final review
+### M5: Write-up and final review 🔄 (README drafted 2026-10-15; final numbers and skeptic review after week 13)
 1. README case study:
    - the question
    - the ATS negative result

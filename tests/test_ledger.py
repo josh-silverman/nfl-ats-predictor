@@ -7,7 +7,9 @@ from pathlib import Path
 
 import pandas as pd
 
-from nfl_ats.ledger import EASTERN, as_of, predict_week, score_ledger, write_ledger
+import numpy as np
+
+from nfl_ats.ledger import EASTERN, as_of, live_report, predict_week, score_ledger, write_ledger
 from tests.test_win_model import _schedules
 
 
@@ -71,6 +73,25 @@ class TestLedger(unittest.TestCase):
         self.assertEqual(out.loc["g2", "home_win"], 0)
         self.assertTrue(out.loc["g3", "is_tie"])
         self.assertTrue(pd.isna(out.loc["g3", "home_win"]))
+
+
+class TestLiveReport(unittest.TestCase):
+
+    def _scored(self, n=400, bias=0.0, seed=0):
+        rng = np.random.default_rng(seed)
+        p = rng.uniform(0.2, 0.8, n)
+        won = (rng.uniform(size=n) < p).astype(float)
+        return pd.DataFrame({"week": np.repeat(np.arange(1, 9), n // 8), "is_tie": False, "home_win": won,
+                             "p_elo": np.clip(p + bias, 0.01, 0.99), "p_v2": p, "p_market_at_pull": p})
+
+    def test_calibrated_model_passes_and_biased_one_fails(self):
+        rep = live_report(self._scored(bias=0.10), n_sims=200)
+        self.assertTrue(rep["models"]["v2 (Elo + logistic)"]["consistent_with_calibration"])
+        self.assertFalse(rep["models"]["raw Elo (the deliverable)"]["consistent_with_calibration"])
+
+    def test_too_few_games_returns_note(self):
+        rep = live_report(self._scored(n=8))
+        self.assertIn("note", rep)
 
 
 if __name__ == "__main__":

@@ -6,7 +6,9 @@
 **M3 in progress:** `src/nfl_ats/ledger.py` + `scripts/predict_week.py` (as-of masking, skip-started, stale-data guard, no overwrite). 55 tests. Backfill weeks 1–5 (79 games, pseudo-live) in `ledger/backfill/`. **Week 6 locked live** 2026-10-15 14:51 ET (14 games, before the 20:15 TNF kickoff).
 **Weekly routine (Josh):** before each Thursday kickoff, run `conda run -n nfl-ats python scripts/predict_week.py --week N`, then commit `ledger/`. Week 7 is due before Thu 2026-10-22 20:15 ET.
 **Hardening sprint done (decision #20):** H1, H2, and H3 all rejected by the pre-set keep rule. **Raw Elo stays the deliverable**, with no shadow models and no Saturday lock. Win-model experiment count: 6.
-**Next:** keep locking weekly (week 7 due before Thu 2026-10-22 20:15 ET). M4 (QB) is effectively done as H2. M5 (write-up) can start any time, and the live record grows until week 18 (S4 needs ≥ 8 locked weeks, so week 13 or later).
+**M5 drafted:** README case study written. `scripts/score_ledger.py` writes `reports/live_2026.md` using the pre-registered 2026 checks. Week 6 is locked twice (14:51 by Claude, 15:07 by Josh: identical, and the earliest lock counts).
+**Weekly routine:** Thursday before kickoff, run `predict_week.py --week N` and commit. After Monday night, run `score_ledger.py` and commit the report. Week 7 is due before Thu 2026-10-22 20:15 ET.
+**Remaining:** S4 needs ≥ 8 locked weeks (week 13, about Dec 3), then the final README numbers and the final skeptic review (M5).
 **Last updated:** 2026-10-15
 
 ## Done
@@ -91,3 +93,4 @@
 - 2026-10-15: M2 skeptic review applied (honest S3 wording, 2026 checks pre-registered, stronger fold test, sklearn deprecation fix). 49 tests.
 - 2026-10-15: M3 built. Backfilled weeks 1–5. Locked week 6 live before TNF.
 - 2026-10-15: Hardening sprint: H1, H2 (QB, after a data audit), and H3 each pre-registered, run once, and rejected. Raw Elo stays. 61 tests.
+- 2026-10-15: Live report script plus README case study. Backfill smoke test: Elo 65.4% on 78 games (wide CIs, not evidence). 63 tests.

@@ -80,7 +80,7 @@
   // ---------- This week: one game per screen ----------
   // One side of the head-to-head: name, chance to win, and what we knew about the team at lock.
   function teamSide(s, cls, chance, isFav) {
-    const metaBits = [s.record, s.rank ? `#${s.rank}` : null, `Elo ${s.elo}`].filter(Boolean).join(" · ");
+    const metaBits = [s.record, `Elo ${s.elo}`].filter(Boolean).join(" · ");
     return el("section", { class: `side ${cls}` + (isFav ? " fav" : ""), "aria-label": team(s.team).name },
       el("div", { class: "team-head" },
         el("div", { class: "team-name" }, sq(s.team), team(s.team).name),

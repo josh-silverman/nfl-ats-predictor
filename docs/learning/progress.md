@@ -7,7 +7,7 @@
 **Weekly routine (Josh):** before each Thursday kickoff, run `conda run -n nfl-ats python scripts/predict_week.py --week N`, then commit `ledger/`. Week 7 is due before Thu 2026-10-22 20:15 ET.
 **Hardening sprint done (decision #20):** H1, H2, and H3 all rejected by the pre-set keep rule. **Raw Elo stays the deliverable**, with no shadow models and no Saturday lock. Win-model experiment count: 6.
 **M5 drafted:** README case study written. `scripts/score_ledger.py` writes `reports/live_2026.md` using the pre-registered 2026 checks. Week 6 is locked twice (14:51 by Claude, 15:07 by Josh: identical, and the earliest lock counts).
-**Site built:** "Josh's NFL Elo" in `site/` (This Week, Record, Rankings, How It Works). Dark theme, plain language, Chart.js. `scripts/build_site.py`, Pages workflow. 68 tests.
+**Site live:** https://josh-silverman.github.io/nfl-ats-predictor/ (repo github.com/josh-silverman/nfl-ats-predictor, public). "Josh's NFL Elo" in `site/` (This Week, Record, Rankings, How It Works). Dark theme, plain language, Chart.js. `scripts/build_site.py`, Pages workflow. 68 tests.
 **Weekly routine:** Thursday before kickoff: `predict_week.py --week N` → `build_site.py` → commit → push. After Monday night: `score_ledger.py` → `build_site.py` → commit → push. Week 7 is due before Thu 2026-10-22 20:15 ET.
 **Remaining:** S4 needs ≥ 8 locked weeks (week 13, about Dec 3), then the final README numbers and the final skeptic review (M5).
 **Last updated:** 2026-10-15
@@ -95,4 +95,4 @@
 - 2026-10-15: M3 built. Backfilled weeks 1–5. Locked week 6 live before TNF.
 - 2026-10-15: Hardening sprint: H1, H2 (QB, after a data audit), and H3 each pre-registered, run once, and rejected. Raw Elo stays. 61 tests.
 - 2026-10-15: Live report script plus README case study. Backfill smoke test: Elo 65.4% on 78 games (wide CIs, not evidence). 63 tests.
-- 2026-10-15: Built the static site and Pages workflow. Publishing is on hold for Josh's call on the commit email (personal Gmail in all commits).
+- 2026-10-15: Built the static site and Pages workflow. Commit emails rewritten to the GitHub noreply address (Josh's choice; dates and contents verified identical). Public repo created, and the site is live at https://josh-silverman.github.io/nfl-ats-predictor/ . Repo-local git config: http.postBuffer plus the gh credential helper (the push failed without it).

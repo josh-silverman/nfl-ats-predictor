@@ -103,7 +103,7 @@ CLAUDE.md (new question, success criteria, archived ATS rules), design section 9
 
 **Log:** what makes a ledger trustworthy.
 
-### M4: One improvement, time-boxed: quarterback availability
+### M4: One improvement, time-boxed: quarterback availability ✅ (done as hardening test H2: audited, pre-registered, rejected; see decision #20)
 1. **Data audit with a go/no-go.** Do `load_injuries` and `load_depth_charts` cover 2016–2025, with pre-game timing? Schedule QB IDs stay banned (post-hoc).
 2. **Go:** build `qb_out_diff`, run `paired_power` first, then one single-change test vs. v2. Josh decides keep or reject.
 3. **No-go:** log why. Either way M4 is done.

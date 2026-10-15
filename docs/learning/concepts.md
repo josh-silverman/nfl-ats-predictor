@@ -118,3 +118,10 @@ At the end of each phase, Claude adds 3–6 bullets with the points worth rememb
 - **Stale data is silent, so make it loud:** Elo skips games without scores, so the script refreshes the data and refuses to run if any earlier game lacks a final score.
 - **Backfill ≠ live:** weeks 1–5 were predicted *after* they happened (same code, same as-of rules), so they're labeled pseudo-live and kept separate. Only weeks locked before kickoff count as the clean test.
 
+## Hardening sprint: trying to beat a simple model honestly
+- **Pre-register, commit, then run once.** Each test's design and pass rule were committed to git *before* the code ran, so the timestamps prove the rules didn't bend to the results.
+- **Plausible ideas often don't survive.** A recent-seasons home field chased year-to-year noise (H1). QB availability had the right sign in every fold, but only about 4% of games are affected, too rare to move a season-long score (H2). EPA added on top of Elo got real weight but no provable gain (H3).
+- **"Points the right way" ≠ "proven".** H2 and H3 improved log loss in 4 of 7 seasons with CIs straddling zero. Keeping them would mean trusting noise. Simple models that can't be beaten in a fair test are the ones worth standing behind.
+- **Rare-but-real signals need coverage, not cleverness.** The QB idea would need more flagged games (e.g. starters moved to injured reserve, who vanish from the weekly report) before it could prove itself.
+- **Interview line:** "I tried three pre-registered improvements on a simple Elo model: an adaptive home field, QB availability, and EPA. Each had a plausible story, and two pointed the right way, but none beat Elo out of sample with confidence. So I kept the simpler model and documented the near-misses as future work."
+

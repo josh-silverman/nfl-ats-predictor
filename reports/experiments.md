@@ -286,4 +286,19 @@ Each test is a single change to **raw Elo, the deliverable**, judged with `compa
 - **Primary (decides keep):** vs. raw Elo, keep rule, walk-forward 2019–2025, same 1,865 decided games.
 - **Secondary (diagnostic):** vs. v2, paired log loss. Also the EPA coefficients by fold.
 - **Prior expectation (D6/D7):** EPA alone ≈ Elo, so any gain must come from the combination.
+- **Result (run once, 2026-10-15):**
+  - **Primary, vs. raw Elo:** log loss −0.0013 [−0.0059, +0.0034], better in 4/7 seasons (2019 +0.010, 2020 −0.001, 2021 −0.006, 2022 −0.009, 2023 +0.001, 2024 −0.012, 2025 +0.008). AUC 0.692 → 0.693, accuracy +0.3 pts [−1.0, +1.5]. Calibration-in-the-large +2.40 pts.
+  - **Secondary, vs. v2:** log loss −0.0017 [−0.0062, +0.0026], accuracy +0.7 pts [−0.5, +1.9].
+  - **Coefficients per SD (elo, off EPA, def EPA)** are stable across folds: about (0.40–0.49, 0.33–0.42, −0.04 to −0.11). Offense EPA gets nearly as much weight as Elo, and def EPA has the expected sign but is small.
+- **Decision: REJECTED by the keep rule** (fails the CI and ≥ 5/7 seasons).
+- **Win-model experiment count: 6.**
+
+### Hardening sprint summary (2026-10-15)
+| Test | Idea | Primary log-loss diff vs. raw Elo [95% CI] | Seasons better | Verdict |
+|---|---|---|---|---|
+| H1 | As-of trailing home field | +0.0004 [−0.0021, +0.0029] | 2/7 | Rejected |
+| H2 | QB out (injury report) | −0.0006 [−0.0032, +0.0020] | 4/7 | Rejected (sensible signal, too rare) |
+| H3 | EPA on top of Elo | −0.0013 [−0.0059, +0.0034] | 4/7 | Rejected |
+
+**Raw Elo stays the deliverable.** No shadow models were added to the ledger. H2 and H3 point the right way, but neither is distinguishable from noise on 1,865 games, which is consistent with the win-target MDE concern raised in the Step 6 skeptic review.
 

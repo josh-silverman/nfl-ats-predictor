@@ -75,3 +75,27 @@ def benchmark_predictions(table: pd.DataFrame, test_seasons: list[int], first_tr
         "elo": test[keep].assign(p=test["p_home_win"].to_numpy()).reset_index(drop=True),
         "market": test[keep].assign(p=test["p_market"].to_numpy()).reset_index(drop=True),
     }
+
+
+def epa_walk_forward(table: pd.DataFrame, games: pd.DataFrame, team_games: pd.DataFrame, extra: list[str],
+                     test_seasons: list[int], first_train: int = 2016) -> tuple[pd.DataFrame, dict]:
+    """Experiment H3: elo_diff + EPA diffs. EPA shrinkage is refit per fold on that fold's training seasons.
+
+    `games`/`team_games` are the ATS-pipeline inputs (target.add_home_cover output, features.load_team_games).
+    Returns (predictions in win_walk_forward format, {test_season: fitted Pipeline}).
+    """
+    from nfl_ats.features import build_game_features
+    from nfl_ats.model import _team_features
+    features = WIN_FEATURES + extra
+    check_features(features)
+    preds, models = [], {}
+    for test_season in test_seasons:
+        train_seasons = list(range(first_train, test_season))
+        tf = _team_features(team_games, train_seasons)
+        gf = build_game_features(games[games["season"].isin(train_seasons + [test_season])], tf)
+        fold = table.merge(gf[["game_id"] + extra], on="game_id", how="inner", validate="one_to_one")
+        fold = fold[fold[TARGET].notna()]
+        train, test = fold[fold["season"].isin(train_seasons)], fold[fold["season"] == test_season]
+        models[test_season] = make_model().fit(train[features], train[TARGET])
+        preds.append(test[["season", "game_id", TARGET]].assign(p=models[test_season].predict_proba(test[features])[:, 1]))
+    return pd.concat(preds, ignore_index=True), models

@@ -106,7 +106,7 @@ Every result goes here, including failures (CLAUDE.md, single-change rule). Each
   | Brier | 0.2508 | 0.2505 | −0.0003 [−0.0007, +0.0001] |
 
   All three metrics point slightly in the right direction, but every CI includes 0. Log loss stays above the constant-0.5 bar (0.6931).
-- **Decision:** PENDING (Josh). Recommendation: **reject**. The single-change rule keeps a change only when the evidence supports it, and a CI straddling 0 doesn't. It also adds a second pass of feature building.
+- **Decision:** **Rejected** (2026-10-15, decision #18). It fails the pre-set keep rule's CI criterion in the Step 5 scorecard, despite improving in 6/7 seasons. Logged as a near-miss.
 
 ## D1 · 2026-10-15 · Diagnostic · Deliberate leak (no `shift(1)`)
 - **What:** `diagnostics.leaky_walk_forward` includes each game's own stats in its season-to-date features. Same folds, same 1,828 games. Josh predicted 60%.
@@ -163,5 +163,38 @@ Every result goes here, including failures (CLAUDE.md, single-change rule). Each
 
 - **v1 vs. base rate (no features):** +0.0014 [−0.0010, +0.0039], better in 3/7 seasons. The whole model adds nothing.
 - **Exp #6 (opponent adjustment) vs. v1:** −0.00059 [−0.0014, +0.0002], better in 6/7 seasons, AUC 0.503 → 0.508. It fails the CI criterion, so it's **not kept by the pre-set rule**. Strongest near-miss so far.
-- **Result: 0 of 4 earn their place (Josh: correct).** Decisions on the kept model and on exp #6 are pending with Josh.
+- **Result: 0 of 4 earn their place (Josh: correct).** Decisions: the kept ATS model is reset to the base rate, and exp #6 is rejected (decision #18).
+
+## D6 · 2026-10-15 · Diagnostic · Same features, different questions (win probability, power ratings)
+- **What:** walk-forward 2019–25 with no betting line as input. A logistic regression for P(home wins) (ties dropped, 1,865 games) and a linear regression for margin (`diagnostics.win_and_margin_walk_forward`). The benchmark is moneyline probabilities with the vig removed, plus the closing spread.
+- **Result:**
+
+  | Model | Accuracy [95% CI] | Log loss | Brier | AUC |
+  |---|---|---|---|---|
+  | Base rate | 53.2% [50.8, 55.4] | 0.6933 | 0.2500 | n/a |
+  | **Our win model** | **63.2% [60.9, 65.4]** | **0.6430** | **0.2257** | **0.681** |
+  | Market (moneyline) | 66.5% [64.3, 68.7] | 0.6084 | 0.2105 | 0.727 |
+
+  - **Model vs. base, paired:** accuracy +10.0 pts [+7.2, +12.8], log loss −0.050 [−0.067, −0.035].
+  - **Model vs. market, paired:** accuracy −3.4 pts [−5.3, −1.5], log loss +0.035 [+0.025, +0.044].
+  - **Margin RMSE:** predict 0 gives 14.38, home field only 14.30, **power ratings 13.20**, closing spread 12.72. Our predicted margin correlates 0.85 with the spread.
+- **Lesson (corrected after the skeptic review):** the features carry generic team-strength signal. The market prices it into the spread, and a simple Elo from final scores captures it equally well (D7). "Beats the base rate" is a strawman for win prediction. Detectability of *increments* on this target is not yet shown: the skeptic measured a paired log-loss CI of about ±0.0055 between two strength models, wider than the ATS MDEs.
+- **Counting:** D6 is **win-model experiment #1**. 2019–2025 has now been viewed for the win target, so it is no longer a pristine holdout. The 2026 live ledger is the only clean test.
+
+## D7 · 2026-10-15 · Win model #2 · Elo baseline (`src/nfl_ats/elo.py`)
+- **What:** FiveThirtyEight-style Elo from final scores only, with published parameters fixed up front (K = 20, home field 48 and 0 at neutral sites, a margin-of-victory multiplier, 1/3 regression between seasons). It starts in 2015. A unit test proves a game's own result never changes its pregame probability. Same 1,865 graded games as D6.
+- **Result:**
+
+  | Model | Accuracy [95% CI] | Log loss | Brier | AUC |
+  |---|---|---|---|---|
+  | EPA win model (D6) | 63.2% [60.9, 65.4] | 0.6430 | 0.2257 | 0.681 |
+  | **Elo** | **63.6% [61.4, 65.8]** | **0.6387** | **0.2235** | **0.692** |
+  | Market moneyline | 66.5% [64.3, 68.7] | 0.6084 | 0.2105 | 0.727 |
+
+  - **EPA − Elo, paired:** accuracy −0.4 pts [−2.2, +1.3], log loss +0.0043 [−0.0037, +0.0126]. Indistinguishable, and Elo is nominally better.
+  - **Elo − market, paired:** accuracy −3.0 pts [−4.8, −1.1], log loss +0.030 [+0.021, +0.040].
+  - **Margin RMSE:** Elo spread 13.17, EPA 13.20, closing 12.72. With the per-fold training mean, home field only is 14.32.
+  - The skeptic independently found a point-differential version of our pipeline gives 63.5% / 0.6435.
+- **Lesson:** our EPA pipeline adds nothing over Elo for win prediction. **The simplest useful model is Elo.** New information (e.g. QB availability, which scores don't capture) must beat Elo, not the base rate.
+- **Data notes (skeptic):** moneylines are not verified as closing, and their source changes around 2023 (average vig 2.5% → 4.3%). Devigging is proportional. 13 games have p_market = 0.5.
 

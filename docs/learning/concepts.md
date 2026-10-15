@@ -88,3 +88,11 @@ At the end of each phase, Claude adds 3–6 bullets with the points worth rememb
 - **Simpler is better:** if features don't beat "no features", the honest model is the simplest one, and new ideas must beat *that*.
 - **Interview line:** "I evaluate features with a pre-registered rule: paired log-loss improvement, stability across seasons, and a ranking metric so a model can't win by being timid. I also use held-out permutation importance. When nothing passed, I reset to the simplest model rather than keep features that only looked useful."
 
+## Diagnostic session (Step 6): changing the question, and the strongest simple baseline
+- **The same features can be useless for one question and useful for another.** Against the spread they add nothing, but they predict *who wins* 63% of the time vs. 53% for "always home". The difference is the benchmark: the spread already contains team strength, while a base rate doesn't.
+- **Beat the strongest simple baseline, not a strawman.** Elo, built only from final scores with published settings, matched our entire EPA pipeline (63.6% vs. 63.2%). In sports, Elo or point differential is the minimum bar for any win model.
+- **"Useful" is not "beats Vegas".** Elo is about 3 points behind the market at picking winners. That's still a useful, transparent rating (rankings, win odds, our own line), as long as we never present its disagreements with Vegas as bets.
+- **As-of traps hide in innocent columns:** `home_qb_id` in the schedule is who *actually* started, known only after the fact. Using it in a backtest leaks late scratches. Pre-game features need pre-game sources with timestamps.
+- **Re-using the same test seasons wears them out.** Every look at 2019–2025 is another test. The only fully clean test left is live 2026 predictions locked before kickoff.
+- **Interview line:** "When the original target had no signal, I checked whether the features had signal for a nearby question. They did, but a 30-line Elo matched them, so I shipped the Elo model and benchmarked it honestly against the betting market."
+

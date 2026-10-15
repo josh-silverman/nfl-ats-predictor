@@ -6,7 +6,7 @@ import numpy as np
 
 import pandas as pd
 
-from nfl_ats.diagnostics import (accuracy_mde_grid, fold_coefficients, learning_curve, leaky_season_to_date,
+from nfl_ats.diagnostics import (accuracy_mde_grid, moneyline_prob, fold_coefficients, learning_curve, leaky_season_to_date,
                                  paired_mse_diff, paired_power, residual_correlations)
 from nfl_ats.features import FEATURES
 from nfl_ats.features import season_to_date
@@ -81,6 +81,15 @@ class TestModelDiagnostics(unittest.TestCase):
         coefs = fold_coefficients(_games(tg), tg, [2021, 2022], first_train=2020)
         self.assertEqual(list(coefs.index), [2021, 2022])
         self.assertEqual(list(coefs.columns), FEATURES)
+
+
+class TestMoneyline(unittest.TestCase):
+
+    def test_devigged_probabilities(self):
+        p = moneyline_prob(pd.Series([-110.0, -200.0, 150.0]), pd.Series([-110.0, 170.0, -170.0]))
+        self.assertAlmostEqual(p.iloc[0], 0.5)
+        self.assertAlmostEqual(p.iloc[1], (200 / 300) / (200 / 300 + 100 / 270))
+        self.assertLess(p.iloc[2], 0.5)  # home is the underdog
 
 
 if __name__ == "__main__":

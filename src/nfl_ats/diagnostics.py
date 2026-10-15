@@ -254,3 +254,33 @@ def fold_coefficients(games: pd.DataFrame, team_games: pd.DataFrame, test_season
         model, _, _ = _fit_fold(games, team_games, list(range(first_train, test_season)), test_season)
         rows[test_season] = pd.Series(model.named_steps["logreg"].coef_[0], index=FEATURES)
     return pd.DataFrame(rows).T.rename_axis("test_season")
+
+
+def moneyline_prob(home_ml: pd.Series, away_ml: pd.Series) -> pd.Series:
+    """Market-implied P(home wins) from American moneylines, with the vig removed proportionally."""
+    def implied(ml):
+        return np.where(ml < 0, np.abs(ml) / (np.abs(ml) + 100), 100 / (np.abs(ml) + 100))  # abs: np.where evaluates both branches
+    ph, pa = implied(home_ml.to_numpy(dtype=float)), implied(away_ml.to_numpy(dtype=float))
+    return pd.Series(ph / (ph + pa), index=home_ml.index)
+
+
+def win_and_margin_walk_forward(games: pd.DataFrame, team_games: pd.DataFrame, test_seasons: list[int]) -> pd.DataFrame:
+    """Different questions, same features, no betting line as input:
+    P(home wins) from a logistic regression, and margin from a linear regression ("power ratings").
+    Ties are dropped for the win model. Returns test rows with both predictions plus the market's numbers.
+    """
+    from sklearn.linear_model import LinearRegression
+    out = []
+    for train, test in _fold_tables(games, team_games, test_seasons):
+        train_w = train[train["margin"] != 0]
+        win_model = make_model().fit(train_w[FEATURES], (train_w["margin"] > 0).astype(int))
+        margin_model = LinearRegression().fit(train[FEATURES], train["margin"])
+        out.append(test[["season", "week", "game_id", "margin", "spread_line"]].assign(
+            p_win=win_model.predict_proba(test[FEATURES])[:, 1],
+            margin_pred=margin_model.predict(test[FEATURES]),
+            base_rate_win=(train_w["margin"] > 0).mean(),
+        ))
+    preds = pd.concat(out, ignore_index=True)
+    ml = games.set_index("game_id").loc[preds["game_id"], ["home_moneyline", "away_moneyline"]]
+    preds["p_market"] = moneyline_prob(ml["home_moneyline"], ml["away_moneyline"]).to_numpy()
+    return preds

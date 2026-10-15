@@ -41,3 +41,8 @@ What broke, and what it taught me.
 - **What happened:** I guarded the keep rule with Brier resolution so that "just less confident" changes couldn't win. A unit test that shrank noisy predictions toward 50% got *kept*. Resolution with equal-count bins depends only on the predictions' rank order, and shrinking doesn't change rank order.
 - **Lesson:** Know what a metric is invariant to. To catch "only less confident", use a pure ranking metric like AUC, which is unchanged by shrinking and moves only when the ranking improves. Write the adversarial test before trusting a guard.
 - **Fix:** The keep rule now requires higher AUC. The test `test_shrinking_toward_half_is_not_kept` passes.
+
+## 9. Claimed a model was "useful" against a strawman baseline (Diagnostic Step 6)
+- **What happened:** I reported that the EPA win model "clearly" had signal because it beat the home-team base rate by 10 points. The skeptic built Elo from final scores alone, and it did just as well (63.6% vs. 63.2%). Our whole EPA pipeline added nothing over the simplest strength rating.
+- **Lesson:** Always compare against the *strongest simple* baseline for the question, not the weakest. For ATS that was coin flip / always home. For winners it's Elo or point differential. Beating a strawman proves nothing.
+- **Fix:** Built `src/nfl_ats/elo.py` (tested as-of), logged it as D7, and made Elo the benchmark every win-model idea must beat. Also: QB columns are now blocked as post-hoc in `OUTCOME_COLUMNS`, the hard-coded 1.6 is replaced by per-fold training means, and 02-next-steps.md is corrected.

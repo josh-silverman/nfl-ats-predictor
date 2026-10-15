@@ -12,7 +12,8 @@ from nfl_ats.features import (FEATURES, add_shrunk_features, adjust_for_opponent
 # Columns that are only known after the game (or ARE the answer). Never valid model inputs.
 # The QB columns record who ACTUALLY started (post-hoc), so they'd leak late scratches and benchings.
 OUTCOME_COLUMNS = {"margin", "home_cover", "is_push", "home_score", "away_score", "result", "total",
-                   "overtime", "home_qb_id", "away_qb_id", "home_qb_name", "away_qb_name"}
+                   "overtime", "home_qb_id", "away_qb_id", "home_qb_name", "away_qb_name",
+                   "home_win", "is_tie"}
 
 
 def check_features(features: list[str]) -> None:

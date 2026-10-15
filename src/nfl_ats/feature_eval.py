@@ -25,16 +25,19 @@ from nfl_ats.model import fold_data, make_model, walk_forward
 MIN_SEASONS_IMPROVED = 5
 
 
-def compare_predictions(base: pd.DataFrame, new: pd.DataFrame) -> dict:
-    """Score `new` against `base` (both from walk_forward, same games). Returns a summary and per-season table."""
+def compare_predictions(base: pd.DataFrame, new: pd.DataFrame, target: str = "home_cover") -> dict:
+    """Score `new` against `base` (same games, same order). Returns a summary and per-season table.
+
+    target: "home_cover" for the archived ATS study, "home_win" for the v2 win model.
+    """
     if not (base["game_id"].to_numpy() == new["game_id"].to_numpy()).all():
         raise ValueError("base and new must be predictions for the same games in the same order")
-    y = base["home_cover"].to_numpy()
+    y = base[target].to_numpy()
     diff = paired_diff(y, base["p"], new["p"])
 
     per_season = pd.DataFrame({
-        season: {"log_loss_diff": log_loss(g["home_cover"].to_numpy(), new.loc[g.index, "p"].to_numpy())
-                                  - log_loss(g["home_cover"].to_numpy(), g["p"].to_numpy())}
+        season: {"log_loss_diff": log_loss(g[target].to_numpy(), new.loc[g.index, "p"].to_numpy())
+                                  - log_loss(g[target].to_numpy(), g["p"].to_numpy())}
         for season, g in base.groupby("season")
     }).T
     improved = int((per_season["log_loss_diff"] < 0).sum())

@@ -74,7 +74,7 @@ The ATS study ends as a documented negative result. Phases 8–9 are replaced by
 ### M0: Pivot paperwork ✅
 CLAUDE.md (new question, success criteria, archived ATS rules), design section 9, this roadmap, decision #19.
 
-### M1: Win-model code
+### M1: Win-model code ✅
 1. `src/nfl_ats/win_model.py`: `build_win_table` (runs Elo over 2015–2025, adds the `home_win` target, flags and counts ties), `WIN_FEATURES = ["elo_diff"]`, `win_walk_forward` (reuses `make_model`, `check_features`).
 2. `feature_eval.compare_predictions(target=...)`, so the keep rule works for `home_win`.
 3. `tests/test_win_model.py`: ties counted, fold isolation, and Elo's as-of property.

@@ -1,7 +1,7 @@
 # Progress
 
-**Current phase:** Pivot to win probability (decision #19). **M0 done** (CLAUDE.md, design section 9, roadmap M0–M5, success criteria S1–S5 pre-registered).
-**Next:** M1, win-model code (`win_model.py`: Elo table + `home_win` target + walk-forward; `compare_predictions(target=...)`; tests). Then M2 scores v2 against S1–S3.
+**Current phase:** Pivot to win probability (decision #19). **M0–M1 done.** `src/nfl_ats/win_model.py` (`build_win_table`, `win_walk_forward`, `benchmark_predictions`), `compare_predictions(target=...)`, `tests/test_win_model.py`. 46 tests pass. Smoke test: 2,895 games, 10 ties, 1,865 test games, no scores looked at.
+**Next:** M2, score v2 once against S1–S3 in `notebooks/10-win-model.ipynb`, log it, then the skeptic.
 **Last updated:** 2026-10-15
 
 ## Done
@@ -81,3 +81,4 @@
 - 2026-10-15: Diagnostic Step 5 done. `feature_eval.py` (keep rule with an AUC guard; mistake #8). 0/4 features earn their place (Josh predicted 0). v1 ≈ base rate. Exp #6 near-miss. 35 tests.
 - 2026-10-15: Diagnostic Step 6 done. Win model 63.2% vs. base 53.2%. Skeptic: Elo matches it, so I built `elo.py` (D7: 63.6%, log loss 0.639). Ranked list in `docs/plans/02-next-steps.md`. Mistake #9. QB columns blocked as post-hoc. 40 tests.
 - 2026-10-15: Josh approved the pivot. M0 done: docs rewritten, S1–S5 pre-registered before scoring v2.
+- 2026-10-15: M1 done (win-model code + 6 tests). No metrics viewed before M2.

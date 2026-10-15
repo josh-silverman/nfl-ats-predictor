@@ -96,3 +96,10 @@ At the end of each phase, Claude adds 3–6 bullets with the points worth rememb
 - **Re-using the same test seasons wears them out.** Every look at 2019–2025 is another test. The only fully clean test left is live 2026 predictions locked before kickoff.
 - **Interview line:** "When the original target had no signal, I checked whether the features had signal for a nearby question. They did, but a 30-line Elo matched them, so I shipped the Elo model and benchmarked it honestly against the betting market."
 
+## M1: Win-model code
+- **Elo as a feature, logistic regression as the learner:** Elo turns every past score into one number per team, and `elo_diff` (home + home field − away) is the model's only input. The logistic regression learns how to turn that gap into a probability (how big home field really is, and how much a gap is worth) from training seasons only.
+- **Why fixed Elo parameters prevent leakage:** nothing about Elo is fit on our data, and each game's rating is taken *before* the game updates it. So there's nothing to refit per fold, and only the logistic regression needs the walk-forward treatment.
+- **Ties are like pushes:** flagged with `is_tie`, counted (10 in 2015–2025), and given a NaN target so they're never trained on or scored.
+- **One function, every benchmark:** `benchmark_predictions` returns the base rate, raw Elo, and the market in the same format as the model's predictions, on the same games. So `compare_predictions(..., target="home_win")` applies the same pre-set keep rule to anything.
+- **Score once:** M1's smoke test checked only shapes and counts (2,895 games, 1,865 test games). We didn't peek at scores, because the success criteria are judged once, in M2.
+

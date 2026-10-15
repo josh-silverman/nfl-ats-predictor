@@ -1,7 +1,7 @@
 # Progress
 
-**Current phase:** Phase 7 paused for a **diagnostic session** (`docs/diagnostic-prompt.md`, plan approved). Steps 0–4 done.
-**Next:** Diagnostic Step 5, a reusable feature-evaluation process (`evaluate_feature`: paired log loss with dispersion guard, per-season stability, permutation importance). It decides the 4 current features and exp #6. Josh predicts first. Exp #6 stays pending until Step 5. Session rules: stop after each step, Josh predicts before reveals, skeptic after Steps 3 and 6.
+**Current phase:** Phase 7 paused for a **diagnostic session** (`docs/diagnostic-prompt.md`, plan approved). Steps 0–5 done.
+**Next:** Josh decides (1) what the kept model becomes (0/4 features earned their place, and v1 = base rate) and (2) exp #6 (fails the CI, 6/7 seasons). Then Step 6, the ranked list of next ideas, plus the skeptic. Exp #6 stays pending until Step 5. Session rules: stop after each step, Josh predicts before reveals, skeptic after Steps 3 and 6.
 **Last updated:** 2026-10-15
 
 ## Done
@@ -78,3 +78,4 @@
 - 2026-10-15: Diagnostic Step 2 done. Accuracy MDE is 1.0–2.4 pts (Josh guessed 1.5), and the observed effects are far below it. Log loss is the better yardstick. Proving profit needs a true rate of about 55.7%. 27 tests.
 - 2026-10-15: Diagnostic Step 3 done. Features add no detectable signal beyond the spread (margin MSE +0.35%, partial r about 0). Skeptic: overclaim corrected (mistake #7), D3 logged. 29 tests.
 - 2026-10-15: Diagnostic Step 4 done. Learning curve and C sweep both converge on "always 50%" (a no-signal problem). Def EPA coef is positive in all folds, an unconfirmed lead. 31 tests.
+- 2026-10-15: Diagnostic Step 5 done. `feature_eval.py` (keep rule with an AUC guard; mistake #8). 0/4 features earn their place (Josh predicted 0). v1 ≈ base rate. Exp #6 near-miss. 35 tests.

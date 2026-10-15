@@ -36,3 +36,8 @@ What broke, and what it taught me.
 - **What happened:** I concluded "the closing spread already contains everything these public stats know". The skeptic simulated our setup with a planted breakeven-sized signal, and the margin-MSE test caught it only about 11% of the time. I also called a p = 0.002 season "about what chance produces", which it isn't.
 - **Lesson:** "Not detected" ≠ "not there". Before calling a result null, ask how often the test would catch an effect of the size you care about (its power). State the bound the CI supports, here "at most about breakeven", and name what wasn't tested (nonlinear effects, interactions, key numbers).
 - **Fix:** Rewrote the Step 3 verdict and the D1/D2 lessons. Added the dispersion guard for paired log loss, and logged D3 with the power caveat.
+
+## 8. Picked a dispersion guard that couldn't detect shrinking (Diagnostic Step 5)
+- **What happened:** I guarded the keep rule with Brier resolution so that "just less confident" changes couldn't win. A unit test that shrank noisy predictions toward 50% got *kept*. Resolution with equal-count bins depends only on the predictions' rank order, and shrinking doesn't change rank order.
+- **Lesson:** Know what a metric is invariant to. To catch "only less confident", use a pure ranking metric like AUC, which is unchanged by shrinking and moves only when the ranking improves. Write the adversarial test before trusting a guard.
+- **Fix:** The keep rule now requires higher AUC. The test `test_shrinking_toward_half_is_not_kept` passes.

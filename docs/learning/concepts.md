@@ -80,3 +80,11 @@ At the end of each phase, Claude adds 3–6 bullets with the points worth rememb
 - **Overlapping folds aren't independent evidence.** Def EPA's coefficient was positive in all 7 folds, but expanding-window folds share most of their training data. Only the out-of-sample test (Step 3) can confirm it, and it didn't.
 - **Interview line:** "My learning curves showed train and test both converging on the baseline, and the C sweep's best setting was effectively a constant. That told me the bottleneck was information, not model capacity or tuning, so I stopped tuning and went looking for new data."
 
+## Diagnostic session (Step 5): how pros decide whether a feature earns its place
+- **Write the keep rule *before* you look.** Ours: paired log loss must improve with a CI below 0, it must improve in at least 5 of 7 seasons, and AUC must rise. Deciding the rule after seeing results is how people talk themselves into noise.
+- **Drop-one (ablation) testing:** remove one feature, rerun the whole walk-forward, and compare on the same games. If the model isn't worse without it, the feature doesn't earn its place. Ours: 0 of 4 earned it, and the full model was no better than predicting the base rate.
+- **Permutation importance on held-out data:** shuffle one feature in the *test* season and see how much the score drops. It measures out-of-sample usefulness. Def EPA helped in 6 of 7 held-out seasons, which is the one consistent lead, but it's too small to pass the paired test.
+- **Guard against "just less confident":** shrinking predictions toward 50% can improve log loss without adding information. AUC only measures ranking, so it can't be gamed that way.
+- **Simpler is better:** if features don't beat "no features", the honest model is the simplest one, and new ideas must beat *that*.
+- **Interview line:** "I evaluate features with a pre-registered rule: paired log-loss improvement, stability across seasons, and a ranking metric so a model can't win by being timid. I also use held-out permutation importance. When nothing passed, I reset to the simplest model rather than keep features that only looked useful."
+

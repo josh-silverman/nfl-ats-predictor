@@ -150,3 +150,18 @@ Every result goes here, including failures (CLAUDE.md, single-change rule). Each
   The folds use overlapping expanding windows, so stability is not independent evidence. Def EPA's out-of-sample partial r in D3 is +0.014 [−0.031, +0.060]. **It's an unconfirmed lead** ("market overreacts to bad defenses").
 - **Conclusion:** the model isn't bias- or variance-limited in the usual sense. With these features, more data and every regularization setting converge on "always 50%". It's a no-signal problem, not a tuning problem.
 
+## D5 · 2026-10-15 · Diagnostic · Feature scorecard (`feature_eval.py`)
+- **Keep rule (fixed before running):** paired log-loss CI < 0, **and** log loss better in ≥ 5/7 seasons, **and** higher AUC (the dispersion guard). Josh predicted 0 of 4 features would earn their place.
+- **Drop-one results** (with − without; negative = the feature helps):
+
+  | Feature | Log-loss diff [95% CI] | Seasons helped | AUC with / without | Permutation importance (mean, folds > 0) | Earns place? |
+  |---|---|---|---|---|---|
+  | off_epa_diff | +0.00057 [−0.0003, +0.0015] | 2/7 | 0.503 / 0.508 | −0.0006, 2/7 | No |
+  | def_epa_diff | −0.00034 [−0.0025, +0.0019] | 3/7 | 0.503 / 0.469 | **+0.0017, 6/7** | No (closest) |
+  | pace_diff | +0.00035 [−0.0000, +0.0007] | 3/7 | 0.503 / 0.506 | −0.0003, 3/7 | No |
+  | rest_diff | +0.00062 [−0.0001, +0.0014] | 2/7 | 0.503 / 0.505 | −0.0006, 1/7 | No |
+
+- **v1 vs. base rate (no features):** +0.0014 [−0.0010, +0.0039], better in 3/7 seasons. The whole model adds nothing.
+- **Exp #6 (opponent adjustment) vs. v1:** −0.00059 [−0.0014, +0.0002], better in 6/7 seasons, AUC 0.503 → 0.508. It fails the CI criterion, so it's **not kept by the pre-set rule**. Strongest near-miss so far.
+- **Result: 0 of 4 earn their place (Josh: correct).** Decisions on the kept model and on exp #6 are pending with Josh.
+

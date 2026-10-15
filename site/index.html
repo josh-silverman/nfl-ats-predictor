@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Josh's NFL Elo</title>
+  <meta name="description" content="Weekly NFL win chances from a simple Elo rating model, locked before kickoff and compared with Vegas.">
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="brand">
+      <span class="brand-mark" aria-hidden="true">◆</span>
+      <div>
+        <h1>Josh's NFL Elo</h1>
+        <p class="tagline">Who's likely to win this week, from a simple rating model, locked before kickoff.</p>
+      </div>
+    </div>
+    <nav class="tabs" role="tablist" aria-label="Sections">
+      <button role="tab" data-tab="week">This Week</button>
+      <button role="tab" data-tab="record">Record</button>
+      <button role="tab" data-tab="rankings">Rankings</button>
+      <button role="tab" data-tab="how">How It Works</button>
+    </nav>
+  </header>
+
+  <main>
+    <section id="tab-week" class="panel" role="tabpanel" aria-label="This Week"></section>
+    <section id="tab-record" class="panel" role="tabpanel" aria-label="Record" hidden></section>
+    <section id="tab-rankings" class="panel" role="tabpanel" aria-label="Rankings" hidden></section>
+    <section id="tab-how" class="panel" role="tabpanel" aria-label="How It Works" hidden></section>
+  </main>
+
+  <footer class="site-footer">
+    <p>Educational project, not betting advice. Vegas is about 3 points more accurate than this model.</p>
+    <p><a id="repo-link" href="#">Code and locked predictions on GitHub</a> · <span id="generated"></span></p>
+  </footer>
+
+  <div id="tooltip" class="tooltip" role="tooltip" hidden></div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+  <script src="data/site-data.js"></script>
+  <script src="assets/app.js"></script>
+</body>
+</html>

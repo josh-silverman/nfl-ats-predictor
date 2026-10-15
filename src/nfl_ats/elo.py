@@ -46,20 +46,31 @@ def trailing_home_field(games: pd.DataFrame, window: int = 3) -> dict[int, float
     return out
 
 
-def run_elo(games: pd.DataFrame, home_field: float | dict[int, float] = HOME_FIELD) -> pd.DataFrame:
-    """Pregame Elo for every game, in kickoff order. Unplayed games get a prediction but no update.
+def _elo_pass(games: pd.DataFrame, home_field: float | dict[int, float]) -> tuple[list[dict], list[dict]]:
+    """One pass in kickoff order. Returns (pregame rows per game, rating snapshots).
 
-    `games` needs season, week, gameday, game_id, home_team, away_team, home_score, away_score, location.
-    home_field: Elo points for a home team, either one number or a {season: points} dict (H1).
-    Returns game_id, home_elo, away_elo, elo_diff (incl. home field), p_home_win, elo_spread.
+    Snapshots: week 0 = each season's preseason rating (after regression), then each team's rating after
+    every week's games are played. Weeks with no played games (the future) produce no snapshot.
     """
     ratings: dict[str, float] = {}
-    season = None
-    rows = []
-    for g in games.sort_values(["season", "week", "gameday", "game_id"]).itertuples(index=False):
+    season, week, week_played = None, None, False
+    rows, snaps = [], []
+
+    def snapshot(s, w):
+        snaps.extend({"season": s, "week": w, "team": t, "rating": r} for t, r in ratings.items())
+
+    ordered = games.sort_values(["season", "week", "gameday", "game_id"])
+    teams_by_season = {s: set(g["home_team"]) | set(g["away_team"]) for s, g in ordered.groupby("season")}
+    for g in ordered.itertuples(index=False):
+        if (g.season, g.week) != (season, week) and week_played:
+            snapshot(season, week)
         if g.season != season:  # new season: regress everyone 1/3 toward the mean
             ratings = {t: MEAN_RATING * SEASON_REGRESSION + r * (1 - SEASON_REGRESSION) for t, r in ratings.items()}
-            season = g.season
+            for t in teams_by_season[g.season]:
+                ratings.setdefault(t, MEAN_RATING)
+            snapshot(g.season, 0)
+        if (g.season, g.week) != (season, week):
+            season, week, week_played = g.season, g.week, False
         home, away = ratings.get(g.home_team, MEAN_RATING), ratings.get(g.away_team, MEAN_RATING)
         season_hfa = home_field[g.season] if isinstance(home_field, dict) else home_field
         hfa = 0 if g.location == "Neutral" else season_hfa
@@ -75,4 +86,22 @@ def run_elo(games: pd.DataFrame, home_field: float | dict[int, float] = HOME_FIE
             shift = K * _mov_multiplier(margin, winner_diff) * (result - p)
             ratings[g.home_team] = home + shift
             ratings[g.away_team] = away - shift
-    return pd.DataFrame(rows)
+            week_played = True
+    if week_played:
+        snapshot(season, week)
+    return rows, snaps
+
+
+def run_elo(games: pd.DataFrame, home_field: float | dict[int, float] = HOME_FIELD) -> pd.DataFrame:
+    """Pregame Elo for every game, in kickoff order. Unplayed games get a prediction but no update.
+
+    `games` needs season, week, gameday, game_id, home_team, away_team, home_score, away_score, location.
+    home_field: Elo points for a home team, either one number or a {season: points} dict (H1).
+    Returns game_id, home_elo, away_elo, elo_diff (incl. home field), p_home_win, elo_spread.
+    """
+    return pd.DataFrame(_elo_pass(games, home_field)[0])
+
+
+def rating_history(games: pd.DataFrame, home_field: float | dict[int, float] = HOME_FIELD) -> pd.DataFrame:
+    """Each team's rating after each played week (week 0 = preseason): season, week, team, rating."""
+    return pd.DataFrame(_elo_pass(games, home_field)[1])

@@ -73,6 +73,7 @@ The ATS evaluation rules (52.4% breakeven, edge only if the CI lower bound clear
 - Each week, `scripts/predict_week.py` writes v2 win probabilities, raw Elo, the Elo spread, and the market probability at pull time (with the pull timestamp) to `ledger/`. **Locked before the week's first kickoff** by a git commit, and never edited after the fact. The script refuses to overwrite and refuses weeks whose games have started.
 - Weeks already played when the ledger starts are a **"pseudo-live" backfill** in `ledger/backfill/`, labeled separately and never mixed into the live record.
 - The market may have later information than our lock time. Say so when comparing.
+- **Weekly routine:** Thursday before kickoff: `predict_week.py --week N` → `build_site.py` → commit → push. After Monday night: `score_ledger.py` → `build_site.py` → commit → push.
 
 ## Environment and stack
 - Use the conda env **`nfl-ats`** (Python 3.12). **Never create a `.venv`.**
@@ -89,6 +90,7 @@ Run the `skeptic` subagent (`.claude/agents/skeptic.md`) at the end of **milesto
 - `tests/`: unit tests (stdlib `unittest`). Run with `conda run -n nfl-ats python -m unittest discover tests`.
 - `notebooks/`: EDA and lessons.
 - `scripts/`: command-line entry points (e.g. the weekly ledger run).
+- `site/`: the public static site "Josh's NFL Elo" (`scripts/build_site.py` writes `site/data/site-data.js`; GitHub Pages deploys `site/` on push). **Plain language on the site:** no stats jargon; technical depth lives in the README and reports.
 - `data/raw/`, `data/processed/`: data, gitignored.
 - `reports/`: experiment log and figures.
 - `ledger/`: locked live predictions.

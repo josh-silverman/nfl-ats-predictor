@@ -4,6 +4,7 @@
 
 It started as an attempt to beat the point spread. Rigorous testing showed public team stats can't do that, so the project pivoted to a model that *can* be useful: pregame win probabilities. The deliverable is an Elo rating model with walk-forward validation, pre-registered success criteria, and a live 2026 ledger locked before every kickoff.
 
+> **Live site: [josh-silverman.github.io/nfl-ats-predictor](https://josh-silverman.github.io/nfl-ats-predictor/)** shows this week's picks, the live record, and power rankings.
 > **Status (2026-10-15):** model complete; live 2026 record in progress (`reports/live_2026.md`, updated weekly).
 
 ## Headline results (walk-forward 2019–2025, 1,865 games, 95% bootstrap CIs)
@@ -85,9 +86,10 @@ Every week, `scripts/predict_week.py` predicts each upcoming game using only ear
 ```bash
 conda create -n nfl-ats python=3.12 -y && conda activate nfl-ats
 python -m pip install -r requirements.txt && python -m pip install -e .
-python -m unittest discover tests                    # 63 tests
+python -m unittest discover tests                    # 68 tests
 python scripts/predict_week.py --week 7              # lock this week's predictions (before Thursday kickoff)
 python scripts/score_ledger.py                       # update reports/live_2026.md
+python scripts/build_site.py                         # rebuild the site's data (then open site/index.html)
 python scripts/run_notebook.py notebooks/10-win-model.ipynb   # re-run the scoring notebook, saving outputs
 ```
 Python ≥ 3.10 is required (nflreadpy). Use the dedicated `nfl-ats` env, not a `.venv` from conda base (see `docs/learning/mistakes.md` #1).
@@ -95,10 +97,11 @@ Python ≥ 3.10 is required (nflreadpy). Use the dedicated `nfl-ats` env, not a 
 ## Layout
 | Path | Contents |
 |---|---|
-| `src/nfl_ats/` | Library: `data`, `target`, `features`, `model`, `evaluate`, `feature_eval`, `diagnostics`, `elo`, `win_model`, `qb`, `ledger` |
-| `tests/` | 63 unit tests (stdlib `unittest`), including leakage and as-of tests |
+| `src/nfl_ats/` | Library: `data`, `target`, `features`, `model`, `evaluate`, `feature_eval`, `diagnostics`, `elo`, `win_model`, `qb`, `ledger`, `site` |
+| `tests/` | 68 unit tests (stdlib `unittest`), including leakage and as-of tests |
 | `notebooks/` | `03-eda`, `07-backtest`, `08-diagnostics`, `10-win-model` |
-| `scripts/` | `predict_week.py`, `score_ledger.py`, `run_notebook.py` |
+| `scripts/` | `predict_week.py`, `score_ledger.py`, `build_site.py`, `run_notebook.py` |
+| `site/` | The static site ("Josh's NFL Elo"), deployed to GitHub Pages by `.github/workflows/pages.yml` |
 | `ledger/` | Locked weekly predictions (`backfill/` is pseudo-live) |
 | `reports/` | `experiments.md` (every result), `live_2026.md`, figures |
 | `docs/` | Design, roadmap, ranked next steps, decisions, learning notes |

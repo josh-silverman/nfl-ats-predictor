@@ -30,10 +30,27 @@ def _mov_multiplier(margin: float, winner_rating_diff: float) -> float:
     return np.log(abs(margin) + 1) * 2.2 / (winner_rating_diff * 0.001 + 2.2)
 
 
-def run_elo(games: pd.DataFrame) -> pd.DataFrame:
+def trailing_home_field(games: pd.DataFrame, window: int = 3) -> dict[int, float]:
+    """Home field (Elo points) for each season, set BEFORE the season from the trailing `window` seasons:
+    mean home margin in decided-or-tied, non-neutral games × ELO_PER_POINT. Experiment H1.
+
+    Uses only earlier seasons, so it's as-of. Seasons with no earlier data get the published HOME_FIELD.
+    """
+    played = games[games["home_score"].notna() & (games["location"] != "Neutral")]
+    margin_by_season = (played["home_score"] - played["away_score"]).groupby(played["season"]).agg(["sum", "size"])
+    out = {}
+    for season in sorted(games["season"].unique()):
+        prior = margin_by_season.loc[(margin_by_season.index >= season - window) & (margin_by_season.index < season)]
+        out[int(season)] = (float(prior["sum"].sum() / prior["size"].sum()) * ELO_PER_POINT
+                            if len(prior) else float(HOME_FIELD))
+    return out
+
+
+def run_elo(games: pd.DataFrame, home_field: float | dict[int, float] = HOME_FIELD) -> pd.DataFrame:
     """Pregame Elo for every game, in kickoff order. Unplayed games get a prediction but no update.
 
     `games` needs season, week, gameday, game_id, home_team, away_team, home_score, away_score, location.
+    home_field: Elo points for a home team, either one number or a {season: points} dict (H1).
     Returns game_id, home_elo, away_elo, elo_diff (incl. home field), p_home_win, elo_spread.
     """
     ratings: dict[str, float] = {}
@@ -44,7 +61,8 @@ def run_elo(games: pd.DataFrame) -> pd.DataFrame:
             ratings = {t: MEAN_RATING * SEASON_REGRESSION + r * (1 - SEASON_REGRESSION) for t, r in ratings.items()}
             season = g.season
         home, away = ratings.get(g.home_team, MEAN_RATING), ratings.get(g.away_team, MEAN_RATING)
-        hfa = 0 if g.location == "Neutral" else HOME_FIELD
+        season_hfa = home_field[g.season] if isinstance(home_field, dict) else home_field
+        hfa = 0 if g.location == "Neutral" else season_hfa
         diff = home + hfa - away
         p = win_prob(diff)
         rows.append({"game_id": g.game_id, "home_elo": home, "away_elo": away, "elo_diff": diff,

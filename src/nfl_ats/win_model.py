@@ -9,21 +9,21 @@ import pandas as pd
 
 from nfl_ats.data import regular_season
 from nfl_ats.diagnostics import moneyline_prob
-from nfl_ats.elo import run_elo
+from nfl_ats.elo import HOME_FIELD, run_elo
 from nfl_ats.model import check_features, make_model
 
 WIN_FEATURES = ["elo_diff"]
 TARGET = "home_win"
 
 
-def build_win_table(schedules: pd.DataFrame) -> pd.DataFrame:
+def build_win_table(schedules: pd.DataFrame, home_field: float | dict[int, float] = HOME_FIELD) -> pd.DataFrame:
     """One row per regular-season game: pregame Elo, the target, ties flagged, and the market probability.
 
     `schedules` should start a season before the first training season (2015) so Elo can warm up.
     home_win is 1/0 for decided games and NaN for ties and unplayed games, which are never trained on.
     """
     reg = regular_season(schedules)
-    elo = run_elo(reg)
+    elo = run_elo(reg, home_field)
     cols = ["season", "week", "gameday", "game_id", "home_team", "away_team", "location",
             "home_score", "away_score", "spread_line", "home_moneyline", "away_moneyline"]
     table = reg[cols].merge(elo, on="game_id", how="left", validate="one_to_one")

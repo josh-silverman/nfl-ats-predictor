@@ -4,7 +4,7 @@ import unittest
 
 import pandas as pd
 
-from nfl_ats.elo import run_elo, win_prob
+from nfl_ats.elo import ELO_PER_POINT, HOME_FIELD, run_elo, trailing_home_field, win_prob
 
 
 def _games():
@@ -46,6 +46,27 @@ class TestElo(unittest.TestCase):
         self.assertTrue(0 < out.loc["e", "p_home_win"] < 1)
         # A won game a by 20 and lost c by 3, so after 1/3 regression A is still above the mean
         self.assertGreater(out.loc["e", "home_elo"], 1500)
+
+
+class TestTrailingHomeField(unittest.TestCase):
+
+    def _league(self):
+        rows = []
+        for season, margin in [(2015, 4), (2016, 2), (2017, 0), (2018, 6)]:
+            rows += [{"season": season, "home_score": 20 + margin, "away_score": 20, "location": "Home"},
+                     {"season": season, "home_score": 99, "away_score": 0, "location": "Neutral"}]  # ignored
+        return pd.DataFrame(rows)
+
+    def test_uses_only_earlier_seasons_and_ignores_neutral_sites(self):
+        hfa = trailing_home_field(self._league(), window=3)
+        self.assertEqual(hfa[2015], HOME_FIELD)                       # nothing earlier
+        self.assertAlmostEqual(hfa[2016], 4 * ELO_PER_POINT)          # 2015 only
+        self.assertAlmostEqual(hfa[2018], (4 + 2 + 0) / 3 * ELO_PER_POINT)  # 2015-2017, not 2018 itself
+
+    def test_season_dict_is_applied(self):
+        g = _games()
+        out = run_elo(g, home_field={2020: 0.0, 2021: 0.0}).set_index("game_id")
+        self.assertAlmostEqual(out.loc["a", "p_home_win"], 0.5)
 
 
 if __name__ == "__main__":

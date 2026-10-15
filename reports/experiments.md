@@ -238,4 +238,18 @@ Each test is a single change to **raw Elo, the deliverable**, judged with `compa
 - **Motivation:** M2 found both models over-predict home wins by +2.4 to +3.0 pts, concentrated in 2019–2021.
 - **Judged:** keep rule vs. raw Elo on 2019–2025 (1,865 games). Report calibration-in-the-large for both.
 - **Note:** a home-field shift moves all home probabilities in a season together, so it mainly fixes calibration-in-the-large. It may barely change AUC, and the keep rule's AUC requirement could reject it even if log loss improves. The rule stands as written.
+- **Result (run once, 2026-10-15):** trailing-3 home field by season, in Elo points: 2016 37, 2017 51, 2018 55, 2019 62, 2020 40, 2021 20, 2022 14, 2023 32, 2024 53, 2025 55 (fixed Elo uses 48).
+
+  | | Raw Elo | H1 | H1 − Elo (paired) |
+  |---|---|---|---|
+  | Log loss | 0.6387 | 0.6391 | +0.0004 [−0.0021, +0.0029] |
+  | Accuracy | 63.6% | 64.5% | +0.9 pts [−0.1, +1.8] |
+  | AUC | 0.692 | 0.690 | lower |
+  | Seasons better (log loss) | n/a | 2/7 | n/a |
+  | Calibration-in-the-large (pooled) | +2.96 pts | +1.81 pts | n/a |
+
+  By season, Elo vs. H1 bias: 2019 +4.6 / +6.4, 2020 +6.2 / +5.2, 2021 +4.5 / +0.9, 2022 +0.1 / **−4.4**, 2023 +0.8 / −1.3, 2024 +2.7 / +3.4, 2025 +2.1 / +3.0.
+- **Decision: REJECTED by the keep rule.** It fails all three checks (CI, 2/7 seasons, AUC). It isn't added as a shadow model.
+- **Lesson:** home-field advantage is noisy year to year. A trailing average lags and chases noise: it used a high value going into 2019's drop, then over-corrected into 2022's rebound. The pooled bias shrank, but the season-level misses got bigger. A fixed long-run value (Elo's 48) is the better bet.
+- **Win-model experiment count: 4** (D6, D7, W3, H1).
 

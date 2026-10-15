@@ -102,3 +102,13 @@ def check_spread_sign(reg: pd.DataFrame) -> None:
     fav_win_rate = (home_won == home_fav).mean()
     assert fav_win_rate > 0.6, f"Favorites won only {fav_win_rate:.1%}: is spread_line's sign flipped?"
     assert played["spread_line"].corr(played["result"]) > 0, "spread_line should rise with home margin"
+
+
+def load_injuries(seasons: list[int], refresh: bool = False) -> pd.DataFrame:
+    """Official weekly injury reports (one row per player per report week), cached like the others."""
+    return _cached_pull("injuries", seasons, nfl.load_injuries, refresh)
+
+
+def load_depth_charts(seasons: list[int], refresh: bool = False) -> pd.DataFrame:
+    """Weekly depth charts, cached like the others. The format changes around 2025, so check before use."""
+    return _cached_pull("depth_charts", seasons, nfl.load_depth_charts, refresh)

@@ -253,3 +253,14 @@ Each test is a single change to **raw Elo, the deliverable**, judged with `compa
 - **Lesson:** home-field advantage is noisy year to year. A trailing average lags and chases noise: it used a high value going into 2019's drop, then over-corrected into 2022's rebound. The pooled bias shrank, but the season-level misses got bigger. A fixed long-run value (Elo's 48) is the better bet.
 - **Win-model experiment count: 4** (D6, D7, W3, H1).
 
+### H2 · Data audit (2026-10-15) · Quarterback availability: go/no-go
+- **Source:** `nflreadpy.load_injuries` (now cached through `data.load_injuries`). 57,253 rows, 2016–2026. QB regular-season Out/Doubtful statuses: 402 rows.
+- **Coverage:** ✅ every season 2016–2026.
+- **Timing:**
+  - ✅ **100%** of 2016–2024 QB Out/Doubtful statuses were last modified **before kickoff**: median 51 hours before, 5th percentile 32 hours.
+  - For Sunday games, the last modification is Friday (267) or Saturday (2).
+  - ⚠️ `date_modified` is missing for 2025 (56 rows) and 2026 (16 rows), so timing can't be verified there.
+- **Live implication:** final statuses for Sunday games are published Friday, **after** the Thursday ledger lock. A QB-aware model would need its own **Saturday lock** to use the same information live as in the backtest.
+- **Starter identity (planned, as-of):** the QB with the most pass attempts in the team's previous game this season, from pbp. Week 1 has no prior game, so the feature is 0. The schedule's `*_qb_id` stays banned.
+- **Verdict:** **GO for the backtest**, with the 2025 timing caveat. Live use depends on Josh agreeing to a Saturday shadow lock.
+

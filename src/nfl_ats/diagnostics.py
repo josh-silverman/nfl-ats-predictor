@@ -196,3 +196,61 @@ def residual_correlations(table: pd.DataFrame, by: str = "season") -> pd.DataFra
             rows.append({by: key, "feature": f, "n": n, "r": r,
                          "ci_low": np.tanh(np.arctanh(r) - half), "ci_high": np.tanh(np.arctanh(r) + half)})
     return pd.DataFrame(rows)
+
+
+def _fit_fold(games, team_games, train_seasons, test_season, C=1.0):
+    from nfl_ats.model import fold_data
+    train, test = fold_data(games, team_games, train_seasons, test_season)
+    model = make_model(C).fit(train[FEATURES], train["home_cover"])
+    return model, train, test
+
+
+def learning_curve(games: pd.DataFrame, team_games: pd.DataFrame, test_seasons: list[int],
+                   windows: list[int]) -> pd.DataFrame:
+    """Train on the most recent k seasons before each test season, for each k; pool the test predictions.
+
+    Every k is scored on the same test games, so rows are comparable. Shows whether more data helps.
+    """
+    from nfl_ats.evaluate import brier, log_loss
+    rows = []
+    for k in windows:
+        y_test, p_test, y_train, p_train = [], [], [], []
+        for test_season in test_seasons:
+            model, train, test = _fit_fold(games, team_games, list(range(test_season - k, test_season)), test_season)
+            y_test.append(test["home_cover"]); p_test.append(model.predict_proba(test[FEATURES])[:, 1])
+            y_train.append(train["home_cover"]); p_train.append(model.predict_proba(train[FEATURES])[:, 1])
+        yt, pt = np.concatenate(y_test), np.concatenate(p_test)
+        ytr, ptr = np.concatenate(y_train), np.concatenate(p_train)
+        rows.append({"train_seasons": k, "train_games_per_fold": len(ytr) // len(test_seasons),
+                     "train_log_loss": log_loss(ytr, ptr), "test_log_loss": log_loss(yt, pt),
+                     "test_brier": brier(yt, pt), "test_pred_sd": pt.std()})
+    return pd.DataFrame(rows).set_index("train_seasons")
+
+
+def c_sweep(games: pd.DataFrame, team_games: pd.DataFrame, test_seasons: list[int], Cs: list[float]) -> pd.DataFrame:
+    """Walk-forward metrics for each regularization strength C, with the dispersion guard.
+
+    Lower C pulls coefficients (and so predictions) toward the base rate. That alone can improve log
+    loss when the features carry nothing, so report pred SD and Brier resolution vs. its noise floor too.
+    """
+    from nfl_ats.evaluate import accuracy, brier, brier_decomposition, log_loss
+    from nfl_ats.model import walk_forward
+    rows = []
+    for C in Cs:
+        preds = walk_forward(games, team_games, FEATURES, test_seasons, C=C)
+        y, p = preds["home_cover"].to_numpy(), preds["p"].to_numpy()
+        d = brier_decomposition(y, p)
+        rows.append({"C": C, "accuracy": accuracy(y, (p > 0.5).astype(float)), "log_loss": log_loss(y, p),
+                     "brier": brier(y, p), "pred_sd": p.std(), "resolution": d["resolution"],
+                     "resolution_noise_floor": d["uncertainty"] / (len(y) / 10)})
+    return pd.DataFrame(rows).set_index("C")
+
+
+def fold_coefficients(games: pd.DataFrame, team_games: pd.DataFrame, test_seasons: list[int],
+                      first_train: int = 2016) -> pd.DataFrame:
+    """Standardized coefficients (log-odds per 1 SD) of each walk-forward fold's model."""
+    rows = {}
+    for test_season in test_seasons:
+        model, _, _ = _fit_fold(games, team_games, list(range(first_train, test_season)), test_season)
+        rows[test_season] = pd.Series(model.named_steps["logreg"].coef_[0], index=FEATURES)
+    return pd.DataFrame(rows).T.rename_axis("test_season")

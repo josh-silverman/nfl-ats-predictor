@@ -138,3 +138,15 @@ Every result goes here, including failures (CLAUDE.md, single-change rule). Each
 - **Power caveat (skeptic simulation):** the MSE test detects a breakeven-sized effect (r ≈ 0.075, about 52.4% ATS) only about 11% of the time, and its null expectation is about +0.29%. The CIs on the correlations are the real bound: the upper bounds of about 0.06–0.07 imply at most about breakeven.
 - **Conclusion:** no detectable incremental signal from these four features entered linearly. Any linear effect is at most breakeven-sized. Nonlinear effects, interactions, key numbers, and subsets were not tested.
 
+## D4 · 2026-10-15 · Diagnostic · Model diagnostics (learning curve, C sweep, calibration, coefficients)
+- **Learning curve** (test 2022–25, trained on the last k seasons; Josh predicted "improves, then flattens"): test log loss goes 0.7025 (k=1) → 0.6967 → 0.6962 → 0.6973 → 0.6950 → 0.6944 (k=6). Train log loss rises 0.6850 → 0.6917. **Test pred SD falls from 0.064 to 0.020.** The improvement comes from shrinking toward 50%, not from learning signal, and test log loss never reaches 0.6931.
+- **C sweep** (walk-forward 2019–25): the best log loss is 0.69324 at C = 1e-4, with pred SD 0.005, which is effectively "always 50%" (the dispersion artifact). Resolution is 0.0005–0.0017 at every C, against a noise floor of 0.0014. **No C creates signal, so C stays 1.0** (consistent with decision #17).
+- **Calibration:** 91.4% of predictions are within 45–55%, and 52.7% are within 48–52%.
+- **Coefficients by fold** (per SD):
+  - off EPA: −0.001 to +0.064
+  - **def EPA: +0.067 to +0.123 (positive in all 7 folds)**
+  - pace: −0.026 to +0.031
+  - rest: −0.009 to +0.073
+  The folds use overlapping expanding windows, so stability is not independent evidence. Def EPA's out-of-sample partial r in D3 is +0.014 [−0.031, +0.060]. **It's an unconfirmed lead** ("market overreacts to bad defenses").
+- **Conclusion:** the model isn't bias- or variance-limited in the usual sense. With these features, more data and every regularization setting converge on "always 50%". It's a no-signal problem, not a tuning problem.
+

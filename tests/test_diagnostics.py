@@ -6,8 +6,8 @@ import numpy as np
 
 import pandas as pd
 
-from nfl_ats.diagnostics import (accuracy_mde_grid, leaky_season_to_date, paired_mse_diff, paired_power,
-                                 residual_correlations)
+from nfl_ats.diagnostics import (accuracy_mde_grid, fold_coefficients, learning_curve, leaky_season_to_date,
+                                 paired_mse_diff, paired_power, residual_correlations)
 from nfl_ats.features import FEATURES
 from nfl_ats.features import season_to_date
 from tests.test_features import _toy_games
@@ -64,6 +64,23 @@ class TestSignalTools(unittest.TestCase):
         self.assertGreater(rc.loc["off_epa_diff", "ci_low"], 0)
         self.assertLess(rc.loc["rest_diff", "ci_low"], 0)
         self.assertGreater(rc.loc["rest_diff", "ci_high"], 0)
+
+
+class TestModelDiagnostics(unittest.TestCase):
+
+    def test_learning_curve_scores_every_window_on_the_same_games(self):
+        from tests.test_model import _games, _team_games
+        tg = _team_games()
+        lc = learning_curve(_games(tg), tg, [2022], [1, 2])
+        self.assertEqual(list(lc.index), [1, 2])
+        self.assertLess(lc.loc[1, "train_games_per_fold"], lc.loc[2, "train_games_per_fold"])
+
+    def test_fold_coefficients_one_row_per_fold(self):
+        from tests.test_model import _games, _team_games
+        tg = _team_games()
+        coefs = fold_coefficients(_games(tg), tg, [2021, 2022], first_train=2020)
+        self.assertEqual(list(coefs.index), [2021, 2022])
+        self.assertEqual(list(coefs.columns), FEATURES)
 
 
 if __name__ == "__main__":

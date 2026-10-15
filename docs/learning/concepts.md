@@ -73,3 +73,10 @@ At the end of each phase, Claude adds 3–6 bullets with the points worth rememb
 - **Stability beats significance:** one season (off EPA, 2024) hit p = 0.002, but the other six were around 0. A real edge shows up season after season.
 - **Interview line:** "I test features against the market's residual, not the raw outcome, and I report what my test could and couldn't detect. Our public EPA features added nothing detectable beyond the closing line, so the next step is new information, not a fancier model."
 
+## Diagnostic session (Step 4): diagnose the model itself
+- **Learning curves tell you what kind of problem you have.** If train is much better than test, that's variance (overfitting): more data or regularization helps. If both are bad and close together, that's bias: you need better features or a richer model. Ours shows a third pattern: train and test converge on the *know-nothing* line from both sides. That's a **no-signal** problem.
+- **Watch confidence, not just the score.** Our test log loss "improved" with more data only because predictions shrank (SD 0.064 → 0.020). A model learning to say "I don't know" looks like progress on log loss. Always plot prediction spread next to log loss.
+- **Regularization can't create signal.** Sweeping C from 0.0001 to 100, the best log loss was a model that predicts about 50% for everyone. Tuning is for extracting signal that exists, not inventing it.
+- **Overlapping folds aren't independent evidence.** Def EPA's coefficient was positive in all 7 folds, but expanding-window folds share most of their training data. Only the out-of-sample test (Step 3) can confirm it, and it didn't.
+- **Interview line:** "My learning curves showed train and test both converging on the baseline, and the C sweep's best setting was effectively a constant. That told me the bottleneck was information, not model capacity or tuning, so I stopped tuning and went looking for new data."
+

@@ -264,3 +264,12 @@ Each test is a single change to **raw Elo, the deliverable**, judged with `compa
 - **Starter identity (planned, as-of):** the QB with the most pass attempts in the team's previous game this season, from pbp. Week 1 has no prior game, so the feature is 0. The schedule's `*_qb_id` stays banned.
 - **Verdict:** **GO for the backtest**, with the 2025 timing caveat. Live use depends on Josh agreeing to a Saturday shadow lock.
 
+### H2 · PRE-REGISTERED 2026-10-15, before building · QB-availability feature
+- **Josh's decision:** backtest first. A Saturday shadow lock is added **only if** the primary test passes.
+- **Expected starter (as-of):** the QB with the most pass attempts (`passer_player_id`, pbp) in the team's **previous** regular-season game of the same season. Week 1 and teams with no prior game get no flag.
+- **`qb_out`:** 1 if that expected starter is listed **Out or Doubtful** on the team's official injury report for this game week (`load_injuries`, matched on gsis_id), else 0. Questionable counts as available. Benchings and non-injury absences aren't captured.
+- **Feature:** `qb_out_diff = home_qb_out − away_qb_out`.
+- **Primary test (decides keep, per CLAUDE.md M4 baseline):** `Pipeline(StandardScaler → LogisticRegression)` on `[elo_diff, qb_out_diff]`, walk-forward 2019–2025, vs. **raw Elo**, with the keep rule (paired log-loss CI < 0, ≥ 5/7 seasons better, higher AUC).
+- **Secondary (diagnostic only, isolates the QB change):** the same model vs. v2 (`[elo_diff]` alone), paired log loss.
+- **Also reported:** how many test games have `qb_out_diff ≠ 0`, the fitted QB coefficient by fold, and calibration-in-the-large.
+

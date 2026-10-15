@@ -89,7 +89,7 @@ CLAUDE.md (new question, success criteria, archived ATS rules), design section 9
 
 **Log:** non-inferiority, calibration slope.
 
-### M3: Live 2026 ledger
+### M3: Live 2026 ledger 🔄 (built; weeks 1–5 backfilled; week 6 locked live 2026-10-15; weekly locks continue)
 1. Check that `load_schedules([2026], refresh=True)` has scores for played weeks and moneylines for upcoming games.
 2. `src/nfl_ats/ledger.py` (`predict_week`, `score_ledger`) and `scripts/predict_week.py`. Guards: no overwrite, no started games.
    - **Records the line used and its pull time.** A line pulled before kickoff is not the closing line.

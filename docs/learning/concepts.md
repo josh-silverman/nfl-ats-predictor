@@ -110,3 +110,11 @@ At the end of each phase, Claude adds 3–6 bullets with the points worth rememb
 - **Calibration-in-the-large:** compare the average prediction with the actual rate. Both models over-predicted home wins by about 2–3 points, and by 6–7 in 2019–2020, because home-field advantage shrank after the years they learned from.
 - **Know your threshold's noise floor:** a perfectly calibrated model would fail our 0.002 reliability bar about 7% of the time. Simulate the null before picking a number, and still report the real bias honestly.
 - **Interview line:** "I pre-registered success criteria before scoring. The model passed usefulness and non-inferiority, but failed calibration. I traced that to a real shift in home-field advantage, reported it instead of retuning the threshold, and pre-registered noise-aware calibration checks for the live season."
+
+## M3: The live ledger
+- **A ledger is only trustworthy if it can't be edited after the fact.** Files are written once (the script refuses to overwrite), and a git commit before kickoff timestamps the lock. If a week is run twice, the earliest lock counts.
+- **As-of by construction:** before predicting week N, the code hides every score from week N onward and then runs Elo. The same function does the live run and the pseudo-live backfill, and a test proves the target week's results can't change its predictions.
+- **Never predict after kickoff:** games that have already started are skipped and counted, rather than predicted late.
+- **Stale data is silent, so make it loud:** Elo skips games without scores, so the script refreshes the data and refuses to run if any earlier game lacks a final score.
+- **Backfill ≠ live:** weeks 1–5 were predicted *after* they happened (same code, same as-of rules), so they're labeled pseudo-live and kept separate. Only weeks locked before kickoff count as the clean test.
+

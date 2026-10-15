@@ -1,4 +1,4 @@
-# 00 — Design (v1)
+# 00 — Design (v1 ATS study, archived; v2 win probability in section 9)
 
 The rules in `CLAUDE.md` override anything here. This doc covers *what* we build and *why*.
 
@@ -72,3 +72,16 @@ Every model result is shown next to all three.
 | nflverse data revisions | Cache raw pulls with dates |
 | Team relocations and abbreviations | Explicit mapping, validated in Phase 2 |
 | Polars/pandas mismatches | Convert once, at the boundary |
+
+## 9. v2: Win probability (decision #19, 2026-10-15)
+**Why the pivot:** the ATS study (sections 1–8) found no detectable signal against the closing spread (D1–D5). The same information predicts *winners* well, and a simple Elo from final scores matches our EPA pipeline (D6–D7). See `docs/plans/02-next-steps.md`.
+
+- **Target:** `home_win` is 1 if home_score > away_score and 0 if less. **Ties are excluded, counted, and reported.** Regular season only.
+- **Strength signal:** `src/nfl_ats/elo.py`, with FiveThirtyEight's published NFL parameters, fixed and never tuned on our data: K = 20, home field 48 Elo points (0 at neutral sites), a margin-of-victory multiplier, and 1/3 regression to 1505 between seasons. It starts in 2015 to warm up. Each game's pregame rating is computed before that game updates the ratings.
+- **v2 model:** `Pipeline(StandardScaler → LogisticRegression(C=1))` on one feature, **`elo_diff`** (home Elo + home field − away Elo). The regression re-learns how big home field is and how to scale Elo gaps into probabilities, from training seasons only.
+- **Validation:** walk-forward, testing 2019–2025, each fold trained on 2016 through the prior season. This holdout has been viewed many times (see CLAUDE.md), so the 2026 ledger is the clean test.
+- **Benchmarks:** the base rate, raw Elo (`p_home_win`), and the schedule moneyline devigged proportionally (`diagnostics.moneyline_prob`).
+- **Success criteria S1–S5:** pre-registered in `CLAUDE.md`.
+- **Single-change improvements:** only after v2 is scored, through `feature_eval.compare_predictions(target="home_win")`, which applies the pre-set keep rule (paired log-loss CI < 0, ≥ 5/7 seasons, higher AUC). The first candidate is quarterback availability from **pre-game** sources only (M4).
+- **Elo spread** (elo_diff / 25) is reported as a rating, **never as a bet signal**: D3 showed its disagreements with the spread are noise.
+

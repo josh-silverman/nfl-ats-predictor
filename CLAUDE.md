@@ -1,6 +1,6 @@
-# NFL ATS Predictor: Project Rules
+# NFL Win-Probability Model: Project Rules
 
-The model predicts whether the **home team covers the closing spread** (a binary outcome). Claude builds the project and explains as it goes. **The priority is finishing the project.** Learning happens along the way, not through quizzes (decision #11). The source brief is `docs/kickoff-prompt.md`, the design is in `docs/plans/00-design.md`, and the phases are in `docs/plans/01-roadmap.md`.
+**Since decision #19 (2026-10-15), the model predicts the probability that the home team wins** (ties excluded and counted). The original question, whether the home team covers the closing spread, is now the **archived ATS study**: a documented negative result (D1–D5 in `reports/experiments.md`). Claude builds the project and explains as it goes. **The priority is finishing the project.** Learning happens along the way, not through quizzes (decision #11). The source brief is `docs/kickoff-prompt.md`, the design is in `docs/plans/00-design.md` (section 9 covers v2), the phases are in `docs/plans/01-roadmap.md`, and the evidence for the pivot is in `docs/plans/02-next-steps.md`.
 
 ## How to talk to Josh
 - Act as a mentor, not a textbook. Be honest about what matters and what doesn't.
@@ -26,8 +26,10 @@ The model predicts whether the **home team covers the closing spread** (a binary
 - **Week 1** (and early weeks) carry over prior-season values, shrunk toward the league mean. The prior's weight decays as current-season games accumulate. Shrinkage parameters are fit on training seasons only.
 - Scalers and models are fit **inside the training fold only**, which the scikit-learn `Pipeline` handles. Nothing is fit on the full dataset.
 - **No random train/test splits, ever.** Validation is walk-forward by season.
-- The closing spread is a feature or reference, never part of the target leakage path. The target comes from final scores against the closing line.
-- If something looks too good (more than about 55% ATS over several seasons), assume it's leakage until proven otherwise.
+- **Never feed the spread or moneyline into a model that is benchmarked against them.** That makes "vs. market" circular.
+- **Post-hoc columns are banned as features:** scores, margin, overtime, and the schedule's `home_qb_id`/`away_qb_id` (who *actually* started). `model.OUTCOME_COLUMNS` enforces this. Pre-game information must come from pre-game sources with known timing.
+- Elo uses fixed published parameters and updates only after each game, so a game's probability never uses its own result. Anything fit (the logistic regression, scalers) is fit inside the training fold only.
+- If something looks too good (beating the market's win-probability log loss, or more than about 55% ATS), assume it's leakage until proven otherwise.
 
 ## Single-change rule
 - Change **one thing at a time**: a feature, a hyperparameter, a data fix.
@@ -35,16 +37,32 @@ The model predicts whether the **home team covers the closing spread** (a binary
 - A change is kept only if the evidence supports it, and the decision goes in `docs/decisions.md`.
 - **Log every result, including failures**, in `reports/experiments.md` (date, change, metrics with confidence intervals, kept or rejected, and why).
 
-## Evaluation rules
-- Metrics: **ATS accuracy, log loss, and Brier score**, each with **bootstrap 95% confidence intervals** (resampling games).
-- Baselines, always shown: **always home**, **always favorite**, **coin flip**.
-- The breakeven at -110 is **52.4%**. One season is about 272 games, so a single season's 95% interval on accuracy is roughly ±6 points. Say this plainly.
-- **Never call something an edge unless the confidence interval's lower bound clears 52.4%.**
-- Pushes are excluded from the target and **counted and reported**.
+## Evaluation rules (win model, v2)
+- Metrics: **log loss (primary), Brier score, and accuracy**, each with **bootstrap 95% confidence intervals**. Compare models with **paired** bootstraps on the same games.
+- Benchmarks, always shown: **base rate** (training home-win rate), **raw Elo** (`src/nfl_ats/elo.py`), and the **schedule moneyline**, devigged. Never call it "the closing line": it isn't verified as closing, and its source changes around 2023.
+- **Dispersion guard:** a change that only makes predictions less confident can win on log loss. Also require higher AUC, as in the `feature_eval.py` keep rule.
+- Ties are excluded from the target and **counted and reported**.
+- **2019–2025 has been viewed many times.** Every test on it adds to the experiment count. The 2026 live ledger is the only clean test.
+
+## Success criteria (pre-registered 2026-10-15, before v2 was scored; never changed after seeing results)
+The v2 model is `Pipeline(StandardScaler → LogisticRegression)` on the pregame `elo_diff`, walk-forward 2019–2025.
+| # | Criterion | Pass if |
+|---|---|---|
+| S1 | Useful vs. knowing nothing | paired log loss vs. the base rate has its CI entirely below 0 |
+| S2 | At least as good as raw Elo | paired log loss vs. raw Elo has CI upper bound < +0.005 (non-inferiority) |
+| S3 | Honest probabilities | Brier reliability ≤ 0.002 **and** recalibration slope within [0.8, 1.2] |
+| S4 | Real out-of-sample test | ≥ 8 weeks of 2026 predictions locked before kickoff and scored vs. outcomes, Elo, and the market |
+| S5 | Professional build | all tests pass, notebooks run top to bottom, README case study done |
+
+**If S2 or S3 fails, raw Elo becomes the deliverable.** Beating the market is **not** a criterion: report the gap honestly.
+
+## Archived ATS study
+The ATS evaluation rules (52.4% breakeven, edge only if the CI lower bound clears it, pushes excluded and counted, baselines always home / always favorite / coin flip) still apply to any ATS result. The kept ATS model is the base rate (decision #18).
 
 ## Live season (2026)
-- Predictions are **locked before kickoff** in `ledger/` and never edited after the fact.
-- Weeks already played when the ledger starts are a **"pseudo-live" backfill**, labeled separately and never mixed into the live record.
+- Each week, `scripts/predict_week.py` writes v2 win probabilities, raw Elo, the Elo spread, and the market probability at pull time (with the pull timestamp) to `ledger/`. **Locked before the week's first kickoff** by a git commit, and never edited after the fact. The script refuses to overwrite and refuses weeks whose games have started.
+- Weeks already played when the ledger starts are a **"pseudo-live" backfill** in `ledger/backfill/`, labeled separately and never mixed into the live record.
+- The market may have later information than our lock time. Say so when comparing.
 
 ## Environment and stack
 - Use the conda env **`nfl-ats`** (Python 3.12). **Never create a `.venv`.**
@@ -54,12 +72,13 @@ The model predicts whether the **home team covers the closing spread** (a binary
 - nflreadpy returns **Polars** DataFrames. Convert with `.to_pandas()` at the load boundary, and keep everything downstream in pandas.
 
 ## Skeptic reviews
-Run the `skeptic` subagent (`.claude/agents/skeptic.md`) at the end of **Phases 4, 7, and 8**, before the gate. Share its findings with Josh and fix any blockers.
+Run the `skeptic` subagent (`.claude/agents/skeptic.md`) at the end of **milestones M2 and M5** (and it already ran after Phases 4 and 7 and diagnostic Steps 3 and 6), before the gate. Share its findings with Josh and fix any blockers.
 
 ## Layout
 - `src/nfl_ats/`: library code.
 - `tests/`: unit tests (stdlib `unittest`). Run with `conda run -n nfl-ats python -m unittest discover tests`.
 - `notebooks/`: EDA and lessons.
+- `scripts/`: command-line entry points (e.g. the weekly ledger run).
 - `data/raw/`, `data/processed/`: data, gitignored.
 - `reports/`: experiment log and figures.
 - `ledger/`: locked live predictions.

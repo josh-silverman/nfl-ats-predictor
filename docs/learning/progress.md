@@ -1,7 +1,7 @@
 # Progress
 
-**Current phase:** Diagnostic session **complete** (Steps 0–6, skeptic after Steps 3 and 6). ATS: no detectable signal, so the kept ATS model is the base rate (decision #18). Win prediction: Elo (63.6%) = the EPA pipeline (63.2%), and the market is 66.5%.
-**Next:** Josh's sign-off on the pivot in `docs/plans/02-next-steps.md`: Elo win probabilities + Elo spread as the main deliverable, ATS kept as a documented negative result, and QB availability (pre-game sources only) as the first improvement. CLAUDE.md, the design doc, and the roadmap change only after sign-off.
+**Current phase:** Pivot to win probability (decision #19). **M0 done** (CLAUDE.md, design section 9, roadmap M0–M5, success criteria S1–S5 pre-registered).
+**Next:** M1, win-model code (`win_model.py`: Elo table + `home_win` target + walk-forward; `compare_predictions(target=...)`; tests). Then M2 scores v2 against S1–S3.
 **Last updated:** 2026-10-15
 
 ## Done
@@ -80,3 +80,4 @@
 - 2026-10-15: Diagnostic Step 4 done. Learning curve and C sweep both converge on "always 50%" (a no-signal problem). Def EPA coef is positive in all folds, an unconfirmed lead. 31 tests.
 - 2026-10-15: Diagnostic Step 5 done. `feature_eval.py` (keep rule with an AUC guard; mistake #8). 0/4 features earn their place (Josh predicted 0). v1 ≈ base rate. Exp #6 near-miss. 35 tests.
 - 2026-10-15: Diagnostic Step 6 done. Win model 63.2% vs. base 53.2%. Skeptic: Elo matches it, so I built `elo.py` (D7: 63.6%, log loss 0.639). Ranked list in `docs/plans/02-next-steps.md`. Mistake #9. QB columns blocked as post-hoc. 40 tests.
+- 2026-10-15: Josh approved the pivot. M0 done: docs rewritten, S1–S5 pre-registered before scoring v2.

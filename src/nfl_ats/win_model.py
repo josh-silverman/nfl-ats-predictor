@@ -36,6 +36,13 @@ def build_win_table(schedules: pd.DataFrame) -> pd.DataFrame:
     return table
 
 
+def fit_fold(table: pd.DataFrame, features: list[str], test_season: int, first_train: int = 2016, C: float = 1.0):
+    """The fitted Pipeline for one fold: trained on decided games from first_train through test_season − 1."""
+    graded = table[table[TARGET].notna()]
+    train = graded[graded["season"].between(first_train, test_season - 1)]
+    return make_model(C).fit(train[features], train[TARGET])
+
+
 def win_walk_forward(table: pd.DataFrame, features: list[str], test_seasons: list[int],
                      first_train: int = 2016, C: float = 1.0) -> pd.DataFrame:
     """Out-of-sample P(home win): each test season predicted by a model fit on all earlier seasons.
@@ -46,9 +53,8 @@ def win_walk_forward(table: pd.DataFrame, features: list[str], test_seasons: lis
     graded = table[table[TARGET].notna()]
     preds = []
     for test_season in test_seasons:
-        train = graded[graded["season"].between(first_train, test_season - 1)]
         test = graded[graded["season"] == test_season]
-        model = make_model(C).fit(train[features], train[TARGET])
+        model = fit_fold(table, features, test_season, first_train, C)
         preds.append(test[["season", "game_id", TARGET]].assign(p=model.predict_proba(test[features])[:, 1]))
     return pd.concat(preds, ignore_index=True)
 

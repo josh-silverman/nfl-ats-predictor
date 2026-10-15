@@ -198,3 +198,34 @@ Every result goes here, including failures (CLAUDE.md, single-change rule). Each
 - **Lesson:** our EPA pipeline adds nothing over Elo for win prediction. **The simplest useful model is Elo.** New information (e.g. QB availability, which scores don't capture) must beat Elo, not the base rate.
 - **Data notes (skeptic):** moneylines are not verified as closing, and their source changes around 2023 (average vig 2.5% → 4.3%). Devigging is proportional. 13 games have p_market = 0.5.
 
+## W3 · 2026-10-15 · Win model #3 · v2 scored once against the pre-registered criteria (M2)
+- **Model:** `Pipeline(StandardScaler → LogisticRegression(C=1))` on `elo_diff`, walk-forward 2019–2025 (`notebooks/10-win-model.ipynb`). 1,865 decided games, 6 ties excluded and counted.
+- **Report card (pooled):**
+
+  | Model | Accuracy [95% CI] | Log loss | Brier | AUC |
+  |---|---|---|---|---|
+  | Base rate | 53.2% [50.8, 55.4] | 0.6933 | 0.2500 | n/a |
+  | Raw Elo | 63.6% [61.4, 65.8] | 0.6387 | 0.2235 | 0.692 |
+  | **v2 (Elo + logistic)** | **63.2% [61.0, 65.5]** | **0.6391** | **0.2237** | **0.691** |
+  | Market (moneyline) | 66.5% [64.3, 68.7] | 0.6084 | 0.2105 | 0.727 |
+
+- **Criteria:**
+  - **S1 PASS:** vs. the base rate, log loss −0.0541 [−0.0698, −0.0392].
+  - **S2 PASS:** vs. raw Elo, +0.0004 [−0.0011, +0.0019], under the +0.005 limit.
+  - **S3 FAIL:** reliability 0.00234 > 0.002. The slope of 0.947 [0.79, 1.12] is in [0.8, 1.2].
+- **Decision (pre-registered rule): raw Elo is the deliverable.**
+- **Post-hoc context, not used to change the verdict:**
+  - Raw Elo's reliability is also above the limit: 0.00208, slope 0.925.
+  - The market's reliability is 0.00075, slope 1.07.
+  - A perfectly calibrated model with raw Elo's predictions exceeds 0.002 in about 7% of simulations (median 0.0011, 95th percentile 0.0021). The threshold was set at about the 93rd percentile of pure noise (mistake #10).
+- **Gap to the market:** v2 is −3.4 accuracy points [−5.2, −1.5] and +0.031 log loss [+0.021, +0.040].
+- **Corrections after the M2 skeptic review:**
+  - **Both models fail S3a**, so the deliverable is raw Elo *by rule only*. It is **not** shown to be better calibrated: the order flips with bin count, and the v2 − Elo reliability CI is [−0.0016, +0.0018].
+  - **The S3 miss is partly a real home-team bias:**
+    - Mean predicted vs. actual home-win rate: v2 +2.4 pts, Elo +3.0, market +1.4.
+    - By season, v2 vs. Elo: 2019 +6.7 / +4.6, 2020 +6.7 / +6.2, 2021 +3.7 / +4.5, 2022 −1.4 / +0.1, 2023 −0.5 / +0.8, 2024 +1.5 / +2.7, 2025 +0.8 / +2.1.
+    - Cause: home-field advantage learned from 2016–2018 (home win rate 0.58–0.60) didn't hold in 2019–2021.
+    - v2's reliability is at p ≈ 0.04 under its own perfectly-calibrated null.
+  - **S1 and S2 were near-certain at registration time:** raw Elo's 0.6387 was reported in D7 six minutes before the criteria were written. Only S3 was a genuinely uncertain test.
+  - Executed notebook outputs are now saved (`scripts/run_notebook.py`) and committed.
+

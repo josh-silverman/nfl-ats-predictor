@@ -6,7 +6,8 @@ import numpy as np
 from sklearn.metrics import brier_score_loss
 from sklearn.metrics import log_loss as sk_log_loss
 
-from nfl_ats.evaluate import accuracy, bootstrap_ci, brier, brier_decomposition, log_loss, paired_diff, score
+from nfl_ats.evaluate import (accuracy, bootstrap_ci, brier, brier_decomposition, calibration_slope, log_loss,
+                              paired_diff, score)
 
 
 class TestMetrics(unittest.TestCase):
@@ -84,6 +85,25 @@ class TestBrierDecomposition(unittest.TestCase):
             p = 0.5 + rng.normal(0, 1e-6, 1000)  # no information, tiny jitter so bins can form
             floors.append(brier_decomposition(y, p, n_bins=10)["resolution"])
         self.assertAlmostEqual(np.mean(floors), 0.25 / 100, delta=0.0008)
+
+class TestCalibrationSlope(unittest.TestCase):
+
+    def setUp(self):
+        rng = np.random.default_rng(15)
+        self.p = rng.uniform(0.2, 0.8, 4000)
+        self.y = (rng.uniform(size=4000) < self.p).astype(float)  # calibrated by construction
+
+    def test_calibrated_predictions_have_slope_near_one(self):
+        b, lo, hi = calibration_slope(self.y, self.p, n_boot=200)
+        self.assertLess(lo, 1)
+        self.assertGreater(hi, 1)
+
+    def test_overconfident_predictions_have_slope_below_one(self):
+        logit = np.log(self.p / (1 - self.p))
+        overconfident = 1 / (1 + np.exp(-2 * logit))  # twice as extreme as the truth
+        b, _, hi = calibration_slope(self.y, overconfident, n_boot=200)
+        self.assertLess(hi, 0.7)
+
 
 if __name__ == "__main__":
     unittest.main()

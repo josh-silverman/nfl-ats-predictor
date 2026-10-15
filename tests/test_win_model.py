@@ -7,7 +7,7 @@ import pandas as pd
 
 from nfl_ats.feature_eval import compare_predictions
 from nfl_ats.model import check_features
-from nfl_ats.win_model import TARGET, WIN_FEATURES, benchmark_predictions, build_win_table, win_walk_forward
+from nfl_ats.win_model import TARGET, WIN_FEATURES, benchmark_predictions, build_win_table, fit_fold, win_walk_forward
 
 TEAMS = ["AAA", "BBB", "CCC", "DDD"]
 
@@ -67,6 +67,17 @@ class TestWinWalkForward(unittest.TestCase):
         # The first 2018 game's prediction depends only on pre-2018 games, so it must be identical
         first = merged.sort_values("game_id").iloc[0]
         self.assertAlmostEqual(first["p"], first["p_w"])
+
+    def test_fold_weights_ignore_the_test_season(self):
+        """Direct check: the 2018 fold's fitted scaler and coefficients are identical when 2018 is wrecked."""
+        sched = _schedules()
+        wrecked = sched.copy()
+        hit = wrecked["season"] == 2018
+        wrecked.loc[hit, ["home_score", "away_score"]] = [99, 0]
+        m1 = fit_fold(build_win_table(sched), WIN_FEATURES, 2018)
+        m2 = fit_fold(build_win_table(wrecked), WIN_FEATURES, 2018)
+        np.testing.assert_array_equal(m1.named_steps["logreg"].coef_, m2.named_steps["logreg"].coef_)
+        np.testing.assert_array_equal(m1.named_steps["scale"].mean_, m2.named_steps["scale"].mean_)
 
     def test_predictions_cover_only_decided_test_games(self):
         t = build_win_table(_schedules())

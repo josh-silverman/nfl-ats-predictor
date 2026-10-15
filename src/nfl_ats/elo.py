@@ -1,6 +1,8 @@
 """Elo ratings: the simplest useful NFL model. Team strength from final scores only.
 
-Parameters are FiveThirtyEight's published NFL settings, fixed up front and never tuned on our data:
+FiveThirtyEight-STYLE: their published core parameters, but regular-season games only (playoffs never
+update ratings) and none of their later QB / travel / rest adjustments.
+Parameters are fixed up front and never tuned on our data:
 K = 20, home field = 48 Elo points (0 at neutral sites), a margin-of-victory multiplier, and
 a 1/3 regression toward the mean between seasons.
 

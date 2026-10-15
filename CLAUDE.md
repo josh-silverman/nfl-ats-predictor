@@ -56,6 +56,16 @@ The v2 model is `Pipeline(StandardScaler → LogisticRegression)` on the pregame
 
 **If S2 or S3 fails, raw Elo becomes the deliverable.** Beating the market is **not** a criterion: report the gap honestly.
 
+**M2 outcome (W3):** S1 PASS, S2 PASS, **S3 FAIL**, so raw Elo is the deliverable by rule. Raw Elo also exceeds the S3a threshold, so **no model passes S3 on 2019–2025.** Never describe the deliverable as calibrated on 2019–2025. Both models over-predicted home wins (+2.4 to +3.0 pts pooled).
+
+**2026 live checks (pre-registered 2026-10-15, before any 2026 outcome was scored).** These are reported, not pass/fail, for both raw Elo and v2, on locked live weeks only (backfill reported separately):
+- Log loss, Brier, and accuracy with bootstrap CIs, and paired differences vs. raw Elo and vs. the pull-time market.
+- **Calibration-in-the-large:** mean(p) − actual home-win rate, with a bootstrap 95% CI. The failure mode seen in M2.
+- **Reliability vs. its noise band:** observed Brier reliability (5 equal-count bins, given the small n) compared with the 95th percentile of reliability for a perfectly calibrated model with the same predictions (1,000 simulations).
+- "Consistent with calibration" means the calibration-in-the-large CI includes 0 **and** reliability is ≤ that 95th percentile.
+
+**M4 baseline (pre-registered):** any improvement (e.g. QB availability) is judged against **raw Elo**, the deliverable, with `compare_predictions(target="home_win")` and the same keep rule. Calibration-in-the-large is reported alongside.
+
 ## Archived ATS study
 The ATS evaluation rules (52.4% breakeven, edge only if the CI lower bound clears it, pushes excluded and counted, baselines always home / always favorite / coin flip) still apply to any ATS result. The kept ATS model is the base rate (decision #18).
 

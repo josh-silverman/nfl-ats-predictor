@@ -1,7 +1,9 @@
 # Progress
 
 **Current phase:** Pivot to win probability (decision #19). **M0–M1 done.** `src/nfl_ats/win_model.py` (`build_win_table`, `win_walk_forward`, `benchmark_predictions`), `compare_predictions(target=...)`, `tests/test_win_model.py`. 46 tests pass. Smoke test: 2,895 games, 10 ties, 1,865 test games, no scores looked at.
-**Next:** M2, score v2 once against S1–S3 in `notebooks/10-win-model.ipynb`, log it, then the skeptic.
+**M2 scored:** S1 PASS, S2 PASS, **S3 FAIL** (reliability 0.00234 > 0.002). By the pre-set rule, **raw Elo is the deliverable**. Post-hoc: raw Elo is 0.00208, and the threshold sat at about the 93rd percentile of noise (mistake #10). Logged as W3.
+**M2 skeptic:** no leakage, no blockers. Wording corrected: both models fail S3, the miss is partly a real home-team bias (+2.4 to +3.0 pts), and S1/S2 were near-certain. 2026 calibration checks and the M4 baseline (raw Elo) were pre-registered in CLAUDE.md before any 2026 outcome was viewed. Notebook outputs saved via `scripts/run_notebook.py`.
+**Next:** Josh's go for M3 (live 2026 ledger), using the roadmap's M3 skeptic requirements.
 **Last updated:** 2026-10-15
 
 ## Done
@@ -82,3 +84,5 @@
 - 2026-10-15: Diagnostic Step 6 done. Win model 63.2% vs. base 53.2%. Skeptic: Elo matches it, so I built `elo.py` (D7: 63.6%, log loss 0.639). Ranked list in `docs/plans/02-next-steps.md`. Mistake #9. QB columns blocked as post-hoc. 40 tests.
 - 2026-10-15: Josh approved the pivot. M0 done: docs rewritten, S1–S5 pre-registered before scoring v2.
 - 2026-10-15: M1 done (win-model code + 6 tests). No metrics viewed before M2.
+- 2026-10-15: M2 run once. v2 passes S1 and S2 and fails S3 by 0.00034, so raw Elo is the deliverable per the rule. `calibration_slope` added (48 tests).
+- 2026-10-15: M2 skeptic review applied (honest S3 wording, 2026 checks pre-registered, stronger fold test, sklearn deprecation fix). 49 tests.

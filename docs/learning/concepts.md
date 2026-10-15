@@ -103,3 +103,10 @@ At the end of each phase, Claude adds 3–6 bullets with the points worth rememb
 - **One function, every benchmark:** `benchmark_predictions` returns the base rate, raw Elo, and the market in the same format as the model's predictions, on the same games. So `compare_predictions(..., target="home_win")` applies the same pre-set keep rule to anything.
 - **Score once:** M1's smoke test checked only shapes and counts (2,895 games, 1,865 test games). We didn't peek at scores, because the success criteria are judged once, in M2.
 
+
+## M2: Scoring against pre-registered criteria
+- **Pre-register, then score once:** we wrote S1–S3 before running v2. v2 passed "useful" (S1) and "as good as Elo" (S2) and failed "honest probabilities" (S3), so the pre-set rule made raw Elo the deliverable. We didn't move the goalposts.
+- **But pre-registration only helps if the outcome was uncertain:** raw Elo's score was already known, so S1 and S2 were near-certain. Only S3 was a real test, and it caught something.
+- **Calibration-in-the-large:** compare the average prediction with the actual rate. Both models over-predicted home wins by about 2–3 points, and by 6–7 in 2019–2020, because home-field advantage shrank after the years they learned from.
+- **Know your threshold's noise floor:** a perfectly calibrated model would fail our 0.002 reliability bar about 7% of the time. Simulate the null before picking a number, and still report the real bias honestly.
+- **Interview line:** "I pre-registered success criteria before scoring. The model passed usefulness and non-inferiority, but failed calibration. I traced that to a real shift in home-field advantage, reported it instead of retuning the threshold, and pre-registered noise-aware calibration checks for the live season."

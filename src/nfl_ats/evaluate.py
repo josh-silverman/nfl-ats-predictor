@@ -131,3 +131,21 @@ def brier_decomposition(y, p, n_bins: int = 10) -> pd.Series:
         "resolution": float((w * (bins["cover_rate"] - base) ** 2).sum()),
         "uncertainty": float(base * (1 - base)),
     })
+
+
+def calibration_slope(y, p, n_boot: int = 2000, seed: int = 0) -> tuple[float, float, float]:
+    """Recalibration slope: fit outcome ~ a + b·logit(p) on held-out predictions. Returns (b, ci_low, ci_high).
+
+    b ≈ 1: probabilities are well scaled. b < 1: overconfident (too extreme). b > 1: too timid.
+    """
+    from sklearn.linear_model import LogisticRegression
+    y = np.asarray(y, dtype=float)
+    p = np.clip(np.asarray(p, dtype=float), 1e-6, 1 - 1e-6)
+    x = np.log(p / (1 - p)).reshape(-1, 1)
+
+    def fit(idx):
+        return LogisticRegression(C=np.inf).fit(x[idx], y[idx]).coef_[0, 0]  # unpenalized (penalty=None is deprecated)
+
+    rng = np.random.default_rng(seed)
+    boots = [fit(rng.integers(0, len(y), len(y))) for _ in range(n_boot)]
+    return float(fit(np.arange(len(y)))), float(np.quantile(boots, 0.025)), float(np.quantile(boots, 0.975))

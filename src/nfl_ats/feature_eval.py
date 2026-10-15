@@ -35,10 +35,12 @@ def compare_predictions(base: pd.DataFrame, new: pd.DataFrame, target: str = "ho
     y = base[target].to_numpy()
     diff = paired_diff(y, base["p"], new["p"])
 
-    per_season = pd.DataFrame({
-        season: {"log_loss_diff": log_loss(g[target].to_numpy(), new.loc[g.index, "p"].to_numpy())
-                                  - log_loss(g[target].to_numpy(), g["p"].to_numpy())}
-        for season, g in base.groupby("season")
+    seasons = base["season"].to_numpy()
+    y_all, p_base, p_new = base[target].to_numpy(), base["p"].to_numpy(), new["p"].to_numpy()
+    per_season = pd.DataFrame({  # positional masks: robust to how either frame is indexed
+        season: {"log_loss_diff": log_loss(y_all[seasons == season], p_new[seasons == season])
+                                  - log_loss(y_all[seasons == season], p_base[seasons == season])}
+        for season in sorted(set(seasons))
     }).T
     improved = int((per_season["log_loss_diff"] < 0).sum())
 

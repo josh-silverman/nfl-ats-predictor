@@ -81,7 +81,7 @@ CLAUDE.md (new question, success criteria, archived ATS rules), design section 9
 
 **Log:** Elo as a feature, why fixed parameters avoid fold leakage.
 
-### M2: Evaluate v2 against S1–S3
+### M2: Evaluate v2 against S1–S3 ✅ (S1 and S2 pass, S3 fails for v2 and raw Elo, so raw Elo is the deliverable by rule)
 1. `notebooks/10-win-model.ipynb`: per-season and pooled metrics with CIs, paired vs. base rate and raw Elo, gap to the market, Brier decomposition, recalibration slope, reliability plot. PASS or FAIL printed per criterion.
 2. Log win experiment #3 in `reports/experiments.md`.
 3. If S2 or S3 fails, raw Elo is the deliverable.
@@ -96,6 +96,10 @@ CLAUDE.md (new question, success criteria, archived ATS rules), design section 9
 3. Backfill the played weeks into `ledger/backfill/` (pseudo-live).
 4. Weekly routine: Josh runs one command before Thursday's kickoff, then commits.
 5. `tests/test_ledger.py`.
+6. **Requirements from the M2 skeptic review:**
+   - **Stale data:** force `refresh=True` on every weekly run, and **assert every game from earlier weeks has a final score** before predicting. Elo silently skips games with missing scores. Check whether nflverse fills partial scores for in-progress games.
+   - **Market numbers:** the live market number is a pull-time moneyline. Don't compare it directly with the backtest's schedule moneyline (different source and timing). Store the pull timestamp.
+   - Record both raw Elo (the deliverable) and v2 in the ledger.
 
 **Log:** what makes a ledger trustworthy.
 

@@ -272,4 +272,12 @@ Each test is a single change to **raw Elo, the deliverable**, judged with `compa
 - **Primary test (decides keep, per CLAUDE.md M4 baseline):** `Pipeline(StandardScaler → LogisticRegression)` on `[elo_diff, qb_out_diff]`, walk-forward 2019–2025, vs. **raw Elo**, with the keep rule (paired log-loss CI < 0, ≥ 5/7 seasons better, higher AUC).
 - **Secondary (diagnostic only, isolates the QB change):** the same model vs. v2 (`[elo_diff]` alone), paired log loss.
 - **Also reported:** how many test games have `qb_out_diff ≠ 0`, the fitted QB coefficient by fold, and calibration-in-the-large.
+- **Result (run once, 2026-10-15):** 100 flagged team-games in 2016–2025. **80 test games** (4.3%) have `qb_out_diff ≠ 0`. Spot checks (e.g. Purdy 2024 wk 12, Roethlisberger 2020 wk 17, Trubisky 2018 wk 12) are correct.
+  - **Primary, vs. raw Elo:** log loss −0.0006 [−0.0032, +0.0020], better in 4/7 seasons, AUC 0.692 → 0.693, accuracy +0.05 pts [−0.6, +0.8]. Calibration-in-the-large +2.40 pts.
+  - **Secondary, vs. v2 (isolates QB):** log loss −0.0010 [−0.0031, +0.0012], accuracy +0.48 pts [+0.05, +0.97].
+  - **QB coefficient** (log-odds per home-QB-out): −0.26, −0.20, −0.13, −0.33, −0.54, −0.51, −0.71 for the 2019 → 2025 folds. Negative in every fold, as football sense predicts, and growing with more data.
+  - **On the 80 flagged games:** raw Elo 62.5% vs. H2 72.5% accuracy. That's a post-hoc subgroup with small n, so it's a lead, not a finding.
+- **Decision: REJECTED by the keep rule** (fails the CI and ≥ 5/7 seasons). Per Josh's "backtest first" choice, **no Saturday shadow lock.**
+- **Lesson:** a real, sensible signal can still be too *rare* to move a whole-season metric. QB-out games are about 4% of games. The obvious next step is coverage: starters moved to injured reserve often vanish from the weekly report, so their first missed game isn't flagged. Catching those (via `load_rosters_weekly` status) would raise the count. Logged as a future idea, not run.
+- **Win-model experiment count: 5.**
 

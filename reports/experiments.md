@@ -229,3 +229,13 @@ Every result goes here, including failures (CLAUDE.md, single-change rule). Each
   - **S1 and S2 were near-certain at registration time:** raw Elo's 0.6387 was reported in D7 six minutes before the criteria were written. Only S3 was a genuinely uncertain test.
   - Executed notebook outputs are now saved (`scripts/run_notebook.py`) and committed.
 
+---
+## Hardening sprint (decided 2026-10-15 with Josh: "both at once")
+Each test is a single change to **raw Elo, the deliverable**, judged with `compare_predictions(target="home_win")` and the pre-set keep rule: paired log-loss CI < 0, ≥ 5/7 seasons better, and higher AUC. That keep rule and the M4 baseline were pre-registered in CLAUDE.md. Calibration-in-the-large is reported alongside. A candidate that's ready joins the ledger as a locked **shadow model** from its first ready week. The headline model changes only if the keep rule passes. **Caveat for all three:** the ideas were motivated by viewing 2019–2025, so a backtest pass there is weaker evidence. 2026 shadow results are the clean test.
+
+### H1 · PRE-REGISTERED 2026-10-15, before running · As-of home-field advantage
+- **Change:** replace Elo's fixed home field (48 Elo points ≈ 1.9 points of spread) with a value set **before each season** from the **trailing 3 seasons'** mean home margin in regular-season, non-neutral games, × 25 Elo per point. Seasons without 3 prior seasons use the seasons available, and the first loaded season uses 48. The window of 3 is fixed up front and not tuned. Elo's updates use the same home field, so everything stays as-of.
+- **Motivation:** M2 found both models over-predict home wins by +2.4 to +3.0 pts, concentrated in 2019–2021.
+- **Judged:** keep rule vs. raw Elo on 2019–2025 (1,865 games). Report calibration-in-the-large for both.
+- **Note:** a home-field shift moves all home probabilities in a season together, so it mainly fixes calibration-in-the-large. It may barely change AUC, and the keep rule's AUC requirement could reject it even if log loss improves. The rule stands as written.
+

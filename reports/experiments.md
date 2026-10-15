@@ -281,3 +281,9 @@ Each test is a single change to **raw Elo, the deliverable**, judged with `compa
 - **Lesson:** a real, sensible signal can still be too *rare* to move a whole-season metric. QB-out games are about 4% of games. The obvious next step is coverage: starters moved to injured reserve often vanish from the weekly report, so their first missed game isn't flagged. Catching those (via `load_rosters_weekly` status) would raise the count. Logged as a future idea, not run.
 - **Win-model experiment count: 5.**
 
+### H3 · PRE-REGISTERED 2026-10-15, before running · EPA on top of Elo
+- **Change:** `Pipeline(StandardScaler → LogisticRegression)` on `[elo_diff, off_epa_diff, def_epa_diff]`. The EPA features are the Phase 4 shrunk, lagged season-to-date home − away diffs, with shrinkage refit **inside each fold** on that fold's training seasons (`model._team_features`). Pace and rest are not included: the question is only whether play-level efficiency adds anything to score-based strength.
+- **Primary (decides keep):** vs. raw Elo, keep rule, walk-forward 2019–2025, same 1,865 decided games.
+- **Secondary (diagnostic):** vs. v2, paired log loss. Also the EPA coefficients by fold.
+- **Prior expectation (D6/D7):** EPA alone ≈ Elo, so any gain must come from the combination.
+

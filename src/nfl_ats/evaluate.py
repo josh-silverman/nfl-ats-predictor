@@ -82,3 +82,52 @@ def paired_diff(y, p_base, p_new, n_boot=2000, seed=0) -> pd.DataFrame:
     everything = np.arange(len(y))
     rows = {name: (float(f(everything)), *np.quantile(f(idx), [0.025, 0.975])) for name, f in diffs.items()}
     return pd.DataFrame(rows, index=["diff", "ci_low", "ci_high"]).T
+
+
+def season_table(preds: pd.DataFrame, games: pd.DataFrame) -> pd.DataFrame:
+    """Model metrics with CIs per test season and pooled, next to the baselines on the same games.
+
+    `preds` comes from model.walk_forward (season, game_id, home_cover, p).
+    """
+    graded = preds.merge(games[["season", "game_id", "spread_line"]], on=["season", "game_id"],
+                         validate="one_to_one")
+    rows = []
+    for season, g in list(graded.groupby("season")) + [("pooled", graded)]:
+        acc, lo, hi = bootstrap_ci(accuracy, g["home_cover"], (g["p"] > 0.5).astype(float))
+        picks = baseline_picks(g)
+        rows.append({
+            "season": season, "games": len(g),
+            "accuracy": acc, "ci_low": lo, "ci_high": hi,
+            "log_loss": float(log_loss(g["home_cover"].to_numpy(), g["p"].to_numpy())),
+            "brier": float(brier(g["home_cover"].to_numpy(), g["p"].to_numpy())),
+            **{name: float(accuracy(g["home_cover"].to_numpy(), picks[name].to_numpy())) for name in picks},
+            "edge": lo > BREAKEVEN,
+        })
+    return pd.DataFrame(rows).set_index("season")
+
+
+def reliability_table(y, p, n_bins: int = 10) -> pd.DataFrame:
+    """Bin games by predicted probability (equal-count bins) and compare mean prediction with outcome rate."""
+    df = pd.DataFrame({"y": np.asarray(y, dtype=float), "p": np.asarray(p, dtype=float)})
+    df["bin"] = pd.qcut(df["p"], n_bins, duplicates="drop")
+    return df.groupby("bin", observed=True).agg(games=("y", "size"), mean_p=("p", "mean"), cover_rate=("y", "mean"))
+
+
+def brier_decomposition(y, p, n_bins: int = 10) -> pd.Series:
+    """Murphy decomposition: Brier ≈ reliability − resolution + uncertainty.
+
+    reliability: how far predictions sit from observed rates (lower is better; 0 = perfectly calibrated)
+    resolution:  how much predictions separate games from the overall rate (higher is better; 0 = no skill)
+    uncertainty: base_rate * (1 - base_rate), fixed by the data and about 0.25 for a coin-flip outcome
+    The identity is exact only when p is constant within each bin, so a small residual remains.
+    """
+    y = np.asarray(y, dtype=float)
+    bins = reliability_table(y, p, n_bins)
+    w = bins["games"] / bins["games"].sum()
+    base = y.mean()
+    return pd.Series({
+        "brier": float(brier(y, np.asarray(p, dtype=float))),
+        "reliability": float((w * (bins["mean_p"] - bins["cover_rate"]) ** 2).sum()),
+        "resolution": float((w * (bins["cover_rate"] - base) ** 2).sum()),
+        "uncertainty": float(base * (1 - base)),
+    })

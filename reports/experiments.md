@@ -7,8 +7,9 @@ Every result goes here, including failures (CLAUDE.md, single-change rule). Each
 - **Design:** a feature-construction check, not an ATS result. Recorded for honesty, but it makes no claim about beating the spread.
 
 - **Baseline:** a reference bar, not an experiment. Not counted.
+- **Diagnostic:** a deliberate check of the pipeline (e.g. an intentional leak). Never a candidate model. Not counted.
 
-**Running count:** ATS experiments: **2**. Design checks: **2**.
+**Running count:** ATS experiments: **4**. Design checks: **2**.
 
 ---
 
@@ -78,4 +79,62 @@ Every result goes here, including failures (CLAUDE.md, single-change rule). Each
   The `spread_line` coefficient in the 2025 fold is −0.027 per SD, essentially 0. Per-season accuracy moves by at most 1.6 points either way.
 - **Also learned (the v1 baseline):** over 7 seasons, v1 hits 51.3%, with a CI that includes 50% and sits below 52.4%. Its log loss of 0.6947 is **worse than a constant 0.5 (0.6931)**. No edge.
 - **Decision:** **Rejected** (Josh, 2026-10-14). The paired difference is 0 on every metric, so it adds a feature for no gain. v1 stays the kept version. See decision #16.
+
+## #5 · 2026-10-15 · ATS · Garbage-time filter (single change vs. v1)
+- **Change:** drop plays where the offense's win probability is outside [10%, 90%] (`GARBAGE_WP`, a common convention fixed in advance, not tuned). It applies to all play-based stats (EPA and pace). Everything else as in v1. Keeps 76.6% of plays, and every team-game keeps at least 6 plays.
+- **Setup:** walk-forward 2019–2025, same 1,828 games as v1, paired bootstrap.
+- **Result:**
+
+  | | v1 (kept) | + garbage filter | New − v1 (paired 95% CI) |
+  |---|---|---|---|
+  | ATS accuracy | 51.3% [48.9, 53.5] | 50.9% [48.6, 53.2] | −0.4 pts [−2.1, +1.3] |
+  | Log loss | 0.6947 | 0.6946 | −0.0001 [−0.0015, +0.0013] |
+  | Brier | 0.2508 | 0.2507 | −0.0000 [−0.0007, +0.0007] |
+
+  Per season it moves by −3.0 to +1.2 points, with no consistent direction. Prediction SD fell from 0.027 to 0.020, so the model is even less decisive.
+- **Decision:** **Rejected** (Josh, 2026-10-15). Every paired CI straddles 0, and the filter adds complexity for no measurable gain. v1 stays kept (decision #17). `drop_garbage_time` stays in the code as an off-by-default option, so the experiment can be reproduced.
+
+## #6 · 2026-10-15 · ATS · Opponent-adjusted EPA (single change vs. v1)
+- **Change:** before computing season-to-date stats, adjust each game's EPA for the opponent's strength as of kickoff (`adjust_for_opponent`). Gains against a weak defense count for less, and EPA allowed to a strong offense counts for less. Two passes inside each fold, and both shrinkage fits use training seasons only. Tests prove only later games can change.
+- **How much it moves the features:** per-game adjustment SD is 0.037 (off) and 0.061 (def), against a raw game SD of 0.205. At the feature level, adjusted vs. unadjusted correlation is 0.992 (off) and 0.960 (def). Schedules largely even out over a season.
+- **Result (walk-forward 2019–2025, same 1,828 games, paired bootstrap):**
+
+  | | v1 (kept) | + opponent adjustment | New − v1 (paired 95% CI) |
+  |---|---|---|---|
+  | ATS accuracy | 51.3% [48.9, 53.5] | 51.5% [49.3, 53.7] | +0.2 pts [−0.9, +1.4] |
+  | Log loss | 0.6947 | 0.6941 | −0.0006 [−0.0014, +0.0002] |
+  | Brier | 0.2508 | 0.2505 | −0.0003 [−0.0007, +0.0001] |
+
+  All three metrics point slightly in the right direction, but every CI includes 0. Log loss stays above the constant-0.5 bar (0.6931).
+- **Decision:** PENDING (Josh). Recommendation: **reject**. The single-change rule keeps a change only when the evidence supports it, and a CI straddling 0 doesn't. It also adds a second pass of feature building.
+
+## D1 · 2026-10-15 · Diagnostic · Deliberate leak (no `shift(1)`)
+- **What:** `diagnostics.leaky_walk_forward` includes each game's own stats in its season-to-date features. Same folds, same 1,828 games. Josh predicted 60%.
+- **Result:** **57.2% [54.9, 59.5]**, log loss 0.6811, Brier 0.2440, probability SD 0.114. The honest v1 gives 51.3%, 0.6947, 0.2508, SD 0.027. By week: wk 1–4 61.5%, wk 5–9 59.2%, wk 10–18 54.1%. The leak is strongest early, when one game is a big share of the average.
+- **Lesson:** a leak produces a CI whose lower bound *clears 52.4%*, a fake edge. (Corrected after the skeptic review: this demo shows what leakage looks like. It doesn't prove there's none, since leaks inflate scores and subtle ones can be quiet. The no-leak evidence is the `shift(1)` and fold-isolation tests plus the scaler check. The demo is also a diluted leak, because shrinkage down-weights the game's own stats.)
+- **Side note (not a finding yet):** honest v1 by week is 54.4% (wk 1–4), 53.3% (wk 5–9), 48.6% (wk 10–18). That's a post-hoc subgroup with n of about 400–1,000 per bucket, so treat it as a lead for Step 3, not a result.
+
+## D2 · 2026-10-15 · Diagnostic · Noise floor (minimum detectable effect)
+- **What:** for each paired comparison, MDE = 2.8 × SE (80% power, 5% two-sided). Accuracy SE ≈ √(disagreement / n). Josh predicted 1.5 points.
+- **Result (n = 1,828):**
+
+  | Exp vs. v1 | Disagree | Acc. observed | Acc. MDE | Log-loss observed | Log-loss MDE |
+  |---|---|---|---|---|---|
+  | #4 +spread | 2.3% | +0.0 pts | 1.0 pts | +0.0002 | 0.0004 |
+  | #5 garbage | 13.0% | −0.4 pts | 2.4 pts | −0.0001 | 0.0020 |
+  | #6 opp-adj | 6.5% | +0.2 pts | 1.7 pts | −0.0006 | 0.0011 |
+
+  - **v1 vs. constant 0.5:** log loss +0.0015 [−0.0012, +0.0043] and Brier +0.0008 [−0.0006, +0.0021]. Statistically indistinguishable from knowing nothing.
+  - **Proving profit vs. 52.4% with 1,828 games** requires a true rate of about 55.7%. A true 54% model needs about 7,400 games (27 seasons), and a true 53% model about 51,000.
+- **Lesson:** the effects we've chased are below what this sample can see. Paired **log loss** is a more sensitive yardstick than accuracy, **but only with a dispersion guard.** v1 is worse than a constant 0.5, so any change that just pulls predictions toward 0.5 "wins" on log loss with no new information. (The skeptic showed that shrinking v1's own predictions 25% toward 0.5 gives −0.0007, beating exp #6. #6 was checked and isn't this artifact.) Always report prediction SD and Brier resolution next to paired log loss. Accuracy vs. 52.4% can only ever confirm a very large edge.
+
+## D3 · 2026-10-15 · Diagnostic · Where is the signal? (margin and residual analysis)
+- **What:** walk-forward out-of-sample margin regressions (`diagnostics.margin_walk_forward`, 1,871 games with pushes kept), plus correlations of each feature with the spread residual, per season. Josh predicted a 1% error reduction.
+- **Result:**
+  - **Margin MSE:** spread + FEATURES vs. fitted spread-only is **+0.35% [−0.18%, +0.91%]**, slightly *worse*. Fitted spread-only vs. spread as-is is +0.16%. Per season: −0.74% to +1.20%.
+  - **Partial correlation with margin, controlling for spread:** off EPA +0.016 [−0.030, +0.061], def EPA +0.014 [−0.031, +0.060], pace −0.029 [−0.074, +0.017], rest −0.007 [−0.052, +0.039].
+  - **Season outliers:** off EPA in 2024 at r = +0.185 (p = 0.002, about a 6% event across 28 feature-seasons) is unstable across seasons.
+  - **Weeks 1–4:** every CI includes 0 (±0.09 wide).
+- **Power caveat (skeptic simulation):** the MSE test detects a breakeven-sized effect (r ≈ 0.075, about 52.4% ATS) only about 11% of the time, and its null expectation is about +0.29%. The CIs on the correlations are the real bound: the upper bounds of about 0.06–0.07 imply at most about breakeven.
+- **Conclusion:** no detectable incremental signal from these four features entered linearly. Any linear effect is at most breakeven-sized. Nonlinear effects, interactions, key numbers, and subsets were not tested.
 

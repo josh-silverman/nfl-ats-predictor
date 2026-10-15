@@ -6,7 +6,7 @@ import numpy as np
 from sklearn.metrics import brier_score_loss
 from sklearn.metrics import log_loss as sk_log_loss
 
-from nfl_ats.evaluate import accuracy, bootstrap_ci, brier, log_loss, paired_diff, score
+from nfl_ats.evaluate import accuracy, bootstrap_ci, brier, brier_decomposition, log_loss, paired_diff, score
 
 
 class TestMetrics(unittest.TestCase):
@@ -63,6 +63,27 @@ class TestPairedDiff(unittest.TestCase):
         out = paired_diff(y, np.full(1000, 0.5), informed)
         self.assertLess(out.loc["log_loss", "ci_high"], 0)
 
+
+class TestBrierDecomposition(unittest.TestCase):
+
+    def test_parts_add_up_and_extremes_behave(self):
+        rng = np.random.default_rng(6)
+        p = rng.uniform(0.2, 0.8, 5000)
+        y = (rng.uniform(size=5000) < p).astype(float)  # perfectly calibrated by construction
+        d = brier_decomposition(y, p, n_bins=20)
+        self.assertAlmostEqual(d["brier"], d["reliability"] - d["resolution"] + d["uncertainty"], delta=0.003)
+        self.assertLess(d["reliability"], 0.002)
+        self.assertGreater(d["resolution"], 0.02)
+
+    def test_uninformative_forecast_resolution_sits_at_the_noise_floor(self):
+        """Binning random outcomes creates 'resolution' of about var / games_per_bin even with zero skill."""
+        rng = np.random.default_rng(7)
+        floors = []
+        for seed in range(30):
+            y = np.random.default_rng(seed).integers(0, 2, 1000).astype(float)
+            p = 0.5 + rng.normal(0, 1e-6, 1000)  # no information, tiny jitter so bins can form
+            floors.append(brier_decomposition(y, p, n_bins=10)["resolution"])
+        self.assertAlmostEqual(np.mean(floors), 0.25 / 100, delta=0.0008)
 
 if __name__ == "__main__":
     unittest.main()

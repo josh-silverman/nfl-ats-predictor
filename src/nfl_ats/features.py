@@ -5,30 +5,39 @@ import pandas as pd
 from nfl_ats.data import TEAM_MAP, load_pbp
 
 PBP_COLS = ["game_id", "season", "week", "season_type", "posteam", "defteam",
-            "play_type", "two_point_attempt", "epa"]
+            "play_type", "two_point_attempt", "epa", "wp"]
+
+# Garbage time: the offense's win probability is outside [10%, 90%], so the game is
+# effectively decided. A common analytics convention, fixed up front (not tuned).
+GARBAGE_WP = (0.10, 0.90)
 
 
-def _scrimmage_plays(pbp: pd.DataFrame) -> pd.DataFrame:
-    """Regular-season pass and run plays with EPA. Drops kneels, spikes, penalties-only, and 2-pt tries."""
-    plays = pbp.loc[
+def _scrimmage_plays(pbp: pd.DataFrame, drop_garbage_time: bool = False) -> pd.DataFrame:
+    """Regular-season pass and run plays with EPA. Drops kneels, spikes, penalties-only, and 2-pt tries.
+
+    drop_garbage_time also drops plays outside GARBAGE_WP (experiment #5).
+    """
+    keep = (
         (pbp["season_type"] == "REG")
         & pbp["play_type"].isin(["pass", "run"])
         & (pbp["two_point_attempt"] != 1)
-        & pbp["epa"].notna(),
-        PBP_COLS,
-    ].copy()
+        & pbp["epa"].notna()
+    )
+    if drop_garbage_time:
+        keep &= pbp["wp"].between(*GARBAGE_WP)
+    plays = pbp.loc[keep, PBP_COLS].copy()
     for col in ["posteam", "defteam"]:
         plays[col] = plays[col].replace(TEAM_MAP)
     return plays
 
 
-def team_game_stats(pbp: pd.DataFrame) -> pd.DataFrame:
+def team_game_stats(pbp: pd.DataFrame, drop_garbage_time: bool = False) -> pd.DataFrame:
     """One row per team per game: offensive EPA/play, defensive EPA/play allowed, and plays run.
 
     A game's own stats are in its own row here. They must be lagged (Phase 4, step 2)
     before they can be used as features for anything.
     """
-    plays = _scrimmage_plays(pbp)
+    plays = _scrimmage_plays(pbp, drop_garbage_time)
 
     offense = (plays.groupby(["season", "week", "game_id", "posteam", "defteam"], as_index=False)
                     .agg(off_epa=("epa", "mean"), off_plays=("epa", "size"))
@@ -41,9 +50,9 @@ def team_game_stats(pbp: pd.DataFrame) -> pd.DataFrame:
     return offense.merge(defense, on=["game_id", "opponent"], how="left", validate="one_to_one")
 
 
-def load_team_games(seasons: list[int]) -> pd.DataFrame:
+def load_team_games(seasons: list[int], drop_garbage_time: bool = False) -> pd.DataFrame:
     """team_game_stats for several seasons, loading play-by-play one season at a time to save memory."""
-    frames = [team_game_stats(load_pbp([season])) for season in seasons]
+    frames = [team_game_stats(load_pbp([season]), drop_garbage_time) for season in seasons]
     return pd.concat(frames, ignore_index=True)
 
 
@@ -151,6 +160,25 @@ def fit_shrinkage(team_games: pd.DataFrame, train_seasons: list[int]) -> dict:
                     best = (mse, r, k0)
         params[stat] = (best[1], best[2])
     return params
+
+
+def adjust_for_opponent(team_games: pd.DataFrame, team_features: pd.DataFrame) -> pd.DataFrame:
+    """Per-game EPA adjusted for the opponent's strength AS OF KICKOFF (experiment #6).
+
+    off_epa_adj = off_epa - (opponent's def_epa allowed - league): gaining yards on a weak
+    defense counts for less. def_epa_adj = def_epa - (opponent's off_epa - league): allowing a
+    lot to a strong offense counts for less. Opponent strength comes from team_features (shrunk,
+    lagged), so it uses only the opponent's games before this one. Where it's unknown (the
+    first loaded season has no prior), no adjustment is made.
+    """
+    opp = team_features[["season", "game_id", "team", "off_epa", "def_epa", "off_epa_league", "def_epa_league"]]
+    opp = opp.rename(columns={"team": "opponent", "off_epa": "opp_off", "def_epa": "opp_def",
+                              "off_epa_league": "opp_off_league", "def_epa_league": "opp_def_league"})
+    out = team_games.merge(opp, on=["season", "game_id", "opponent"], how="left", validate="one_to_one")
+    opp_def_weakness = (out["opp_def"] - out["opp_def_league"]).fillna(0)
+    opp_off_strength = (out["opp_off"] - out["opp_off_league"]).fillna(0)
+    return team_games.assign(off_epa=(out["off_epa"] - opp_def_weakness).to_numpy(),
+                             def_epa=(out["def_epa"] - opp_off_strength).to_numpy())
 
 
 FEATURES = ["off_epa_diff", "def_epa_diff", "pace_diff", "rest_diff"]

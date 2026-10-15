@@ -52,3 +52,24 @@ At the end of each phase, Claude adds 3–6 bullets with the points worth rememb
 - **v1 over 7 seasons has no edge:** 51.3% [48.9, 53.5], log loss 0.6947, which is *worse* than the constant-0.5 bar of 0.6931. Watch log loss and Brier, not just accuracy.
 - **Compare models with paired bootstraps:** resample the same games for both models. The CI on the difference (±0.7 points) is far tighter than either model's own CI (±2.3). Adding `spread_line` changed nothing, so it was rejected (decision #16).
 - **Experiment hygiene:** one change at a time, every result logged with a running count (2 ATS so far), and Josh makes the keep or reject call.
+
+## Diagnostic session (Step 1): rule out bugs first
+- **Most "the model won't improve" problems are pipeline bugs, so check those before anything clever.** We verified the target on games you can look up, reconciled row counts at every step (2,639 games − 65 pushes = 2,303 train + 271 test), checked features for NaNs and constants, and confirmed the scaler only learned from training rows (its means match the training data exactly).
+- **What leakage looks like:** when we deliberately let each game's own result into its features, accuracy jumped from 51.3% to **57.2%**, with a CI *above* 52.4%. That's a fake edge. The model also became far more confident (prediction spread 4× wider). Too-good results and sudden confidence are the alarm. But a demo doesn't *prove* there's no leak, because subtle leaks can be quiet. Unit tests that wreck future data are the proof.
+- **Interview line:** "Before tuning a model that won't improve, I prove the pipeline is right: hand-check labels, reconcile row counts, and inject a deliberate leak to see what a bug would look like. Then I know the weak result is real."
+
+## Diagnostic session (Step 2): the noise floor
+- **Minimum detectable effect (MDE):** the smallest *true* improvement a test would catch most of the time. MDE = 2.8 × standard error (80% power, 5% test). If the effects you're chasing are smaller than the MDE, "no improvement" means "can't see it", not "isn't there".
+- **Paired comparisons only learn from disagreements.** If two models pick the same side in 94% of games, those games tell you nothing about which is better. Accuracy SE ≈ √(disagreement rate / n). With 1,828 games we can detect about 1–2.4 points of accuracy, and our experiments moved it 0–0.4.
+- **Log loss is a sharper yardstick than accuracy.** It uses the probabilities, not just right or wrong, so it detects smaller changes. Opponent adjustment's log-loss gain was about half its MDE, while its accuracy gain was about a tenth.
+- **The profit-proof ceiling:** to show a model beats 52.4% with 7 seasons of games, it must truly hit about 55.7%. A real 54% model needs about 27 seasons to prove. This is why sports bettors care about closing-line value: it's a faster signal than win rate.
+- **Interview line:** "Before concluding a feature doesn't help, I compute the minimum detectable effect. With about 1,800 games you can't see a 1-point accuracy gain, so I compare models on paired log loss and treat accuracy as a sanity check."
+
+## Diagnostic session (Step 3): where is the signal?
+- **The test that matters:** does a feature predict what the *spread got wrong* (margin − spread)? If it doesn't, it can't help you beat the spread, no matter how well it predicts who wins. Our four features correlate with the spread at up to 0.75, and with the residual at about 0.0 to ±0.03.
+- **Adding features made margin predictions slightly worse out of sample (+0.35%).** When there's no signal, fitting extra coefficients just adds noise. That's overfitting in its simplest form.
+- **Converting correlation to betting terms:** a correlation r with the residual is worth roughly ½ + arcsin(r)/π ATS. r = 0.075 ≈ 52.4% (breakeven), and r = 0.10 ≈ 53.2%. Edges live at tiny correlations, which is why they're so hard to see.
+- **"Not detected" ≠ "not there":** our margin test would catch a breakeven-sized effect only about 11% of the time. The honest claim is "any linear signal in these four features is at most about breakeven", not "no signal exists".
+- **Stability beats significance:** one season (off EPA, 2024) hit p = 0.002, but the other six were around 0. A real edge shows up season after season.
+- **Interview line:** "I test features against the market's residual, not the raw outcome, and I report what my test could and couldn't detect. Our public EPA features added nothing detectable beyond the closing line, so the next step is new information, not a fancier model."
+

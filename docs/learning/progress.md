@@ -1,8 +1,8 @@
 # Progress
 
-**Current phase:** Phase 6 ✅ done. Waiting for Josh's go to start Phase 7.
-**Next:** Phase 7, Walk-forward backtest and calibration. `walk_forward()` already exists. Add the leakage tests from the skeptic requirements, metrics vs. baselines, a reliability plot, and single-change experiments.
-**Last updated:** 2026-10-14
+**Current phase:** Phase 7 paused for a **diagnostic session** (`docs/diagnostic-prompt.md`, plan approved). Steps 0–3 done (Step 3 skeptic: no blockers, wording corrected).
+**Next:** Diagnostic Step 4, model diagnostics (learning curves, C sweep **with the dispersion guard**, calibration, coefficients). Josh predicts first. Exp #6 stays pending until Step 5. Session rules: stop after each step, Josh predicts before reveals, skeptic after Steps 3 and 6.
+**Last updated:** 2026-10-15
 
 ## Done
 - Planning docs, CLAUDE.md, learning files, skeptic agent, slash commands.
@@ -29,6 +29,11 @@
 - Phase 6 step 1: `src/nfl_ats/model.py` (`make_model`, `fold_data` with per-fold shrinkage, `coefficients`). Fold 1 (train 2016–18, 746 games): coefs per SD are def +0.12, rest +0.07, off +0.06, pace +0.02. Train probabilities 35–63%, SD 0.04. The model is barely confident.
 - Phase 6 step 2: `evaluate.score()`. 2019 out-of-sample: 49.6% [43.1, 55.7], log loss 0.698 (worse than 0.693), Brier 0.2525. In-sample 52.7%. Logged as ATS experiment #3 in experiments.md (count 1).
 - Phase 6 step 4: `model.walk_forward` + `evaluate.paired_diff` (15 tests). v1 walk-forward 2019–25: 51.3% [48.9, 53.5], log loss 0.6947 (worse than 0.6931). Adding `spread_line` changes nothing (paired diffs about 0). Experiment #4: rejected by Josh (decision #16).
+- Phase 7 step 1: `OUTCOME_COLUMNS` + `check_features()` guard in `walk_forward`. `tests/test_model.py` (5 tests): wrecking the test season leaves the fold's shrinkage params and training rows unchanged (and the wreck is confirmed to change the test rows), leaky features are refused, and X columns == FEATURES. 20 tests total.
+- Phase 7 step 2: `evaluate.season_table()` + `notebooks/07-backtest.ipynb` (verified end to end), figure `reports/figures/v1_backtest_by_season.png`. Seasons range 49.6–52.7%, every CI includes 50%, pooled 51.3% [48.9, 53.5]. The model picks away 68–82% in 2020–24 because mean p equals the training home-cover rate (about 48.3% after 2019 joins) and the features move p by only about ±2 points. Preds saved to `data/processed/v1_walk_forward_preds.parquet`.
+- Phase 7 step 3: `reliability_table`, `brier_decomposition` (22 tests, including the resolution noise-floor test). Figure `reports/figures/v1_reliability.png`. v1: reliability 0.0018, resolution 0.0013 vs. noise floor 0.0014, uncertainty 0.2498. Roughly calibrated, zero resolution.
+- Phase 7 step 4, exp #5: garbage-time filter (`drop_garbage_time`, wp in [0.1, 0.9]). Paired vs. v1: −0.4 pts [−2.1, +1.3], log loss −0.0001 [−0.0015, +0.0013]. Rejected (decision #17), and C tuning skipped.
+- Exp #6: opponent-adjusted EPA (`adjust_for_opponent`, `opponent_adjust=True` in fold_data/walk_forward, 24 tests). Paired: +0.2 pts [−0.9, +1.4], log loss −0.0006 [−0.0014, +0.0002]. Features barely move (r = 0.99 off). Decision pending.
 
 ## Open items
 - The 2026 live ledger starts with the next unplayed week. Weeks already played are a pseudo-live backfill, always labeled as backfill. As of mid-October that is more than weeks 1–4. Revisit in Phase 8.
@@ -63,3 +68,12 @@
 - 2026-10-14: Phase 6 step 2 done (first out-of-sample score).
 - 2026-10-14: Phase 6 step 4 run. Awaiting Josh's keep or reject.
 - 2026-10-14: Phase 6 done. `spread_line` rejected, and v1 stays kept.
+- 2026-10-15: Phase 7 started. Step 1 done (walk-forward guards + fold-isolation tests).
+- 2026-10-15: Phase 7 step 2 done (backtest report card).
+- 2026-10-15: Phase 7 step 3 done (calibration).
+- 2026-10-15: Exp #5 (garbage time) run. Awaiting Josh.
+- 2026-10-15: Exp #5 rejected. Exp #6 (opponent adjustment) run, awaiting Josh.
+- 2026-10-15: Started the diagnostic session. Step 0 summary given. Waiting for Josh's leak prediction and go-ahead for Step 1.
+- 2026-10-15: Diagnostic Step 1 done. No bugs. Leak demo: 57.2% (Josh guessed 60%). `src/nfl_ats/diagnostics.py`, `notebooks/08-diagnostics.ipynb`, 25 tests.
+- 2026-10-15: Diagnostic Step 2 done. Accuracy MDE is 1.0–2.4 pts (Josh guessed 1.5), and the observed effects are far below it. Log loss is the better yardstick. Proving profit needs a true rate of about 55.7%. 27 tests.
+- 2026-10-15: Diagnostic Step 3 done. Features add no detectable signal beyond the spread (margin MSE +0.35%, partial r about 0). Skeptic: overclaim corrected (mistake #7), D3 logged. 29 tests.

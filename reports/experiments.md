@@ -302,3 +302,21 @@ Each test is a single change to **raw Elo, the deliverable**, judged with `compa
 
 **Raw Elo stays the deliverable.** No shadow models were added to the ledger. H2 and H3 point the right way, but neither is distinguishable from noise on 1,865 games, which is consistent with the win-target MDE concern raised in the Step 6 skeptic review.
 
+
+### H4 · Data audit (2026-10-22) · Usual starting QB unavailable (injury report + reserve list): go/no-go
+- **Why again:** H2's signal pointed the right way but was rare (100 flags), and it missed starters on injured reserve. In 2026 Week 7, Jalen Hurts (PHI) is on IR and no longer on the injury report, and H2's "last game's passer" is already the backup, so H2 can't see it.
+- **New source:** `nflreadpy.load_rosters_weekly` (`data.load_rosters_weekly`). `status == "RES"` = a reserve list (R01 = injured reserve, plus PUP, NFI, suspended and so on).
+- **Timing (is the weekly roster a pre-game snapshot?):** of 6,489 QB-games in 2016–2025 with a pass attempt, **0** had that QB listed RES on that week's roster. A post-game snapshot would show players hurt in the game. ✅
+- **Coverage:** **381** flagged team-games in 2016–2025 (vs. H2's 100): out 167, injured reserve 101, other reserve 71, doubtful 42. That's 30–53 per season.
+- **Accuracy:** **0** flagged QBs threw 10+ passes that week. ✅
+- **Verdict: GO.**
+
+### H4 · PRE-REGISTERED 2026-10-22, before running · QB-adjusted Elo
+- **Josh's decision:** test it fairly. If kept, it becomes the deliverable from 2026 Week 8, with a Saturday lock for Sunday and Monday games (final injury statuses come out Friday). If rejected, the site keeps its display-only QB note and the model is unchanged.
+- **No. 1 QB (as-of):** the QB with the most starts (most pass attempts, pbp) in the team's **previous 8 regular-season games**, crossing seasons. Ties go to the most recent. `qb.usual_starters`, which uses earlier games only.
+- **`qb_out`:** 1 if the No. 1 QB is **Out/Doubtful** on that week's injury report **or** listed **RES** on that week's team roster (`qb.qb_unavailable`). Questionable counts as available.
+- **The change (single change from raw Elo):** `p = elo.win_prob(elo_diff − QB_PTS·home_qb_out + QB_PTS·away_qb_out)`. `elo_diff` is raw Elo's pregame difference including home field. Ratings and updates are untouched.
+- **`QB_PTS`:** fit **inside each fold** on that fold's training seasons only (2016 … test−1). Grid 0–250 in steps of 5, minimizing training log loss.
+- **Primary (decides keep, M4 baseline):** vs. **raw Elo**, `compare_predictions(target="home_win")`, walk-forward 2019–2025, same decided games. **Keep rule:** paired log-loss CI upper bound < 0, **and** better in ≥ 5/7 seasons, **and** higher AUC.
+- **Also reported:** flagged test games, `QB_PTS` by fold, accuracy on flagged games (Elo vs. H4), and calibration-in-the-large.
+- **Honesty note:** this is a second attempt at H2's idea on seasons that have been viewed many times. It is run once. The 2026 live ledger stays the clean test either way.

@@ -15,6 +15,9 @@
   --accent-soft: #e8f1fc;
   --good: #237a4b;
   --bad: #c2412d;
+  --warn-ink: #7a4a06;
+  --warn-soft: #fdf4e3;
+  --warn-line: #f1dcb4;
   --shadow: 0 1px 2px rgba(17, 24, 39, 0.04), 0 10px 30px -18px rgba(17, 24, 39, 0.18);
   --r-lg: 16px;
   --r-md: 10px;
@@ -119,6 +122,9 @@ main.wrap { padding-top: 4px; padding-bottom: 8px; }
 .lines { display: flex; flex-wrap: wrap; gap: 6px 18px; margin-top: 14px; font-size: 14px; color: var(--ink-2); }
 .lines b { font-weight: 600; color: var(--ink); }
 .lines .at { color: var(--muted); font-size: 13px; }
+.qb-note { margin-top: 14px; padding: 10px 12px; border: 1px solid var(--warn-line); border-radius: var(--r-sm);
+           background: var(--warn-soft); color: var(--warn-ink); font-size: 14px; line-height: 1.45; text-wrap: pretty; }
+.qb-note b { font-weight: 600; }
 
 .why { margin-top: 16px; border-top: 1px solid var(--line); padding-top: 10px; }
 .why summary { cursor: pointer; list-style: none; font-size: 14px; font-weight: 600; color: var(--ink-2); min-height: 32px; display: inline-flex; align-items: center; gap: 8px; }

@@ -109,6 +109,11 @@ def load_injuries(seasons: list[int], refresh: bool = False) -> pd.DataFrame:
     return _cached_pull("injuries", seasons, nfl.load_injuries, refresh)
 
 
+def load_rosters_weekly(seasons: list[int], refresh: bool = False) -> pd.DataFrame:
+    """Weekly team rosters with status (ACT, RES = reserve list such as injured reserve, ...), cached like the others."""
+    return _cached_pull("rosters_weekly", seasons, nfl.load_rosters_weekly, refresh)
+
+
 def load_depth_charts(seasons: list[int], refresh: bool = False) -> pd.DataFrame:
     """Weekly depth charts, cached like the others. The format changes around 2025, so check before use."""
     return _cached_pull("depth_charts", seasons, nfl.load_depth_charts, refresh)

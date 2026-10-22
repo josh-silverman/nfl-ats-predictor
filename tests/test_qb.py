@@ -4,7 +4,7 @@ import unittest
 
 import pandas as pd
 
-from nfl_ats.qb import add_qb_feature, expected_starters, game_starters, qb_out_flags
+from nfl_ats.qb import add_qb_feature, expected_starters, game_starters, qb_out_flags, qb_unavailable, usual_starters
 
 
 def _pbp():
@@ -44,6 +44,50 @@ class TestQbFeature(unittest.TestCase):
         flags = pd.DataFrame({"game_id": ["g3", "g3"], "team": ["A", "B"], "qb_out": [1, 0]})
         out = add_qb_feature(table, flags)
         self.assertEqual(out["qb_out_diff"].iloc[0], 1)
+
+
+
+class TestUsualStarter(unittest.TestCase):
+    """H4: the No. 1 QB comes from EARLIER games only; Out/Doubtful or the reserve list flags him."""
+
+    def _starters(self):
+        # a1 starts weeks 1-5 of 2020, gets hurt, backup a2 starts weeks 6-7
+        return pd.DataFrame({"season": 2020, "week": range(1, 8), "game_id": [f"g{w}" for w in range(1, 8)],
+                             "team": "A", "starter_id": ["a1"] * 5 + ["a2"] * 2})
+
+    def _games(self, weeks):
+        return pd.DataFrame({"season": 2020, "week": weeks, "game_id": [f"g{w}" for w in weeks], "team": "A"})
+
+    def test_usual_starter_survives_a_few_missed_games(self):
+        u = usual_starters(self._starters(), self._games([1, 6, 8])).set_index("week")
+        self.assertTrue(pd.isna(u.loc[1, "usual_id"]))   # no earlier game
+        self.assertEqual(u.loc[6, "usual_id"], "a1")
+        self.assertEqual(u.loc[8, "usual_id"], "a1")     # unplayed game: 5 of the last 7 starts are a1's
+
+    def test_current_game_never_counts(self):
+        wrecked = self._starters()
+        wrecked.loc[wrecked["week"] == 6, "starter_id"] = "zzz"
+        a = usual_starters(self._starters(), self._games([6]))
+        b = usual_starters(wrecked, self._games([6]))
+        self.assertEqual(a["usual_id"].iloc[0], b["usual_id"].iloc[0])
+
+    def test_window_decays_to_the_backup(self):
+        s = pd.DataFrame({"season": 2020, "week": range(1, 13), "game_id": [f"g{w}" for w in range(1, 13)],
+                          "team": "A", "starter_id": ["a1"] * 3 + ["a2"] * 9})
+        self.assertEqual(usual_starters(s, self._games([13]))["usual_id"].iloc[0], "a2")
+
+    def test_reserve_and_out_flag_but_questionable_does_not(self):
+        usual = pd.DataFrame({"season": 2020, "week": [6, 7, 8], "game_id": ["g6", "g7", "g8"], "team": "A",
+                              "usual_id": "a1"})
+        inj = pd.DataFrame({"season": [2020.0, 2020.0], "week": [6.0, 8.0], "team": ["A", "A"], "gsis_id": ["a1", "a1"],
+                            "game_type": ["REG", "REG"], "report_status": ["Questionable", "Doubtful"]})
+        rost = pd.DataFrame({"season": 2020, "week": [6, 7], "team": "A", "gsis_id": "a1", "full_name": "Al One",
+                             "status": ["ACT", "RES"], "status_description_abbr": ["A01", "R01"]})
+        f = qb_unavailable(usual, inj, rost).set_index("week")
+        self.assertEqual(f.loc[6, "qb_out"], 0)
+        self.assertEqual((f.loc[7, "qb_out"], f.loc[7, "reason"]), (1, "injured reserve"))
+        self.assertEqual((f.loc[8, "qb_out"], f.loc[8, "reason"]), (1, "doubtful"))
+        self.assertEqual(f.loc[7, "player"], "Al One")
 
 
 if __name__ == "__main__":

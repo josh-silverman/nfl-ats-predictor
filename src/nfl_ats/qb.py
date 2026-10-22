@@ -64,3 +64,67 @@ def add_qb_feature(table: pd.DataFrame, flags: pd.DataFrame) -> pd.DataFrame:
 def build_qb_flags(seasons: list[int]) -> pd.DataFrame:
     """End to end: pbp starters → expected starters → injury-report flags, for `seasons`."""
     return qb_out_flags(expected_starters(load_game_starters(seasons)), load_injuries(seasons))
+
+
+# ---------- H4: the team's USUAL starter, and whether he is unavailable (injury report or reserve list) ----------
+
+USUAL_WINDOW = 8  # the No. 1 QB = most starts in the team's previous 8 regular-season games (crossing seasons)
+
+
+def usual_starters(starters: pd.DataFrame, games: pd.DataFrame, window: int = USUAL_WINDOW) -> pd.DataFrame:
+    """Each team-game's No. 1 QB, from games strictly BEFORE it (so unplayed games work too).
+
+    starters: game_starters output (played games). games: season, week, game_id, team (may include unplayed).
+    Ties in the start count go to the most recent starter.
+    """
+    s = starters.sort_values(["season", "week"])
+    rows = []
+    for g in games.itertuples(index=False):
+        prior = s[(s["team"] == g.team) & ((s["season"] < g.season) | ((s["season"] == g.season) & (s["week"] < g.week)))]
+        recent = prior["starter_id"].tail(window).tolist()
+        usual = None
+        if recent:
+            counts = pd.Series(recent).value_counts()
+            tied = set(counts[counts == counts.max()].index)
+            usual = next(q for q in reversed(recent) if q in tied)
+        rows.append({"season": g.season, "week": g.week, "game_id": g.game_id, "team": g.team, "usual_id": usual})
+    return pd.DataFrame(rows)
+
+
+def qb_unavailable(usual: pd.DataFrame, injuries: pd.DataFrame, rosters: pd.DataFrame) -> pd.DataFrame:
+    """qb_out = 1 if the No. 1 QB is Out/Doubtful on that week's injury report OR on the team's reserve list.
+
+    Adds `reason` ("injured reserve", "reserve list", "out", "doubtful") and `player` (full name) for display.
+    """
+    inj = injuries.loc[(injuries["game_type"] == "REG") & injuries["report_status"].isin(OUT_STATUSES),
+                       ["season", "week", "team", "gsis_id", "report_status"]].copy()
+    inj["reason_inj"] = inj.pop("report_status").str.lower()
+    res = rosters.loc[rosters["status"] == "RES", ["season", "week", "team", "gsis_id", "status_description_abbr"]].copy()
+    res["reason_res"] = (res.pop("status_description_abbr") == "R01").map({True: "injured reserve", False: "reserve list"})
+    names = rosters.drop_duplicates(["season", "gsis_id"])[["season", "gsis_id", "full_name"]]
+
+    out = usual.copy()
+    for src in (inj, res):
+        src["team"] = src["team"].replace(TEAM_MAP)
+        src[["season", "week"]] = src[["season", "week"]].astype(int)
+        out = out.merge(src.drop_duplicates(["season", "week", "team", "gsis_id"]),
+                        left_on=["season", "week", "team", "usual_id"], right_on=["season", "week", "team", "gsis_id"],
+                        how="left", validate="many_to_one").drop(columns="gsis_id")
+    out["reason"] = out["reason_res"].fillna(out["reason_inj"])
+    out["qb_out"] = out["reason"].notna().astype(int)
+    out = out.merge(names, left_on=["season", "usual_id"], right_on=["season", "gsis_id"], how="left").drop(columns="gsis_id")
+    out = out.rename(columns={"full_name": "player"})
+    return out[["season", "week", "game_id", "team", "usual_id", "player", "qb_out", "reason"]]
+
+
+def build_usual_flags(schedules: pd.DataFrame, seasons: list[int], refresh: bool = False) -> pd.DataFrame:
+    """End to end for `seasons`: pbp starters (plus the season before, for the window) → No. 1 QB → unavailable flags."""
+    from nfl_ats.data import load_rosters_weekly, regular_season
+    reg = regular_season(schedules)
+    reg = reg[reg["season"].isin(seasons)]
+    games = pd.concat([reg[["season", "week", "game_id"]].assign(team=reg[side]) for side in ["home_team", "away_team"]],
+                      ignore_index=True)
+    starters = pd.concat([game_starters(load_pbp([s], refresh=refresh and s == max(seasons)))
+                          for s in range(min(seasons) - 1, max(seasons) + 1)], ignore_index=True)
+    return qb_unavailable(usual_starters(starters, games), load_injuries(seasons, refresh=refresh),
+                          load_rosters_weekly(seasons, refresh=refresh))

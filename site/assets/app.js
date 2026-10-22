@@ -113,6 +113,14 @@
       g.vegas_line_at_lock ? el("span", {}, "Vegas ", el("b", {}, g.vegas_line_at_lock), el("span", { class: "at" }, " at lock")) : null,
       g.closing_line ? el("span", {}, term("Closed", TIPS.closing), " ", el("b", {}, g.closing_line)) : null);
 
+    // QB news (display only: the locked % never changes). One line per team whose usual starter is out.
+    const QB_REASON = { "injured reserve": "is out (injured reserve)", "reserve list": "is out (reserve list)",
+                        out: "is ruled out", doubtful: "is listed as doubtful" };
+    const qbNote = (g.qb_out || []).length ? el("div", { class: "qb-note", role: "note" },
+      el("b", {}, "Heads up: "),
+      g.qb_out.map((q) => `${team(q.team).name}' usual starting QB${q.player ? ", " + q.player + "," : ""} ${QB_REASON[q.reason] || "is out"}. `).join(""),
+      "Our rating doesn't account for injuries; Vegas does.") : null;
+
     const w = g.why;
     const homeTotal = w.home_rating + w.home_field;
     const vegasFav = g.p_vegas_home === null ? null : (g.p_vegas_home >= 0.5 ? home : away);
@@ -149,7 +157,7 @@
           teamSide(homeSide, "home", pHome, g.favorite === home)),
         el("div", { class: "bar-wrap" }, outer,
           el("div", { class: "bar-legend" }, el("span", {}, `${team(g.favorite).name} favored`), legendRight)),
-        lines, why, result));
+        lines, qbNote, why, result));
   }
 
   function renderWeek(root) {

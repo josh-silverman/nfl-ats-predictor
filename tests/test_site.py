@@ -8,7 +8,7 @@ import numpy as np
 import pandas as pd
 
 from nfl_ats.elo import rating_history, run_elo
-from nfl_ats.site import (MINUS, TEAMS, confidence, day_group, format_line, game_cards, lock_status,
+from nfl_ats.site import (MINUS, TEAMS, confidence, day_group, format_line, game_cards, lock_status, qb_notes,
                           record_summary, team_context)
 from tests.test_win_model import _schedules
 
@@ -72,6 +72,15 @@ class TestSiteData(unittest.TestCase):
         done = game_cards(self._scored(24, 17), closing={"g1": -4.0}, now=before)[0]  # a result also reveals it
         self.assertEqual(done["closing_line"], f"CAR {MINUS}4.0")
         self.assertTrue(done["result"]["we_were_right"])
+
+    def test_qb_note_rides_along_without_changing_the_pick(self):
+        flags = pd.DataFrame({"game_id": ["g1", "g1"], "team": ["PHI", "CAR"], "player": ["Jalen Hurts", None],
+                              "qb_out": [1, 0], "reason": ["injured reserve", None]})
+        c = game_cards(self._scored(), notes=qb_notes(flags))[0]
+        json.dumps(c)
+        self.assertEqual(c["qb_out"], [{"team": "PHI", "player": "Jalen Hurts", "reason": "injured reserve"}])
+        self.assertEqual(c["p_home"], 0.64)                       # news only: the locked % is untouched
+        self.assertEqual(game_cards(self._scored())[0]["qb_out"], [])
 
     def test_line_formatting(self):
         self.assertEqual(format_line(0.0, "A", "B"), "Pick'em")

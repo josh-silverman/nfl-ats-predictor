@@ -4,7 +4,7 @@ window.SITE_DATA = {
   "title": "Josh's NFL Elo",
   "season": 2026,
   "repo": "https://github.com/josh-silverman/nfl-ats-predictor",
-  "generated": "Oct 22, 2026 3:50 PM ET",
+  "generated": "Oct 22, 2026 4:01 PM ET",
   "current_week": 7
  },
  "teams": {
@@ -182,7 +182,8 @@ window.SITE_DATA = {
       "winner": "SEA",
       "we_were_right": true,
       "vegas_was_right": true
-     }
+     },
+     "qb_out": []
     },
     {
      "game_id": "2026_01_SF_LA",
@@ -223,7 +224,8 @@ window.SITE_DATA = {
       "winner": "SF",
       "we_were_right": false,
       "vegas_was_right": false
-     }
+     },
+     "qb_out": []
     },
     {
      "game_id": "2026_01_ATL_PIT",
@@ -264,7 +266,8 @@ window.SITE_DATA = {
       "winner": "PIT",
       "we_were_right": true,
       "vegas_was_right": true
-     }
+     },
+     "qb_out": []
     },
     {
      "game_id": "2026_01_BAL_IND",
@@ -305,7 +308,8 @@ window.SITE_DATA = {
       "winner": "BAL",
       "we_were_right": true,
       "vegas_was_right": true
-     }
+     },
+     "qb_out": []
     },
     {
      "game_id": "2026_01_BUF_HOU",
@@ -346,7 +350,8 @@ window.SITE_DATA = {
       "winner": "BUF",
       "we_were_right": false,
       "vegas_was_right": true
-     }
+     },
+     "qb_out": []
     },
     {
      "game_id": "2026_01_CHI_CAR",
@@ -387,7 +392,8 @@ window.SITE_DATA = {
       "winner": "CHI",
       "we_were_right": true,
       "vegas_was_right": true
-     }
+     },
+     "qb_out": []
     },
     {
      "game_id": "2026_01_CLE_JAX",
@@ -428,7 +434,8 @@ window.SITE_DATA = {
       "winner": "JAX",
       "we_were_right": true,
       "vegas_was_right": true
-     }
+     },
+     "qb_out": []
     },
     {
      "game_id": "2026_01_NO_DET",
@@ -469,7 +476,8 @@ window.SITE_DATA = {
       "winner": "DET",
       "we_were_right": true,
       "vegas_was_right": true
-     }
+     },
+     "qb_out": []
     },
     {
      "game_id": "2026_01_NYJ_TEN",
@@ -510,7 +518,8 @@ window.SITE_DATA = {
       "winner": "NYJ",
       "we_were_right": false,
       "vegas_was_right": false
-     }
+     },
+     "qb_out": []
     },
     {
      "game_id": "2026_01_TB_CIN",
@@ -551,7 +560,8 @@ window.SITE_DATA = {
       "winner": "CIN",
       "we_were_right": true,
       "vegas_was_right": true
-     }
+     },
+     "qb_out": []
     },
     {
      "game_id": "2026_01_ARI_LAC",
@@ -592,7 +602,8 @@ window.SITE_DATA = {
       "winner": "ARI",
       "we_were_right": false,
       "vegas_was_right": false
-     }
+     },
+     "qb_out": []
     },
     {
      "game_id": "2026_01_GB_MIN",
@@ -633,7 +644,8 @@ window.SITE_DATA = {
       "winner": "MIN",
       "we_were_right": true,
       "vegas_was_right": true
-     }
+     },
+     "qb_out": []
     },
     {
      "game_id": "2026_01_MIA_LV",
@@ -674,7 +686,8 @@ window.SITE_DATA = {
       "winner": "LV",
       "we_were_right": false,
       "vegas_was_right": true
-     }
+     },
+     "qb_out": []
     },
     {
      "game_id": "2026_01_WAS_PHI",
@@ -715,7 +728,8 @@ window.SITE_DATA = {
       "winner": "PHI",
       "we_were_right": true,
       "vegas_was_right": true
-     }
+     },
+     "qb_out": []
     },
     {
      "game_id": "2026_01_DAL_NYG",
@@ -756,7 +770,8 @@ window.SITE_DATA = {
       "winner": "NYG",
       "we_were_right": true,
       "vegas_was_right": false
-     }
+     },
+     "qb_out": []
     },
     {
      "game_id": "2026_01_DEN_KC",
@@ -797,7 +812,8 @@ window.SITE_DATA = {
       "winner": "KC",
       "we_were_right": false,
       "vegas_was_right": true
-     }
+     },
+     "qb_out": []
     }
    ]
   },
@@ -845,7 +861,8 @@ window.SITE_DATA = {
       "winner": "BUF",
       "we_were_right": true,
       "vegas_was_right": true
-     }
+     },
+     "qb_out": []
     },
     {
      "game_id": "2026_02_CAR_ATL",
@@ -886,7 +903,8 @@ window.SITE_DATA = {
       "winner": "CAR",
       "we_were_right": false,
       "vegas_was_right": true
-     }
+     },
+     "qb_out": []
     },
     {
      "game_id": "2026_02_CIN_HOU",
@@ -927,7 +945,8 @@ window.SITE_DATA = {
       "winner": "CIN",
       "we_were_right": false,
       "vegas_was_right": false
-     }
+     },
+     "qb_out": []
     },
     {
      "game_id": "2026_02_CLE_TB",
@@ -968,7 +987,8 @@ window.SITE_DATA = {
       "winner": "CLE",
       "we_were_right": false,
       "vegas_was_right": false
-     }
+     },
+     "qb_out": []
     },
     {
      "game_id": "2026_02_GB_NYJ",
@@ -1009,7 +1029,8 @@ window.SITE_DATA = {
       "winner": "GB",
       "we_were_right": true,
       "vegas_was_right": true
-     }
+     },
+     "qb_out": []
     },
     {
      "game_id": "2026_02_MIN_CHI",
@@ -1050,7 +1071,8 @@ window.SITE_DATA = {
       "winner": "MIN",
       "we_were_right": false,
       "vegas_was_right": false
-     }
+     },
+     "qb_out": []
     },
     {
      "game_id": "2026_02_NO_BAL",
@@ -1091,7 +1113,8 @@ window.SITE_DATA = {
       "winner": "NO",
       "we_were_right": false,
       "vegas_was_right": false
-     }
+     },
+     "qb_out": []
     },
     {
      "game_id": "2026_02_PHI_TEN",
@@ -1132,7 +1155,8 @@ window.SITE_DATA = {
       "winner": "PHI",
       "we_were_right": true,
       "vegas_was_right": true
-     }
+     },
+     "qb_out": []
     },
     {
      "game_id": "2026_02_PIT_NE",
@@ -1173,7 +1197,8 @@ window.SITE_DATA = {
       "winner": "NE",
       "we_were_right": true,
       "vegas_was_right": true
-     }
+     },
+     "qb_out": []
     },
     {
      "game_id": "2026_02_JAX_DEN",
@@ -1214,7 +1239,8 @@ window.SITE_DATA = {
       "winner": "DEN",
       "we_were_right": true,
       "vegas_was_right": true
-     }
+     },
+     "qb_out": []
     },
     {
      "game_id": "2026_02_LV_LAC",
@@ -1255,7 +1281,8 @@ window.SITE_DATA = {
       "winner": "LV",
       "we_were_right": false,
       "vegas_was_right": false
-     }
+     },
+     "qb_out": []
     },
     {
      "game_id": "2026_02_MIA_SF",
@@ -1296,7 +1323,8 @@ window.SITE_DATA = {
       "winner": "SF",
       "we_were_right": true,
       "vegas_was_right": true
-     }
+     },
+     "qb_out": []
     },
     {
      "game_id": "2026_02_SEA_ARI",
@@ -1337,7 +1365,14 @@ window.SITE_DATA = {
       "winner": "SEA",
       "we_were_right": true,
       "vegas_was_right": true
-     }
+     },
+     "qb_out": [
+      {
+       "team": "SEA",
+       "player": "Sam Darnold",
+       "reason": "out"
+      }
+     ]
     },
     {
      "game_id": "2026_02_WAS_DAL",
@@ -1378,7 +1413,8 @@ window.SITE_DATA = {
       "winner": "DAL",
       "we_were_right": true,
       "vegas_was_right": true
-     }
+     },
+     "qb_out": []
     },
     {
      "game_id": "2026_02_IND_KC",
@@ -1419,7 +1455,8 @@ window.SITE_DATA = {
       "winner": "KC",
       "we_were_right": true,
       "vegas_was_right": true
-     }
+     },
+     "qb_out": []
     },
     {
      "game_id": "2026_02_NYG_LA",
@@ -1460,7 +1497,8 @@ window.SITE_DATA = {
       "winner": "LA",
       "we_were_right": true,
       "vegas_was_right": true
-     }
+     },
+     "qb_out": []
     }
    ]
   },
@@ -1508,7 +1546,8 @@ window.SITE_DATA = {
       "winner": "ATL",
       "we_were_right": false,
       "vegas_was_right": false
-     }
+     },
+     "qb_out": []
     },
     {
      "game_id": "2026_03_CAR_CLE",
@@ -1549,7 +1588,8 @@ window.SITE_DATA = {
       "winner": "CLE",
       "we_were_right": true,
       "vegas_was_right": false
-     }
+     },
+     "qb_out": []
     },
     {
      "game_id": "2026_03_CIN_PIT",
@@ -1590,7 +1630,8 @@ window.SITE_DATA = {
       "winner": "PIT",
       "we_were_right": true,
       "vegas_was_right": false
-     }
+     },
+     "qb_out": []
     },
     {
      "game_id": "2026_03_HOU_IND",
@@ -1631,7 +1672,8 @@ window.SITE_DATA = {
       "winner": "IND",
       "we_were_right": false,
       "vegas_was_right": false
-     }
+     },
+     "qb_out": []
     },
     {
      "game_id": "2026_03_KC_MIA",
@@ -1672,7 +1714,8 @@ window.SITE_DATA = {
       "winner": "KC",
       "we_were_right": true,
       "vegas_was_right": true
-     }
+     },
+     "qb_out": []
     },
     {
      "game_id": "2026_03_LAC_BUF",
@@ -1713,7 +1756,8 @@ window.SITE_DATA = {
       "winner": "BUF",
       "we_were_right": true,
       "vegas_was_right": true
-     }
+     },
+     "qb_out": []
     },
     {
      "game_id": "2026_03_NE_JAX",
@@ -1754,7 +1798,8 @@ window.SITE_DATA = {
       "winner": "JAX",
       "we_were_right": true,
       "vegas_was_right": true
-     }
+     },
+     "qb_out": []
     },
     {
      "game_id": "2026_03_NYJ_DET",
@@ -1795,7 +1840,8 @@ window.SITE_DATA = {
       "winner": "DET",
       "we_were_right": true,
       "vegas_was_right": true
-     }
+     },
+     "qb_out": []
     },
     {
      "game_id": "2026_03_SEA_WAS",
@@ -1836,7 +1882,14 @@ window.SITE_DATA = {
       "winner": "WAS",
       "we_were_right": false,
       "vegas_was_right": false
-     }
+     },
+     "qb_out": [
+      {
+       "team": "WAS",
+       "player": "Jayden Daniels",
+       "reason": "out"
+      }
+     ]
     },
     {
      "game_id": "2026_03_TEN_NYG",
@@ -1877,7 +1930,14 @@ window.SITE_DATA = {
       "winner": "NYG",
       "we_were_right": true,
       "vegas_was_right": true
-     }
+     },
+     "qb_out": [
+      {
+       "team": "NYG",
+       "player": "Jaxson Dart",
+       "reason": "injured reserve"
+      }
+     ]
     },
     {
      "game_id": "2026_03_ARI_SF",
@@ -1918,7 +1978,8 @@ window.SITE_DATA = {
       "winner": "SF",
       "we_were_right": true,
       "vegas_was_right": true
-     }
+     },
+     "qb_out": []
     },
     {
      "game_id": "2026_03_MIN_TB",
@@ -1959,7 +2020,8 @@ window.SITE_DATA = {
       "winner": "MIN",
       "we_were_right": true,
       "vegas_was_right": true
-     }
+     },
+     "qb_out": []
     },
     {
      "game_id": "2026_03_BAL_DAL",
@@ -2000,7 +2062,8 @@ window.SITE_DATA = {
       "winner": "BAL",
       "we_were_right": true,
       "vegas_was_right": true
-     }
+     },
+     "qb_out": []
     },
     {
      "game_id": "2026_03_LV_NO",
@@ -2041,7 +2104,8 @@ window.SITE_DATA = {
       "winner": "LV",
       "we_were_right": false,
       "vegas_was_right": false
-     }
+     },
+     "qb_out": []
     },
     {
      "game_id": "2026_03_LA_DEN",
@@ -2082,7 +2146,8 @@ window.SITE_DATA = {
       "winner": "DEN",
       "we_were_right": true,
       "vegas_was_right": true
-     }
+     },
+     "qb_out": []
     },
     {
      "game_id": "2026_03_PHI_CHI",
@@ -2123,7 +2188,14 @@ window.SITE_DATA = {
       "winner": "CHI",
       "we_were_right": true,
       "vegas_was_right": false
-     }
+     },
+     "qb_out": [
+      {
+       "team": "CHI",
+       "player": "Caleb Williams",
+       "reason": "out"
+      }
+     ]
     }
    ]
   },
@@ -2171,7 +2243,8 @@ window.SITE_DATA = {
       "winner": "CLE",
       "we_were_right": false,
       "vegas_was_right": false
-     }
+     },
+     "qb_out": []
     },
     {
      "game_id": "2026_04_IND_WAS",
@@ -2212,7 +2285,8 @@ window.SITE_DATA = {
       "winner": "IND",
       "we_were_right": true,
       "vegas_was_right": true
-     }
+     },
+     "qb_out": []
     },
     {
      "game_id": "2026_04_ARI_NYG",
@@ -2253,7 +2327,14 @@ window.SITE_DATA = {
       "winner": "NYG",
       "we_were_right": true,
       "vegas_was_right": false
-     }
+     },
+     "qb_out": [
+      {
+       "team": "NYG",
+       "player": "Jaxson Dart",
+       "reason": "injured reserve"
+      }
+     ]
     },
     {
      "game_id": "2026_04_DAL_HOU",
@@ -2294,7 +2375,8 @@ window.SITE_DATA = {
       "winner": "DAL",
       "we_were_right": false,
       "vegas_was_right": false
-     }
+     },
+     "qb_out": []
     },
     {
      "game_id": "2026_04_GB_TB",
@@ -2335,7 +2417,14 @@ window.SITE_DATA = {
       "winner": "GB",
       "we_were_right": true,
       "vegas_was_right": true
-     }
+     },
+     "qb_out": [
+      {
+       "team": "TB",
+       "player": "Baker Mayfield",
+       "reason": "out"
+      }
+     ]
     },
     {
      "game_id": "2026_04_JAX_CIN",
@@ -2376,7 +2465,8 @@ window.SITE_DATA = {
       "winner": "JAX",
       "we_were_right": true,
       "vegas_was_right": false
-     }
+     },
+     "qb_out": []
     },
     {
      "game_id": "2026_04_LA_PHI",
@@ -2417,7 +2507,8 @@ window.SITE_DATA = {
       "winner": "LA",
       "we_were_right": false,
       "vegas_was_right": true
-     }
+     },
+     "qb_out": []
     },
     {
      "game_id": "2026_04_NE_BUF",
@@ -2458,7 +2549,8 @@ window.SITE_DATA = {
       "winner": "NE",
       "we_were_right": false,
       "vegas_was_right": false
-     }
+     },
+     "qb_out": []
     },
     {
      "game_id": "2026_04_NYJ_CHI",
@@ -2499,7 +2591,14 @@ window.SITE_DATA = {
       "winner": "CHI",
       "we_were_right": true,
       "vegas_was_right": true
-     }
+     },
+     "qb_out": [
+      {
+       "team": "CHI",
+       "player": "Caleb Williams",
+       "reason": "out"
+      }
+     ]
     },
     {
      "game_id": "2026_04_TEN_BAL",
@@ -2540,7 +2639,8 @@ window.SITE_DATA = {
       "winner": "BAL",
       "we_were_right": true,
       "vegas_was_right": true
-     }
+     },
+     "qb_out": []
     },
     {
      "game_id": "2026_04_MIA_MIN",
@@ -2581,7 +2681,8 @@ window.SITE_DATA = {
       "winner": "MIN",
       "we_were_right": true,
       "vegas_was_right": true
-     }
+     },
+     "qb_out": []
     },
     {
      "game_id": "2026_04_DEN_SF",
@@ -2622,7 +2723,8 @@ window.SITE_DATA = {
       "winner": "SF",
       "we_were_right": true,
       "vegas_was_right": true
-     }
+     },
+     "qb_out": []
     },
     {
      "game_id": "2026_04_KC_LV",
@@ -2663,7 +2765,8 @@ window.SITE_DATA = {
       "winner": "KC",
       "we_were_right": true,
       "vegas_was_right": true
-     }
+     },
+     "qb_out": []
     },
     {
      "game_id": "2026_04_LAC_SEA",
@@ -2704,7 +2807,8 @@ window.SITE_DATA = {
       "winner": "SEA",
       "we_were_right": true,
       "vegas_was_right": true
-     }
+     },
+     "qb_out": []
     },
     {
      "game_id": "2026_04_DET_CAR",
@@ -2745,7 +2849,8 @@ window.SITE_DATA = {
       "winner": "CAR",
       "we_were_right": false,
       "vegas_was_right": false
-     }
+     },
+     "qb_out": []
     },
     {
      "game_id": "2026_04_ATL_NO",
@@ -2786,7 +2891,8 @@ window.SITE_DATA = {
       "winner": "ATL",
       "we_were_right": false,
       "vegas_was_right": false
-     }
+     },
+     "qb_out": []
     }
    ]
   },
@@ -2834,7 +2940,14 @@ window.SITE_DATA = {
       "winner": "TB",
       "we_were_right": false,
       "vegas_was_right": false
-     }
+     },
+     "qb_out": [
+      {
+       "team": "TB",
+       "player": "Baker Mayfield",
+       "reason": "out"
+      }
+     ]
     },
     {
      "game_id": "2026_05_PHI_JAX",
@@ -2875,7 +2988,8 @@ window.SITE_DATA = {
       "winner": "JAX",
       "we_were_right": true,
       "vegas_was_right": true
-     }
+     },
+     "qb_out": []
     },
     {
      "game_id": "2026_05_CHI_GB",
@@ -2916,7 +3030,8 @@ window.SITE_DATA = {
       "winner": "GB",
       "we_were_right": false,
       "vegas_was_right": false
-     }
+     },
+     "qb_out": []
     },
     {
      "game_id": "2026_05_CIN_MIA",
@@ -2957,7 +3072,8 @@ window.SITE_DATA = {
       "winner": "CIN",
       "we_were_right": true,
       "vegas_was_right": true
-     }
+     },
+     "qb_out": []
     },
     {
      "game_id": "2026_05_CLE_NYJ",
@@ -2998,7 +3114,8 @@ window.SITE_DATA = {
       "winner": "NYJ",
       "we_were_right": false,
       "vegas_was_right": true
-     }
+     },
+     "qb_out": []
     },
     {
      "game_id": "2026_05_HOU_TEN",
@@ -3039,7 +3156,8 @@ window.SITE_DATA = {
       "winner": "HOU",
       "we_were_right": true,
       "vegas_was_right": true
-     }
+     },
+     "qb_out": []
     },
     {
      "game_id": "2026_05_IND_PIT",
@@ -3080,7 +3198,8 @@ window.SITE_DATA = {
       "winner": "PIT",
       "we_were_right": true,
       "vegas_was_right": true
-     }
+     },
+     "qb_out": []
     },
     {
      "game_id": "2026_05_LV_NE",
@@ -3121,7 +3240,8 @@ window.SITE_DATA = {
       "winner": "NE",
       "we_were_right": true,
       "vegas_was_right": true
-     }
+     },
+     "qb_out": []
     },
     {
      "game_id": "2026_05_MIN_NO",
@@ -3162,7 +3282,8 @@ window.SITE_DATA = {
       "winner": "MIN",
       "we_were_right": true,
       "vegas_was_right": true
-     }
+     },
+     "qb_out": []
     },
     {
      "game_id": "2026_05_NYG_WAS",
@@ -3203,7 +3324,19 @@ window.SITE_DATA = {
       "winner": null,
       "we_were_right": null,
       "vegas_was_right": null
-     }
+     },
+     "qb_out": [
+      {
+       "team": "WAS",
+       "player": "Marcus Mariota",
+       "reason": "out"
+      },
+      {
+       "team": "NYG",
+       "player": "Jaxson Dart",
+       "reason": "injured reserve"
+      }
+     ]
     },
     {
      "game_id": "2026_05_DEN_LAC",
@@ -3244,7 +3377,8 @@ window.SITE_DATA = {
       "winner": "DEN",
       "we_were_right": true,
       "vegas_was_right": true
-     }
+     },
+     "qb_out": []
     },
     {
      "game_id": "2026_05_DET_ARI",
@@ -3285,7 +3419,8 @@ window.SITE_DATA = {
       "winner": "DET",
       "we_were_right": true,
       "vegas_was_right": true
-     }
+     },
+     "qb_out": []
     },
     {
      "game_id": "2026_05_SF_SEA",
@@ -3326,7 +3461,8 @@ window.SITE_DATA = {
       "winner": "SF",
       "we_were_right": false,
       "vegas_was_right": false
-     }
+     },
+     "qb_out": []
     },
     {
      "game_id": "2026_05_BAL_ATL",
@@ -3367,7 +3503,14 @@ window.SITE_DATA = {
       "winner": "BAL",
       "we_were_right": true,
       "vegas_was_right": false
-     }
+     },
+     "qb_out": [
+      {
+       "team": "BAL",
+       "player": "Lamar Jackson",
+       "reason": "out"
+      }
+     ]
     },
     {
      "game_id": "2026_05_BUF_LA",
@@ -3408,7 +3551,8 @@ window.SITE_DATA = {
       "winner": "BUF",
       "we_were_right": false,
       "vegas_was_right": false
-     }
+     },
+     "qb_out": []
     }
    ]
   },
@@ -3461,7 +3605,8 @@ window.SITE_DATA = {
       "winner": "DEN",
       "we_were_right": true,
       "vegas_was_right": false
-     }
+     },
+     "qb_out": []
     },
     {
      "game_id": "2026_06_HOU_JAX",
@@ -3502,7 +3647,8 @@ window.SITE_DATA = {
       "winner": "HOU",
       "we_were_right": false,
       "vegas_was_right": false
-     }
+     },
+     "qb_out": []
     },
     {
      "game_id": "2026_06_BAL_CLE",
@@ -3543,7 +3689,14 @@ window.SITE_DATA = {
       "winner": "CLE",
       "we_were_right": false,
       "vegas_was_right": false
-     }
+     },
+     "qb_out": [
+      {
+       "team": "BAL",
+       "player": "Lamar Jackson",
+       "reason": "out"
+      }
+     ]
     },
     {
      "game_id": "2026_06_CAR_PHI",
@@ -3584,7 +3737,14 @@ window.SITE_DATA = {
       "winner": "CAR",
       "we_were_right": false,
       "vegas_was_right": true
-     }
+     },
+     "qb_out": [
+      {
+       "team": "PHI",
+       "player": "Jalen Hurts",
+       "reason": "injured reserve"
+      }
+     ]
     },
     {
      "game_id": "2026_06_CHI_ATL",
@@ -3625,7 +3785,8 @@ window.SITE_DATA = {
       "winner": "CHI",
       "we_were_right": true,
       "vegas_was_right": true
-     }
+     },
+     "qb_out": []
     },
     {
      "game_id": "2026_06_NO_NYG",
@@ -3666,7 +3827,8 @@ window.SITE_DATA = {
       "winner": "NO",
       "we_were_right": false,
       "vegas_was_right": true
-     }
+     },
+     "qb_out": []
     },
     {
      "game_id": "2026_06_NYJ_NE",
@@ -3707,7 +3869,8 @@ window.SITE_DATA = {
       "winner": "NE",
       "we_were_right": true,
       "vegas_was_right": true
-     }
+     },
+     "qb_out": []
     },
     {
      "game_id": "2026_06_PIT_TB",
@@ -3748,7 +3911,14 @@ window.SITE_DATA = {
       "winner": "PIT",
       "we_were_right": true,
       "vegas_was_right": true
-     }
+     },
+     "qb_out": [
+      {
+       "team": "TB",
+       "player": "Baker Mayfield",
+       "reason": "out"
+      }
+     ]
     },
     {
      "game_id": "2026_06_TEN_IND",
@@ -3789,7 +3959,8 @@ window.SITE_DATA = {
       "winner": "TEN",
       "we_were_right": false,
       "vegas_was_right": false
-     }
+     },
+     "qb_out": []
     },
     {
      "game_id": "2026_06_ARI_LA",
@@ -3830,7 +4001,8 @@ window.SITE_DATA = {
       "winner": "ARI",
       "we_were_right": false,
       "vegas_was_right": false
-     }
+     },
+     "qb_out": []
     },
     {
      "game_id": "2026_06_BUF_LV",
@@ -3871,7 +4043,8 @@ window.SITE_DATA = {
       "winner": "BUF",
       "we_were_right": true,
       "vegas_was_right": true
-     }
+     },
+     "qb_out": []
     },
     {
      "game_id": "2026_06_LAC_KC",
@@ -3912,7 +4085,8 @@ window.SITE_DATA = {
       "winner": "KC",
       "we_were_right": true,
       "vegas_was_right": true
-     }
+     },
+     "qb_out": []
     },
     {
      "game_id": "2026_06_DAL_GB",
@@ -3953,7 +4127,8 @@ window.SITE_DATA = {
       "winner": "GB",
       "we_were_right": true,
       "vegas_was_right": true
-     }
+     },
+     "qb_out": []
     },
     {
      "game_id": "2026_06_WAS_SF",
@@ -3994,7 +4169,8 @@ window.SITE_DATA = {
       "winner": "SF",
       "we_were_right": true,
       "vegas_was_right": true
-     }
+     },
+     "qb_out": []
     }
    ]
   },
@@ -4041,7 +4217,8 @@ window.SITE_DATA = {
       "home_field": 48,
       "edge": 8
      },
-     "result": null
+     "result": null,
+     "qb_out": []
     },
     {
      "game_id": "2026_07_PIT_NO",
@@ -4076,7 +4253,8 @@ window.SITE_DATA = {
       "home_field": 0,
       "edge": -132
      },
-     "result": null
+     "result": null,
+     "qb_out": []
     },
     {
      "game_id": "2026_07_CIN_BAL",
@@ -4111,7 +4289,8 @@ window.SITE_DATA = {
       "home_field": 48,
       "edge": 78
      },
-     "result": null
+     "result": null,
+     "qb_out": []
     },
     {
      "game_id": "2026_07_CLE_TEN",
@@ -4146,7 +4325,8 @@ window.SITE_DATA = {
       "home_field": 48,
       "edge": -90
      },
-     "result": null
+     "result": null,
+     "qb_out": []
     },
     {
      "game_id": "2026_07_IND_MIN",
@@ -4181,7 +4361,8 @@ window.SITE_DATA = {
       "home_field": 48,
       "edge": 257
      },
-     "result": null
+     "result": null,
+     "qb_out": []
     },
     {
      "game_id": "2026_07_MIA_NYJ",
@@ -4216,7 +4397,8 @@ window.SITE_DATA = {
       "home_field": 48,
       "edge": 56
      },
-     "result": null
+     "result": null,
+     "qb_out": []
     },
     {
      "game_id": "2026_07_NYG_HOU",
@@ -4251,7 +4433,8 @@ window.SITE_DATA = {
       "home_field": 48,
       "edge": 161
      },
-     "result": null
+     "result": null,
+     "qb_out": []
     },
     {
      "game_id": "2026_07_SF_ATL",
@@ -4286,7 +4469,8 @@ window.SITE_DATA = {
       "home_field": 48,
       "edge": -153
      },
-     "result": null
+     "result": null,
+     "qb_out": []
     },
     {
      "game_id": "2026_07_TB_CAR",
@@ -4321,7 +4505,8 @@ window.SITE_DATA = {
       "home_field": 48,
       "edge": 120
      },
-     "result": null
+     "result": null,
+     "qb_out": []
     },
     {
      "game_id": "2026_07_DEN_ARI",
@@ -4356,7 +4541,8 @@ window.SITE_DATA = {
       "home_field": 48,
       "edge": -177
      },
-     "result": null
+     "result": null,
+     "qb_out": []
     },
     {
      "game_id": "2026_07_GB_DET",
@@ -4391,7 +4577,8 @@ window.SITE_DATA = {
       "home_field": 48,
       "edge": 60
      },
-     "result": null
+     "result": null,
+     "qb_out": []
     },
     {
      "game_id": "2026_07_LA_LV",
@@ -4426,7 +4613,8 @@ window.SITE_DATA = {
       "home_field": 48,
       "edge": -85
      },
-     "result": null
+     "result": null,
+     "qb_out": []
     },
     {
      "game_id": "2026_07_KC_SEA",
@@ -4461,7 +4649,8 @@ window.SITE_DATA = {
       "home_field": 48,
       "edge": 90
      },
-     "result": null
+     "result": null,
+     "qb_out": []
     },
     {
      "game_id": "2026_07_DAL_PHI",
@@ -4496,7 +4685,14 @@ window.SITE_DATA = {
       "home_field": 48,
       "edge": 103
      },
-     "result": null
+     "result": null,
+     "qb_out": [
+      {
+       "team": "PHI",
+       "player": "Jalen Hurts",
+       "reason": "injured reserve"
+      }
+     ]
     }
    ]
   }

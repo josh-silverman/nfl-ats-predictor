@@ -4,13 +4,13 @@
 **M2 scored:** S1 PASS, S2 PASS, **S3 FAIL** (reliability 0.00234 > 0.002). By the pre-set rule, **raw Elo is the deliverable**. Post-hoc: raw Elo is 0.00208, and the threshold sat at about the 93rd percentile of noise (mistake #10). Logged as W3.
 **M2 skeptic:** no leakage, no blockers. Wording corrected: both models fail S3, the miss is partly a real home-team bias (+2.4 to +3.0 pts), and S1/S2 were near-certain. 2026 calibration checks and the M4 baseline (raw Elo) were pre-registered in CLAUDE.md before any 2026 outcome was viewed. Notebook outputs saved via `scripts/run_notebook.py`.
 **M3 in progress:** `src/nfl_ats/ledger.py` + `scripts/predict_week.py` (as-of masking, skip-started, stale-data guard, no overwrite). 55 tests. Backfill weeks 1–5 (79 games, pseudo-live) in `ledger/backfill/`. **Week 6 locked live** 2026-10-15 14:51 ET (14 games, before the 20:15 TNF kickoff).
-**Weekly routine (Josh):** before each Thursday kickoff, run `conda run -n nfl-ats python scripts/predict_week.py --week N`, then commit `ledger/`. Week 7 is due before Thu 2026-10-22 20:15 ET.
+**Live record:** Week 6 (first live week) scored 2026-10-22: Elo picked 8 of 14 winners, Vegas 9 of 14. One week is noise; home teams went 6-8 vs. a predicted ~9. **Week 7 locked** 2026-10-22 15:50 ET (14 games, commit 233dda2, before the 20:15 TNF kickoff).
 **Hardening sprint done (decision #20):** H1, H2, and H3 all rejected by the pre-set keep rule. **Raw Elo stays the deliverable**, with no shadow models and no Saturday lock. Win-model experiment count: 6.
 **M5 drafted:** README case study written. `scripts/score_ledger.py` writes `reports/live_2026.md` using the pre-registered 2026 checks. Week 6 is locked twice (14:51 by Claude, 15:07 by Josh: identical, and the earliest lock counts).
-**Site live:** https://josh-silverman.github.io/nfl-ats-predictor/ (repo github.com/josh-silverman/nfl-ats-predictor, public). "Josh's NFL Elo" in `site/` (This Week, Record, Rankings, How It Works). Dark theme, plain language, Chart.js. `scripts/build_site.py`, Pages workflow. 68 tests.
-**Weekly routine:** Thursday before kickoff: `predict_week.py --week N` → `build_site.py` → commit → push. After Monday night: `score_ledger.py` → `build_site.py` → commit → push. Week 7 is due before Thu 2026-10-22 20:15 ET.
+**Site live:** https://josh-silverman.github.io/nfl-ats-predictor/ (repo github.com/josh-silverman/nfl-ats-predictor, public). "Josh's NFL Elo" in `site/` (This Week, Record, Rankings, How It Works). Light redesign (one game per screen), plain language, Chart.js. `scripts/build_site.py`, Pages workflow. 72 tests.
+**Weekly routine:** Thursday before kickoff: `predict_week.py --week N` → `build_site.py` → commit → push. After Monday night: `score_ledger.py` → `build_site.py` → commit → push. Next: score Week 7 after MNF (Mon 2026-10-26); lock Week 8 before Thu 2026-10-29 kickoff. If `conda run` errors, call `~/opt/anaconda3/envs/nfl-ats/bin/python` directly.
 **Remaining:** S4 needs ≥ 8 locked weeks (week 13, about Dec 3), then the final README numbers and the final skeptic review (M5).
-**Last updated:** 2026-10-15
+**Last updated:** 2026-10-22
 
 ## Done
 - Planning docs, CLAUDE.md, learning files, skeptic agent, slash commands.

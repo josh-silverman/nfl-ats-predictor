@@ -13,7 +13,7 @@ import pandas as pd
 from nfl_ats.data import PROJECT_ROOT, regular_season
 from nfl_ats.elo import HOME_FIELD, rating_history
 from nfl_ats.evaluate import accuracy, bootstrap_ci
-from nfl_ats.ledger import EASTERN, LEDGER_DIR, kickoff_times, load_ledger, score_ledger
+from nfl_ats.ledger import EASTERN, LEDGER_DIR, attach_qb, kickoff_times, load_ledger, score_ledger
 
 REPO_URL = "https://github.com/josh-silverman/nfl-ats-predictor"
 BIG_GAP = 0.15  # flag games where we and Vegas differ by 15+ points of win chance
@@ -63,6 +63,28 @@ def lock_status(commit: tuple[str, datetime] | None, first_kickoff: pd.Timestamp
     stamp = pd.Timestamp(when).tz_convert(EASTERN).strftime("%a %b %-d, %-I:%M %p ET")
     return {"locked": True, "before_kickoff": bool(before), "url": f"{REPO_URL}/commit/{sha}",
             "text": f"Locked {stamp}" + (", before kickoff" if before else ", AFTER first kickoff")}
+
+
+def headline(df: pd.DataFrame) -> pd.DataFrame:
+    """Add the pick the site shows: QB-adjusted Elo where it was locked (Week 8 on, decision #21), else raw Elo."""
+    out = df.copy()
+    has_qb = "p_elo_qb" in out.columns
+    out["p_pick"] = out["p_elo_qb"].fillna(out["p_elo"]) if has_qb else out["p_elo"]
+    if "elo_spread" in out.columns:
+        out["pick_spread"] = out["elo_spread_qb"].fillna(out["elo_spread"]) if has_qb else out["elo_spread"]
+    out["qb_adjusted"] = out["p_elo_qb"].notna() if has_qb else False
+    return out
+
+
+def qb_lock_status(season: int, week: int) -> dict | None:
+    """Badge for the week's latest Saturday QB lock (ledger/qb/), judged against the first game in that file."""
+    files = sorted((LEDGER_DIR / "qb").glob(f"{season}_wk{week:02d}_*.csv"))
+    if not files:
+        return None
+    first_kick = pd.to_datetime(pd.read_csv(files[-1])["kickoff_et"]).min().tz_localize(EASTERN)
+    lock = lock_status(first_commit(files[-1]), first_kick)
+    lock["text"] = lock["text"].replace("Locked", "QB update locked", 1)
+    return lock
 
 
 def _earliest_files(mode: str, season: int) -> dict[int, object]:
@@ -140,8 +162,11 @@ def game_cards(scored: pd.DataFrame, context: dict | None = None, closing: dict 
     """
     context, closing, notes = context or {}, closing or {}, notes or {}
     cards = []
-    for g in scored.sort_values(["kickoff_et", "game_id"]).itertuples(index=False):
-        p_home, p_mkt = float(g.p_elo), _num(g.p_market_at_pull)
+    for g in headline(scored).sort_values(["kickoff_et", "game_id"]).itertuples(index=False):
+        p_home, p_mkt = float(g.p_pick), _num(g.p_market_at_pull)
+        qb_teams = [t for t, side in [(g.home_team, "home"), (g.away_team, "away")]
+                    if g.qb_adjusted and getattr(g, f"{side}_qb_out", 0) == 1]
+        qb_pts = int(g.qb_pts) if qb_teams else 0
         fav = g.home_team if p_home >= 0.5 else g.away_team
         result = None
         if pd.notna(g.home_score):
@@ -159,25 +184,28 @@ def game_cards(scored: pd.DataFrame, context: dict | None = None, closing: dict 
             "kickoff": kick.strftime("%a %b %-d · %-I:%M %p ET"), "day_group": day_group(kick),
             "p_home": round(p_home, 3), "p_vegas_home": None if p_mkt is None else round(p_mkt, 3),
             "favorite": fav, "confidence": confidence(p_home),
-            "our_line": format_line(g.elo_spread, g.home_team, g.away_team),
+            "our_line": format_line(g.pick_spread, g.home_team, g.away_team),
             "vegas_line_at_lock": format_line(_num(getattr(g, "spread_line_at_pull", np.nan)), g.home_team, g.away_team),
             "closing_line": format_line(closing.get(g.game_id), g.home_team, g.away_team) if started else None,
             "big_gap": p_mkt is not None and abs(p_home - p_mkt) >= BIG_GAP,
             "home_side": side(g.home_team), "away_side": side(g.away_team),
             "why": {"home_rating": round(float(g.home_elo)), "away_rating": round(float(g.away_elo)), "home_field": hfa,
-                    "edge": round(float(g.home_elo) + hfa - float(g.away_elo))},
+                    "qb_pts": qb_pts, "qb_teams": qb_teams,
+                    "edge": round(float(g.home_elo) + hfa - float(g.away_elo)
+                                  - qb_pts * (g.home_team in qb_teams) + qb_pts * (g.away_team in qb_teams))},
             "result": result,
-            "qb_out": notes.get(g.game_id, []),
+            "qb_adjusted": bool(g.qb_adjusted),
+            "qb_out": [{**q, "in_pick": q["team"] in qb_teams} for q in notes.get(g.game_id, [])],
         })
     return cards
 
 
 def record_summary(scored_live: pd.DataFrame) -> dict:
     """W-L for us and Vegas on live weeks only, week by week, plus up to three plain extra lines."""
-    d = scored_live[scored_live["home_win"].notna()].copy()
+    d = headline(scored_live[scored_live["home_win"].notna()])
     if d.empty:
         return {"games": 0, "by_week": [], "extra": []}
-    d["ours"] = ((d["p_elo"] >= 0.5) == (d["home_win"] == 1)).astype(int)
+    d["ours"] = ((d["p_pick"] >= 0.5) == (d["home_win"] == 1)).astype(int)
     has_mkt = d["p_market_at_pull"].notna()
     d["vegas"] = ((d["p_market_at_pull"] >= 0.5) == (d["home_win"] == 1)).astype(float).where(has_mkt)
     weekly = d.groupby("week").agg(games=("ours", "size"), ours=("ours", "sum"), vegas=("vegas", "sum"),
@@ -186,9 +214,9 @@ def record_summary(scored_live: pd.DataFrame) -> dict:
                 "vegas_games": int(r.vegas_games)} for w, r in weekly.iterrows()]
     extra = []
     if len(d) >= 10:
-        _, lo, hi = bootstrap_ci(accuracy, d["home_win"].to_numpy(), (d["p_elo"] >= 0.5).astype(float).to_numpy())
+        _, lo, hi = bootstrap_ci(accuracy, d["home_win"].to_numpy(), (d["p_pick"] >= 0.5).astype(float).to_numpy())
         extra.append(f"Honest range for our hit rate so far: {lo:.0%} to {hi:.0%} (small samples swing a lot).")
-        conf = np.maximum(d["p_elo"], 1 - d["p_elo"])
+        conf = np.maximum(d["p_pick"], 1 - d["p_pick"])
         sure = conf >= 0.6
         if sure.sum() >= 5:
             expected = conf[sure].mean()
@@ -234,7 +262,8 @@ def rankings(history: pd.DataFrame, schedules: pd.DataFrame, current_cards: list
 
 def worked_example(scored: pd.DataFrame, history: pd.DataFrame) -> dict | None:
     """One decided game, step by step, using the numbers locked before it."""
-    d = scored[scored["home_win"].notna()]
+    d = headline(scored[scored["home_win"].notna()])
+    d = d[~d["qb_adjusted"] | (d["p_pick"] == d["p_elo"])]  # keep the plain rating example: no QB adjustment
     if d.empty:
         return None
     g = d.sort_values(["week", "p_elo"], ascending=[False, False]).iloc[0]  # latest week's most lopsided call
@@ -261,11 +290,14 @@ def build_site_data(schedules: pd.DataFrame, season: int = 2026, backtest: dict 
     weeks, scored_by_mode = [], {}
     for mode in ["backfill", "live"]:
         ledger = load_ledger(mode, season)
+        if mode == "live":
+            ledger = attach_qb(ledger, season)
         scored_by_mode[mode] = score_ledger(ledger, schedules) if not ledger.empty else pd.DataFrame()
         for week, path in _earliest_files(mode, season).items():
             s = scored_by_mode[mode]
             weeks.append({"week": week, "mode": mode,
                           "lock": lock_status(first_commit(path), first_kick[week]) if mode == "live" else None,
+                          "qb_lock": qb_lock_status(season, week) if mode == "live" else None,
                           "games": game_cards(s[s["week"] == week], team_context(reg, history, season, week),
                                               closing, now, notes)})
     weeks.sort(key=lambda w: w["week"])

@@ -61,7 +61,8 @@ class TestSiteData(unittest.TestCase):
         self.assertTrue(c["big_gap"])
         self.assertEqual(c["our_line"], f"PHI {MINUS}4.0")
         self.assertEqual(c["vegas_line_at_lock"], f"CAR {MINUS}3.5")  # negative home margin = away favored
-        self.assertEqual(c["why"], {"home_rating": 1521, "away_rating": 1469, "home_field": 48, "edge": 100})
+        self.assertEqual(c["why"], {"home_rating": 1521, "away_rating": 1469, "home_field": 48, "qb_pts": 0,
+                                     "qb_teams": [], "edge": 100})
         self.assertIsNone(c["result"])
 
     def test_closing_line_hidden_until_kickoff(self):
@@ -78,9 +79,27 @@ class TestSiteData(unittest.TestCase):
                               "qb_out": [1, 0], "reason": ["injured reserve", None]})
         c = game_cards(self._scored(), notes=qb_notes(flags))[0]
         json.dumps(c)
-        self.assertEqual(c["qb_out"], [{"team": "PHI", "player": "Jalen Hurts", "reason": "injured reserve"}])
+        self.assertEqual(c["qb_out"], [{"team": "PHI", "player": "Jalen Hurts", "reason": "injured reserve",
+                                        "in_pick": False}])
         self.assertEqual(c["p_home"], 0.64)                       # news only: the locked % is untouched
         self.assertEqual(game_cards(self._scored())[0]["qb_out"], [])
+
+    def test_qb_adjusted_lock_becomes_the_headline(self):
+        """From Week 8 the card shows the QB-adjusted lock; the 'why' edge adds up to it."""
+        scored = self._scored().assign(home_qb_out=1, away_qb_out=0, qb_pts=90, elo_spread_qb=0.4, p_elo_qb=0.513)
+        flags = pd.DataFrame({"game_id": ["g1"], "team": ["PHI"], "player": ["Jalen Hurts"], "qb_out": [1],
+                              "reason": ["injured reserve"]})
+        c = game_cards(scored, notes=qb_notes(flags))[0]
+        self.assertTrue(c["qb_adjusted"])
+        self.assertEqual(c["p_home"], 0.513)
+        self.assertEqual(c["our_line"], f"PHI {MINUS}0.4")
+        self.assertEqual(c["why"]["edge"], 100 - 90)
+        self.assertTrue(c["qb_out"][0]["in_pick"])
+        rec = record_summary(pd.DataFrame({"week": [8], "home_win": [0.0], "p_elo": [0.6], "p_elo_qb": [0.45],
+                                           "p_market_at_pull": [0.4]}))
+        self.assertEqual(rec["by_week"][0]["ours"], 1)        # the record grades the QB-adjusted pick
+
+
 
     def test_line_formatting(self):
         self.assertEqual(format_line(0.0, "A", "B"), "Pick'em")

@@ -4,7 +4,7 @@ window.SITE_DATA = {
   "title": "Josh's NFL Elo",
   "season": 2026,
   "repo": "https://github.com/josh-silverman/nfl-ats-predictor",
-  "generated": "Oct 22, 2026 4:01 PM ET",
+  "generated": "Oct 22, 2026 4:15 PM ET",
   "current_week": 7
  },
  "teams": {
@@ -142,6 +142,7 @@ window.SITE_DATA = {
    "week": 1,
    "mode": "backfill",
    "lock": null,
+   "qb_lock": null,
    "games": [
     {
      "game_id": "2026_01_NE_SEA",
@@ -174,6 +175,8 @@ window.SITE_DATA = {
       "home_rating": 1640,
       "away_rating": 1574,
       "home_field": 48,
+      "qb_pts": 0,
+      "qb_teams": [],
       "edge": 114
      },
      "result": {
@@ -183,6 +186,7 @@ window.SITE_DATA = {
       "we_were_right": true,
       "vegas_was_right": true
      },
+     "qb_adjusted": false,
      "qb_out": []
     },
     {
@@ -216,6 +220,8 @@ window.SITE_DATA = {
       "home_rating": 1602,
       "away_rating": 1559,
       "home_field": 0,
+      "qb_pts": 0,
+      "qb_teams": [],
       "edge": 42
      },
      "result": {
@@ -225,6 +231,7 @@ window.SITE_DATA = {
       "we_were_right": false,
       "vegas_was_right": false
      },
+     "qb_adjusted": false,
      "qb_out": []
     },
     {
@@ -258,6 +265,8 @@ window.SITE_DATA = {
       "home_rating": 1534,
       "away_rating": 1475,
       "home_field": 48,
+      "qb_pts": 0,
+      "qb_teams": [],
       "edge": 106
      },
      "result": {
@@ -267,6 +276,7 @@ window.SITE_DATA = {
       "we_were_right": true,
       "vegas_was_right": true
      },
+     "qb_adjusted": false,
      "qb_out": []
     },
     {
@@ -300,6 +310,8 @@ window.SITE_DATA = {
       "home_rating": 1470,
       "away_rating": 1547,
       "home_field": 48,
+      "qb_pts": 0,
+      "qb_teams": [],
       "edge": -29
      },
      "result": {
@@ -309,6 +321,7 @@ window.SITE_DATA = {
       "we_were_right": true,
       "vegas_was_right": true
      },
+     "qb_adjusted": false,
      "qb_out": []
     },
     {
@@ -342,6 +355,8 @@ window.SITE_DATA = {
       "home_rating": 1605,
       "away_rating": 1603,
       "home_field": 48,
+      "qb_pts": 0,
+      "qb_teams": [],
       "edge": 50
      },
      "result": {
@@ -351,6 +366,7 @@ window.SITE_DATA = {
       "we_were_right": false,
       "vegas_was_right": true
      },
+     "qb_adjusted": false,
      "qb_out": []
     },
     {
@@ -384,6 +400,8 @@ window.SITE_DATA = {
       "home_rating": 1438,
       "away_rating": 1532,
       "home_field": 48,
+      "qb_pts": 0,
+      "qb_teams": [],
       "edge": -46
      },
      "result": {
@@ -393,6 +411,7 @@ window.SITE_DATA = {
       "we_were_right": true,
       "vegas_was_right": true
      },
+     "qb_adjusted": false,
      "qb_out": []
     },
     {
@@ -426,6 +445,8 @@ window.SITE_DATA = {
       "home_rating": 1582,
       "away_rating": 1429,
       "home_field": 48,
+      "qb_pts": 0,
+      "qb_teams": [],
       "edge": 201
      },
      "result": {
@@ -435,6 +456,7 @@ window.SITE_DATA = {
       "we_were_right": true,
       "vegas_was_right": true
      },
+     "qb_adjusted": false,
      "qb_out": []
     },
     {
@@ -468,6 +490,8 @@ window.SITE_DATA = {
       "home_rating": 1563,
       "away_rating": 1442,
       "home_field": 48,
+      "qb_pts": 0,
+      "qb_teams": [],
       "edge": 169
      },
      "result": {
@@ -477,6 +501,7 @@ window.SITE_DATA = {
       "we_were_right": true,
       "vegas_was_right": true
      },
+     "qb_adjusted": false,
      "qb_out": []
     },
     {
@@ -510,6 +535,8 @@ window.SITE_DATA = {
       "home_rating": 1361,
       "away_rating": 1366,
       "home_field": 48,
+      "qb_pts": 0,
+      "qb_teams": [],
       "edge": 43
      },
      "result": {
@@ -519,6 +546,7 @@ window.SITE_DATA = {
       "we_were_right": false,
       "vegas_was_right": false
      },
+     "qb_adjusted": false,
      "qb_out": []
     },
     {
@@ -552,6 +580,8 @@ window.SITE_DATA = {
       "home_rating": 1485,
       "away_rating": 1484,
       "home_field": 48,
+      "qb_pts": 0,
+      "qb_teams": [],
       "edge": 50
      },
      "result": {
@@ -561,6 +591,7 @@ window.SITE_DATA = {
       "we_were_right": true,
       "vegas_was_right": true
      },
+     "qb_adjusted": false,
      "qb_out": []
     },
     {
@@ -594,6 +625,8 @@ window.SITE_DATA = {
       "home_rating": 1545,
       "away_rating": 1395,
       "home_field": 48,
+      "qb_pts": 0,
+      "qb_teams": [],
       "edge": 198
      },
      "result": {
@@ -603,6 +636,7 @@ window.SITE_DATA = {
       "we_were_right": false,
       "vegas_was_right": false
      },
+     "qb_adjusted": false,
      "qb_out": []
     },
     {
@@ -636,6 +670,8 @@ window.SITE_DATA = {
       "home_rating": 1559,
       "away_rating": 1542,
       "home_field": 48,
+      "qb_pts": 0,
+      "qb_teams": [],
       "edge": 65
      },
      "result": {
@@ -645,6 +681,7 @@ window.SITE_DATA = {
       "we_were_right": true,
       "vegas_was_right": true
      },
+     "qb_adjusted": false,
      "qb_out": []
     },
     {
@@ -678,6 +715,8 @@ window.SITE_DATA = {
       "home_rating": 1353,
       "away_rating": 1462,
       "home_field": 48,
+      "qb_pts": 0,
+      "qb_teams": [],
       "edge": -61
      },
      "result": {
@@ -687,6 +726,7 @@ window.SITE_DATA = {
       "we_were_right": false,
       "vegas_was_right": true
      },
+     "qb_adjusted": false,
      "qb_out": []
     },
     {
@@ -720,6 +760,8 @@ window.SITE_DATA = {
       "home_rating": 1562,
       "away_rating": 1458,
       "home_field": 48,
+      "qb_pts": 0,
+      "qb_teams": [],
       "edge": 151
      },
      "result": {
@@ -729,6 +771,7 @@ window.SITE_DATA = {
       "we_were_right": true,
       "vegas_was_right": true
      },
+     "qb_adjusted": false,
      "qb_out": []
     },
     {
@@ -762,6 +805,8 @@ window.SITE_DATA = {
       "home_rating": 1427,
       "away_rating": 1460,
       "home_field": 48,
+      "qb_pts": 0,
+      "qb_teams": [],
       "edge": 15
      },
      "result": {
@@ -771,6 +816,7 @@ window.SITE_DATA = {
       "we_were_right": true,
       "vegas_was_right": false
      },
+     "qb_adjusted": false,
      "qb_out": []
     },
     {
@@ -804,6 +850,8 @@ window.SITE_DATA = {
       "home_rating": 1490,
       "away_rating": 1617,
       "home_field": 48,
+      "qb_pts": 0,
+      "qb_teams": [],
       "edge": -80
      },
      "result": {
@@ -813,6 +861,7 @@ window.SITE_DATA = {
       "we_were_right": false,
       "vegas_was_right": true
      },
+     "qb_adjusted": false,
      "qb_out": []
     }
    ]
@@ -821,6 +870,7 @@ window.SITE_DATA = {
    "week": 2,
    "mode": "backfill",
    "lock": null,
+   "qb_lock": null,
    "games": [
     {
      "game_id": "2026_02_DET_BUF",
@@ -853,6 +903,8 @@ window.SITE_DATA = {
       "home_rating": 1624,
       "away_rating": 1567,
       "home_field": 48,
+      "qb_pts": 0,
+      "qb_teams": [],
       "edge": 105
      },
      "result": {
@@ -862,6 +914,7 @@ window.SITE_DATA = {
       "we_were_right": true,
       "vegas_was_right": true
      },
+     "qb_adjusted": false,
      "qb_out": []
     },
     {
@@ -895,6 +948,8 @@ window.SITE_DATA = {
       "home_rating": 1461,
       "away_rating": 1411,
       "home_field": 48,
+      "qb_pts": 0,
+      "qb_teams": [],
       "edge": 98
      },
      "result": {
@@ -904,6 +959,7 @@ window.SITE_DATA = {
       "we_were_right": false,
       "vegas_was_right": true
      },
+     "qb_adjusted": false,
      "qb_out": []
     },
     {
@@ -937,6 +993,8 @@ window.SITE_DATA = {
       "home_rating": 1584,
       "away_rating": 1502,
       "home_field": 48,
+      "qb_pts": 0,
+      "qb_teams": [],
       "edge": 130
      },
      "result": {
@@ -946,6 +1004,7 @@ window.SITE_DATA = {
       "we_were_right": false,
       "vegas_was_right": false
      },
+     "qb_adjusted": false,
      "qb_out": []
     },
     {
@@ -979,6 +1038,8 @@ window.SITE_DATA = {
       "home_rating": 1467,
       "away_rating": 1415,
       "home_field": 48,
+      "qb_pts": 0,
+      "qb_teams": [],
       "edge": 101
      },
      "result": {
@@ -988,6 +1049,7 @@ window.SITE_DATA = {
       "we_were_right": false,
       "vegas_was_right": false
      },
+     "qb_adjusted": false,
      "qb_out": []
     },
     {
@@ -1021,6 +1083,8 @@ window.SITE_DATA = {
       "home_rating": 1396,
       "away_rating": 1519,
       "home_field": 48,
+      "qb_pts": 0,
+      "qb_teams": [],
       "edge": -75
      },
      "result": {
@@ -1030,6 +1094,7 @@ window.SITE_DATA = {
       "we_were_right": true,
       "vegas_was_right": true
      },
+     "qb_adjusted": false,
      "qb_out": []
     },
     {
@@ -1063,6 +1128,8 @@ window.SITE_DATA = {
       "home_rating": 1559,
       "away_rating": 1582,
       "home_field": 48,
+      "qb_pts": 0,
+      "qb_teams": [],
       "edge": 25
      },
      "result": {
@@ -1072,6 +1139,7 @@ window.SITE_DATA = {
       "we_were_right": false,
       "vegas_was_right": false
      },
+     "qb_adjusted": false,
      "qb_out": []
     },
     {
@@ -1105,6 +1173,8 @@ window.SITE_DATA = {
       "home_rating": 1574,
       "away_rating": 1438,
       "home_field": 48,
+      "qb_pts": 0,
+      "qb_teams": [],
       "edge": 184
      },
      "result": {
@@ -1114,6 +1184,7 @@ window.SITE_DATA = {
       "we_were_right": false,
       "vegas_was_right": false
      },
+     "qb_adjusted": false,
      "qb_out": []
     },
     {
@@ -1147,6 +1218,8 @@ window.SITE_DATA = {
       "home_rating": 1331,
       "away_rating": 1568,
       "home_field": 48,
+      "qb_pts": 0,
+      "qb_teams": [],
       "edge": -189
      },
      "result": {
@@ -1156,6 +1229,7 @@ window.SITE_DATA = {
       "we_were_right": true,
       "vegas_was_right": true
      },
+     "qb_adjusted": false,
      "qb_out": []
     },
     {
@@ -1189,6 +1263,8 @@ window.SITE_DATA = {
       "home_rating": 1565,
       "away_rating": 1548,
       "home_field": 48,
+      "qb_pts": 0,
+      "qb_teams": [],
       "edge": 65
      },
      "result": {
@@ -1198,6 +1274,7 @@ window.SITE_DATA = {
       "we_were_right": true,
       "vegas_was_right": true
      },
+     "qb_adjusted": false,
      "qb_out": []
     },
     {
@@ -1231,6 +1308,8 @@ window.SITE_DATA = {
       "home_rating": 1578,
       "away_rating": 1596,
       "home_field": 48,
+      "qb_pts": 0,
+      "qb_teams": [],
       "edge": 30
      },
      "result": {
@@ -1240,6 +1319,7 @@ window.SITE_DATA = {
       "we_were_right": true,
       "vegas_was_right": true
      },
+     "qb_adjusted": false,
      "qb_out": []
     },
     {
@@ -1273,6 +1353,8 @@ window.SITE_DATA = {
       "home_rating": 1502,
       "away_rating": 1386,
       "home_field": 48,
+      "qb_pts": 0,
+      "qb_teams": [],
       "edge": 165
      },
      "result": {
@@ -1282,6 +1364,7 @@ window.SITE_DATA = {
       "we_were_right": false,
       "vegas_was_right": false
      },
+     "qb_adjusted": false,
      "qb_out": []
     },
     {
@@ -1315,6 +1398,8 @@ window.SITE_DATA = {
       "home_rating": 1594,
       "away_rating": 1429,
       "home_field": 48,
+      "qb_pts": 0,
+      "qb_teams": [],
       "edge": 213
      },
      "result": {
@@ -1324,6 +1409,7 @@ window.SITE_DATA = {
       "we_were_right": true,
       "vegas_was_right": true
      },
+     "qb_adjusted": false,
      "qb_out": []
     },
     {
@@ -1357,6 +1443,8 @@ window.SITE_DATA = {
       "home_rating": 1438,
       "away_rating": 1649,
       "home_field": 48,
+      "qb_pts": 0,
+      "qb_teams": [],
       "edge": -163
      },
      "result": {
@@ -1366,11 +1454,13 @@ window.SITE_DATA = {
       "we_were_right": true,
       "vegas_was_right": true
      },
+     "qb_adjusted": false,
      "qb_out": [
       {
        "team": "SEA",
        "player": "Sam Darnold",
-       "reason": "out"
+       "reason": "out",
+       "in_pick": false
       }
      ]
     },
@@ -1405,6 +1495,8 @@ window.SITE_DATA = {
       "home_rating": 1439,
       "away_rating": 1452,
       "home_field": 48,
+      "qb_pts": 0,
+      "qb_teams": [],
       "edge": 35
      },
      "result": {
@@ -1414,6 +1506,7 @@ window.SITE_DATA = {
       "we_were_right": true,
       "vegas_was_right": true
      },
+     "qb_adjusted": false,
      "qb_out": []
     },
     {
@@ -1447,6 +1540,8 @@ window.SITE_DATA = {
       "home_rating": 1529,
       "away_rating": 1444,
       "home_field": 48,
+      "qb_pts": 0,
+      "qb_teams": [],
       "edge": 133
      },
      "result": {
@@ -1456,6 +1551,7 @@ window.SITE_DATA = {
       "we_were_right": true,
       "vegas_was_right": true
      },
+     "qb_adjusted": false,
      "qb_out": []
     },
     {
@@ -1489,6 +1585,8 @@ window.SITE_DATA = {
       "home_rating": 1567,
       "away_rating": 1448,
       "home_field": 48,
+      "qb_pts": 0,
+      "qb_teams": [],
       "edge": 167
      },
      "result": {
@@ -1498,6 +1596,7 @@ window.SITE_DATA = {
       "we_were_right": true,
       "vegas_was_right": true
      },
+     "qb_adjusted": false,
      "qb_out": []
     }
    ]
@@ -1506,6 +1605,7 @@ window.SITE_DATA = {
    "week": 3,
    "mode": "backfill",
    "lock": null,
+   "qb_lock": null,
    "games": [
     {
      "game_id": "2026_03_ATL_GB",
@@ -1538,6 +1638,8 @@ window.SITE_DATA = {
       "home_rating": 1530,
       "away_rating": 1415,
       "home_field": 48,
+      "qb_pts": 0,
+      "qb_teams": [],
       "edge": 162
      },
      "result": {
@@ -1547,6 +1649,7 @@ window.SITE_DATA = {
       "we_were_right": false,
       "vegas_was_right": false
      },
+     "qb_adjusted": false,
      "qb_out": []
     },
     {
@@ -1580,6 +1683,8 @@ window.SITE_DATA = {
       "home_rating": 1436,
       "away_rating": 1458,
       "home_field": 48,
+      "qb_pts": 0,
+      "qb_teams": [],
       "edge": 27
      },
      "result": {
@@ -1589,6 +1694,7 @@ window.SITE_DATA = {
       "we_were_right": true,
       "vegas_was_right": false
      },
+     "qb_adjusted": false,
      "qb_out": []
     },
     {
@@ -1622,6 +1728,8 @@ window.SITE_DATA = {
       "home_rating": 1525,
       "away_rating": 1541,
       "home_field": 48,
+      "qb_pts": 0,
+      "qb_teams": [],
       "edge": 32
      },
      "result": {
@@ -1631,6 +1739,7 @@ window.SITE_DATA = {
       "we_were_right": true,
       "vegas_was_right": false
      },
+     "qb_adjusted": false,
      "qb_out": []
     },
     {
@@ -1664,6 +1773,8 @@ window.SITE_DATA = {
       "home_rating": 1435,
       "away_rating": 1545,
       "home_field": 48,
+      "qb_pts": 0,
+      "qb_teams": [],
       "edge": -61
      },
      "result": {
@@ -1673,6 +1784,7 @@ window.SITE_DATA = {
       "we_were_right": false,
       "vegas_was_right": false
      },
+     "qb_adjusted": false,
      "qb_out": []
     },
     {
@@ -1706,6 +1818,8 @@ window.SITE_DATA = {
       "home_rating": 1416,
       "away_rating": 1537,
       "home_field": 48,
+      "qb_pts": 0,
+      "qb_teams": [],
       "edge": -73
      },
      "result": {
@@ -1715,6 +1829,7 @@ window.SITE_DATA = {
       "we_were_right": true,
       "vegas_was_right": true
      },
+     "qb_adjusted": false,
      "qb_out": []
     },
     {
@@ -1748,6 +1863,8 @@ window.SITE_DATA = {
       "home_rating": 1640,
       "away_rating": 1462,
       "home_field": 48,
+      "qb_pts": 0,
+      "qb_teams": [],
       "edge": 225
      },
      "result": {
@@ -1757,6 +1874,7 @@ window.SITE_DATA = {
       "we_were_right": true,
       "vegas_was_right": true
      },
+     "qb_adjusted": false,
      "qb_out": []
     },
     {
@@ -1790,6 +1908,8 @@ window.SITE_DATA = {
       "home_rating": 1577,
       "away_rating": 1588,
       "home_field": 48,
+      "qb_pts": 0,
+      "qb_teams": [],
       "edge": 38
      },
      "result": {
@@ -1799,6 +1919,7 @@ window.SITE_DATA = {
       "we_were_right": true,
       "vegas_was_right": true
      },
+     "qb_adjusted": false,
      "qb_out": []
     },
     {
@@ -1832,6 +1953,8 @@ window.SITE_DATA = {
       "home_rating": 1551,
       "away_rating": 1386,
       "home_field": 48,
+      "qb_pts": 0,
+      "qb_teams": [],
       "edge": 213
      },
      "result": {
@@ -1841,6 +1964,7 @@ window.SITE_DATA = {
       "we_were_right": true,
       "vegas_was_right": true
      },
+     "qb_adjusted": false,
      "qb_out": []
     },
     {
@@ -1874,6 +1998,8 @@ window.SITE_DATA = {
       "home_rating": 1427,
       "away_rating": 1666,
       "home_field": 48,
+      "qb_pts": 0,
+      "qb_teams": [],
       "edge": -191
      },
      "result": {
@@ -1883,11 +2009,13 @@ window.SITE_DATA = {
       "we_were_right": false,
       "vegas_was_right": false
      },
+     "qb_adjusted": false,
      "qb_out": [
       {
        "team": "WAS",
        "player": "Jayden Daniels",
-       "reason": "out"
+       "reason": "out",
+       "in_pick": false
       }
      ]
     },
@@ -1922,6 +2050,8 @@ window.SITE_DATA = {
       "home_rating": 1432,
       "away_rating": 1323,
       "home_field": 48,
+      "qb_pts": 0,
+      "qb_teams": [],
       "edge": 156
      },
      "result": {
@@ -1931,11 +2061,13 @@ window.SITE_DATA = {
       "we_were_right": true,
       "vegas_was_right": true
      },
+     "qb_adjusted": false,
      "qb_out": [
       {
        "team": "NYG",
        "player": "Jaxson Dart",
-       "reason": "injured reserve"
+       "reason": "injured reserve",
+       "in_pick": false
       }
      ]
     },
@@ -1970,6 +2102,8 @@ window.SITE_DATA = {
       "home_rating": 1607,
       "away_rating": 1421,
       "home_field": 48,
+      "qb_pts": 0,
+      "qb_teams": [],
       "edge": 234
      },
      "result": {
@@ -1979,6 +2113,7 @@ window.SITE_DATA = {
       "we_were_right": true,
       "vegas_was_right": true
      },
+     "qb_adjusted": false,
      "qb_out": []
     },
     {
@@ -2012,6 +2147,8 @@ window.SITE_DATA = {
       "home_rating": 1446,
       "away_rating": 1603,
       "home_field": 48,
+      "qb_pts": 0,
+      "qb_teams": [],
       "edge": -109
      },
      "result": {
@@ -2021,6 +2158,7 @@ window.SITE_DATA = {
       "we_were_right": true,
       "vegas_was_right": true
      },
+     "qb_adjusted": false,
      "qb_out": []
     },
     {
@@ -2054,6 +2192,8 @@ window.SITE_DATA = {
       "home_rating": 1465,
       "away_rating": 1540,
       "home_field": 0,
+      "qb_pts": 0,
+      "qb_teams": [],
       "edge": -76
      },
      "result": {
@@ -2063,6 +2203,7 @@ window.SITE_DATA = {
       "we_were_right": true,
       "vegas_was_right": true
      },
+     "qb_adjusted": false,
      "qb_out": []
     },
     {
@@ -2096,6 +2237,8 @@ window.SITE_DATA = {
       "home_rating": 1472,
       "away_rating": 1426,
       "home_field": 48,
+      "qb_pts": 0,
+      "qb_teams": [],
       "edge": 94
      },
      "result": {
@@ -2105,6 +2248,7 @@ window.SITE_DATA = {
       "we_were_right": false,
       "vegas_was_right": false
      },
+     "qb_adjusted": false,
      "qb_out": []
     },
     {
@@ -2138,6 +2282,8 @@ window.SITE_DATA = {
       "home_rating": 1597,
       "away_rating": 1583,
       "home_field": 48,
+      "qb_pts": 0,
+      "qb_teams": [],
       "edge": 62
      },
      "result": {
@@ -2147,6 +2293,7 @@ window.SITE_DATA = {
       "we_were_right": true,
       "vegas_was_right": true
      },
+     "qb_adjusted": false,
      "qb_out": []
     },
     {
@@ -2180,6 +2327,8 @@ window.SITE_DATA = {
       "home_rating": 1538,
       "away_rating": 1575,
       "home_field": 48,
+      "qb_pts": 0,
+      "qb_teams": [],
       "edge": 10
      },
      "result": {
@@ -2189,11 +2338,13 @@ window.SITE_DATA = {
       "we_were_right": true,
       "vegas_was_right": false
      },
+     "qb_adjusted": false,
      "qb_out": [
       {
        "team": "CHI",
        "player": "Caleb Williams",
-       "reason": "out"
+       "reason": "out",
+       "in_pick": false
       }
      ]
     }
@@ -2203,6 +2354,7 @@ window.SITE_DATA = {
    "week": 4,
    "mode": "backfill",
    "lock": null,
+   "qb_lock": null,
    "games": [
     {
      "game_id": "2026_04_PIT_CLE",
@@ -2235,6 +2387,8 @@ window.SITE_DATA = {
       "home_rating": 1449,
       "away_rating": 1537,
       "home_field": 48,
+      "qb_pts": 0,
+      "qb_teams": [],
       "edge": -40
      },
      "result": {
@@ -2244,6 +2398,7 @@ window.SITE_DATA = {
       "we_were_right": false,
       "vegas_was_right": false
      },
+     "qb_adjusted": false,
      "qb_out": []
     },
     {
@@ -2277,6 +2432,8 @@ window.SITE_DATA = {
       "home_rating": 1445,
       "away_rating": 1449,
       "home_field": 0,
+      "qb_pts": 0,
+      "qb_teams": [],
       "edge": -4
      },
      "result": {
@@ -2286,6 +2443,7 @@ window.SITE_DATA = {
       "we_were_right": true,
       "vegas_was_right": true
      },
+     "qb_adjusted": false,
      "qb_out": []
     },
     {
@@ -2319,6 +2477,8 @@ window.SITE_DATA = {
       "home_rating": 1441,
       "away_rating": 1414,
       "home_field": 48,
+      "qb_pts": 0,
+      "qb_teams": [],
       "edge": 76
      },
      "result": {
@@ -2328,11 +2488,13 @@ window.SITE_DATA = {
       "we_were_right": true,
       "vegas_was_right": false
      },
+     "qb_adjusted": false,
      "qb_out": [
       {
        "team": "NYG",
        "player": "Jaxson Dart",
-       "reason": "injured reserve"
+       "reason": "injured reserve",
+       "in_pick": false
       }
      ]
     },
@@ -2367,6 +2529,8 @@ window.SITE_DATA = {
       "home_rating": 1532,
       "away_rating": 1454,
       "home_field": 48,
+      "qb_pts": 0,
+      "qb_teams": [],
       "edge": 125
      },
      "result": {
@@ -2376,6 +2540,7 @@ window.SITE_DATA = {
       "we_were_right": false,
       "vegas_was_right": false
      },
+     "qb_adjusted": false,
      "qb_out": []
     },
     {
@@ -2409,6 +2574,8 @@ window.SITE_DATA = {
       "home_rating": 1432,
       "away_rating": 1482,
       "home_field": 48,
+      "qb_pts": 0,
+      "qb_teams": [],
       "edge": -2
      },
      "result": {
@@ -2418,11 +2585,13 @@ window.SITE_DATA = {
       "we_were_right": true,
       "vegas_was_right": true
      },
+     "qb_adjusted": false,
      "qb_out": [
       {
        "team": "TB",
        "player": "Baker Mayfield",
-       "reason": "out"
+       "reason": "out",
+       "in_pick": false
       }
      ]
     },
@@ -2457,6 +2626,8 @@ window.SITE_DATA = {
       "home_rating": 1528,
       "away_rating": 1607,
       "home_field": 48,
+      "qb_pts": 0,
+      "qb_teams": [],
       "edge": -31
      },
      "result": {
@@ -2466,6 +2637,7 @@ window.SITE_DATA = {
       "we_were_right": true,
       "vegas_was_right": false
      },
+     "qb_adjusted": false,
      "qb_out": []
     },
     {
@@ -2499,6 +2671,8 @@ window.SITE_DATA = {
       "home_rating": 1546,
       "away_rating": 1570,
       "home_field": 48,
+      "qb_pts": 0,
+      "qb_teams": [],
       "edge": 24
      },
      "result": {
@@ -2508,6 +2682,7 @@ window.SITE_DATA = {
       "we_were_right": false,
       "vegas_was_right": true
      },
+     "qb_adjusted": false,
      "qb_out": []
     },
     {
@@ -2541,6 +2716,8 @@ window.SITE_DATA = {
       "home_rating": 1648,
       "away_rating": 1558,
       "home_field": 48,
+      "qb_pts": 0,
+      "qb_teams": [],
       "edge": 139
      },
      "result": {
@@ -2550,6 +2727,7 @@ window.SITE_DATA = {
       "we_were_right": false,
       "vegas_was_right": false
      },
+     "qb_adjusted": false,
      "qb_out": []
     },
     {
@@ -2583,6 +2761,8 @@ window.SITE_DATA = {
       "home_rating": 1567,
       "away_rating": 1377,
       "home_field": 48,
+      "qb_pts": 0,
+      "qb_teams": [],
       "edge": 238
      },
      "result": {
@@ -2592,11 +2772,13 @@ window.SITE_DATA = {
       "we_were_right": true,
       "vegas_was_right": true
      },
+     "qb_adjusted": false,
      "qb_out": [
       {
        "team": "CHI",
        "player": "Caleb Williams",
-       "reason": "out"
+       "reason": "out",
+       "in_pick": false
       }
      ]
     },
@@ -2631,6 +2813,8 @@ window.SITE_DATA = {
       "home_rating": 1551,
       "away_rating": 1314,
       "home_field": 48,
+      "qb_pts": 0,
+      "qb_teams": [],
       "edge": 285
      },
      "result": {
@@ -2640,6 +2824,7 @@ window.SITE_DATA = {
       "we_were_right": true,
       "vegas_was_right": true
      },
+     "qb_adjusted": false,
      "qb_out": []
     },
     {
@@ -2673,6 +2858,8 @@ window.SITE_DATA = {
       "home_rating": 1617,
       "away_rating": 1395,
       "home_field": 48,
+      "qb_pts": 0,
+      "qb_teams": [],
       "edge": 270
      },
      "result": {
@@ -2682,6 +2869,7 @@ window.SITE_DATA = {
       "we_were_right": true,
       "vegas_was_right": true
      },
+     "qb_adjusted": false,
      "qb_out": []
     },
     {
@@ -2715,6 +2903,8 @@ window.SITE_DATA = {
       "home_rating": 1614,
       "away_rating": 1610,
       "home_field": 48,
+      "qb_pts": 0,
+      "qb_teams": [],
       "edge": 53
      },
      "result": {
@@ -2724,6 +2914,7 @@ window.SITE_DATA = {
       "we_were_right": true,
       "vegas_was_right": true
      },
+     "qb_adjusted": false,
      "qb_out": []
     },
     {
@@ -2757,6 +2948,8 @@ window.SITE_DATA = {
       "home_rating": 1455,
       "away_rating": 1558,
       "home_field": 48,
+      "qb_pts": 0,
+      "qb_teams": [],
       "edge": -55
      },
      "result": {
@@ -2766,6 +2959,7 @@ window.SITE_DATA = {
       "we_were_right": true,
       "vegas_was_right": true
      },
+     "qb_adjusted": false,
      "qb_out": []
     },
     {
@@ -2799,6 +2993,8 @@ window.SITE_DATA = {
       "home_rating": 1648,
       "away_rating": 1454,
       "home_field": 48,
+      "qb_pts": 0,
+      "qb_teams": [],
       "edge": 242
      },
      "result": {
@@ -2808,6 +3004,7 @@ window.SITE_DATA = {
       "we_were_right": true,
       "vegas_was_right": true
      },
+     "qb_adjusted": false,
      "qb_out": []
     },
     {
@@ -2841,6 +3038,8 @@ window.SITE_DATA = {
       "home_rating": 1445,
       "away_rating": 1559,
       "home_field": 48,
+      "qb_pts": 0,
+      "qb_teams": [],
       "edge": -66
      },
      "result": {
@@ -2850,6 +3049,7 @@ window.SITE_DATA = {
       "we_were_right": false,
       "vegas_was_right": false
      },
+     "qb_adjusted": false,
      "qb_out": []
     },
     {
@@ -2883,6 +3083,8 @@ window.SITE_DATA = {
       "home_rating": 1443,
       "away_rating": 1463,
       "home_field": 48,
+      "qb_pts": 0,
+      "qb_teams": [],
       "edge": 28
      },
      "result": {
@@ -2892,6 +3094,7 @@ window.SITE_DATA = {
       "we_were_right": false,
       "vegas_was_right": false
      },
+     "qb_adjusted": false,
      "qb_out": []
     }
    ]
@@ -2900,6 +3103,7 @@ window.SITE_DATA = {
    "week": 5,
    "mode": "backfill",
    "lock": null,
+   "qb_lock": null,
    "games": [
     {
      "game_id": "2026_05_TB_DAL",
@@ -2932,6 +3136,8 @@ window.SITE_DATA = {
       "home_rating": 1477,
       "away_rating": 1418,
       "home_field": 48,
+      "qb_pts": 0,
+      "qb_teams": [],
       "edge": 107
      },
      "result": {
@@ -2941,11 +3147,13 @@ window.SITE_DATA = {
       "we_were_right": false,
       "vegas_was_right": false
      },
+     "qb_adjusted": false,
      "qb_out": [
       {
        "team": "TB",
        "player": "Baker Mayfield",
-       "reason": "out"
+       "reason": "out",
+       "in_pick": false
       }
      ]
     },
@@ -2980,6 +3188,8 @@ window.SITE_DATA = {
       "home_rating": 1623,
       "away_rating": 1528,
       "home_field": 0,
+      "qb_pts": 0,
+      "qb_teams": [],
       "edge": 95
      },
      "result": {
@@ -2989,6 +3199,7 @@ window.SITE_DATA = {
       "we_were_right": true,
       "vegas_was_right": true
      },
+     "qb_adjusted": false,
      "qb_out": []
     },
     {
@@ -3022,6 +3233,8 @@ window.SITE_DATA = {
       "home_rating": 1495,
       "away_rating": 1576,
       "home_field": 48,
+      "qb_pts": 0,
+      "qb_teams": [],
       "edge": -33
      },
      "result": {
@@ -3031,6 +3244,7 @@ window.SITE_DATA = {
       "we_were_right": false,
       "vegas_was_right": false
      },
+     "qb_adjusted": false,
      "qb_out": []
     },
     {
@@ -3064,6 +3278,8 @@ window.SITE_DATA = {
       "home_rating": 1390,
       "away_rating": 1512,
       "home_field": 48,
+      "qb_pts": 0,
+      "qb_teams": [],
       "edge": -74
      },
      "result": {
@@ -3073,6 +3289,7 @@ window.SITE_DATA = {
       "we_were_right": true,
       "vegas_was_right": true
      },
+     "qb_adjusted": false,
      "qb_out": []
     },
     {
@@ -3106,6 +3323,8 @@ window.SITE_DATA = {
       "home_rating": 1368,
       "away_rating": 1465,
       "home_field": 48,
+      "qb_pts": 0,
+      "qb_teams": [],
       "edge": -49
      },
      "result": {
@@ -3115,6 +3334,7 @@ window.SITE_DATA = {
       "we_were_right": false,
       "vegas_was_right": true
      },
+     "qb_adjusted": false,
      "qb_out": []
     },
     {
@@ -3148,6 +3368,8 @@ window.SITE_DATA = {
       "home_rating": 1308,
       "away_rating": 1509,
       "home_field": 48,
+      "qb_pts": 0,
+      "qb_teams": [],
       "edge": -152
      },
      "result": {
@@ -3157,6 +3379,7 @@ window.SITE_DATA = {
       "we_were_right": true,
       "vegas_was_right": true
      },
+     "qb_adjusted": false,
      "qb_out": []
     },
     {
@@ -3190,6 +3413,8 @@ window.SITE_DATA = {
       "home_rating": 1521,
       "away_rating": 1477,
       "home_field": 48,
+      "qb_pts": 0,
+      "qb_teams": [],
       "edge": 92
      },
      "result": {
@@ -3199,6 +3424,7 @@ window.SITE_DATA = {
       "we_were_right": true,
       "vegas_was_right": true
      },
+     "qb_adjusted": false,
      "qb_out": []
     },
     {
@@ -3232,6 +3458,8 @@ window.SITE_DATA = {
       "home_rating": 1578,
       "away_rating": 1443,
       "home_field": 48,
+      "qb_pts": 0,
+      "qb_teams": [],
       "edge": 183
      },
      "result": {
@@ -3241,6 +3469,7 @@ window.SITE_DATA = {
       "we_were_right": true,
       "vegas_was_right": true
      },
+     "qb_adjusted": false,
      "qb_out": []
     },
     {
@@ -3274,6 +3503,8 @@ window.SITE_DATA = {
       "home_rating": 1409,
       "away_rating": 1622,
       "home_field": 48,
+      "qb_pts": 0,
+      "qb_teams": [],
       "edge": -165
      },
      "result": {
@@ -3283,6 +3514,7 @@ window.SITE_DATA = {
       "we_were_right": true,
       "vegas_was_right": true
      },
+     "qb_adjusted": false,
      "qb_out": []
     },
     {
@@ -3316,6 +3548,8 @@ window.SITE_DATA = {
       "home_rating": 1416,
       "away_rating": 1461,
       "home_field": 48,
+      "qb_pts": 0,
+      "qb_teams": [],
       "edge": 4
      },
      "result": {
@@ -3325,16 +3559,19 @@ window.SITE_DATA = {
       "we_were_right": null,
       "vegas_was_right": null
      },
+     "qb_adjusted": false,
      "qb_out": [
       {
        "team": "WAS",
        "player": "Marcus Mariota",
-       "reason": "out"
+       "reason": "out",
+       "in_pick": false
       },
       {
        "team": "NYG",
        "player": "Jaxson Dart",
-       "reason": "injured reserve"
+       "reason": "injured reserve",
+       "in_pick": false
       }
      ]
     },
@@ -3369,6 +3606,8 @@ window.SITE_DATA = {
       "home_rating": 1446,
       "away_rating": 1590,
       "home_field": 48,
+      "qb_pts": 0,
+      "qb_teams": [],
       "edge": -95
      },
      "result": {
@@ -3378,6 +3617,7 @@ window.SITE_DATA = {
       "we_were_right": true,
       "vegas_was_right": true
      },
+     "qb_adjusted": false,
      "qb_out": []
     },
     {
@@ -3411,6 +3651,8 @@ window.SITE_DATA = {
       "home_rating": 1394,
       "away_rating": 1535,
       "home_field": 48,
+      "qb_pts": 0,
+      "qb_teams": [],
       "edge": -93
      },
      "result": {
@@ -3420,6 +3662,7 @@ window.SITE_DATA = {
       "we_were_right": true,
       "vegas_was_right": true
      },
+     "qb_adjusted": false,
      "qb_out": []
     },
     {
@@ -3453,6 +3696,8 @@ window.SITE_DATA = {
       "home_rating": 1655,
       "away_rating": 1634,
       "home_field": 48,
+      "qb_pts": 0,
+      "qb_teams": [],
       "edge": 69
      },
      "result": {
@@ -3462,6 +3707,7 @@ window.SITE_DATA = {
       "we_were_right": false,
       "vegas_was_right": false
      },
+     "qb_adjusted": false,
      "qb_out": []
     },
     {
@@ -3495,6 +3741,8 @@ window.SITE_DATA = {
       "home_rating": 1497,
       "away_rating": 1556,
       "home_field": 48,
+      "qb_pts": 0,
+      "qb_teams": [],
       "edge": -12
      },
      "result": {
@@ -3504,11 +3752,13 @@ window.SITE_DATA = {
       "we_were_right": true,
       "vegas_was_right": false
      },
+     "qb_adjusted": false,
      "qb_out": [
       {
        "team": "BAL",
        "player": "Lamar Jackson",
-       "reason": "out"
+       "reason": "out",
+       "in_pick": false
       }
      ]
     },
@@ -3543,6 +3793,8 @@ window.SITE_DATA = {
       "home_rating": 1587,
       "away_rating": 1628,
       "home_field": 48,
+      "qb_pts": 0,
+      "qb_teams": [],
       "edge": 8
      },
      "result": {
@@ -3552,6 +3804,7 @@ window.SITE_DATA = {
       "we_were_right": false,
       "vegas_was_right": false
      },
+     "qb_adjusted": false,
      "qb_out": []
     }
    ]
@@ -3565,6 +3818,7 @@ window.SITE_DATA = {
     "url": "https://github.com/josh-silverman/nfl-ats-predictor/commit/2f07e6812baa5b767fb6da2a27d29ba8fbf4b429",
     "text": "Locked Thu Oct 15, 2:51 PM ET, before kickoff"
    },
+   "qb_lock": null,
    "games": [
     {
      "game_id": "2026_06_SEA_DEN",
@@ -3597,6 +3851,8 @@ window.SITE_DATA = {
       "home_rating": 1603,
       "away_rating": 1638,
       "home_field": 48,
+      "qb_pts": 0,
+      "qb_teams": [],
       "edge": 13
      },
      "result": {
@@ -3606,6 +3862,7 @@ window.SITE_DATA = {
       "we_were_right": true,
       "vegas_was_right": false
      },
+     "qb_adjusted": false,
      "qb_out": []
     },
     {
@@ -3639,6 +3896,8 @@ window.SITE_DATA = {
       "home_rating": 1631,
       "away_rating": 1526,
       "home_field": 0,
+      "qb_pts": 0,
+      "qb_teams": [],
       "edge": 105
      },
      "result": {
@@ -3648,6 +3907,7 @@ window.SITE_DATA = {
       "we_were_right": false,
       "vegas_was_right": false
      },
+     "qb_adjusted": false,
      "qb_out": []
     },
     {
@@ -3681,6 +3941,8 @@ window.SITE_DATA = {
       "home_rating": 1444,
       "away_rating": 1576,
       "home_field": 48,
+      "qb_pts": 0,
+      "qb_teams": [],
       "edge": -85
      },
      "result": {
@@ -3690,11 +3952,13 @@ window.SITE_DATA = {
       "we_were_right": false,
       "vegas_was_right": false
      },
+     "qb_adjusted": false,
      "qb_out": [
       {
        "team": "BAL",
        "player": "Lamar Jackson",
-       "reason": "out"
+       "reason": "out",
+       "in_pick": false
       }
      ]
     },
@@ -3729,6 +3993,8 @@ window.SITE_DATA = {
       "home_rating": 1521,
       "away_rating": 1469,
       "home_field": 48,
+      "qb_pts": 0,
+      "qb_teams": [],
       "edge": 100
      },
      "result": {
@@ -3738,11 +4004,13 @@ window.SITE_DATA = {
       "we_were_right": false,
       "vegas_was_right": true
      },
+     "qb_adjusted": false,
      "qb_out": [
       {
        "team": "PHI",
        "player": "Jalen Hurts",
-       "reason": "injured reserve"
+       "reason": "injured reserve",
+       "in_pick": false
       }
      ]
     },
@@ -3777,6 +4045,8 @@ window.SITE_DATA = {
       "home_rating": 1477,
       "away_rating": 1540,
       "home_field": 48,
+      "qb_pts": 0,
+      "qb_teams": [],
       "edge": -16
      },
      "result": {
@@ -3786,6 +4056,7 @@ window.SITE_DATA = {
       "we_were_right": true,
       "vegas_was_right": true
      },
+     "qb_adjusted": false,
      "qb_out": []
     },
     {
@@ -3819,6 +4090,8 @@ window.SITE_DATA = {
       "home_rating": 1461,
       "away_rating": 1397,
       "home_field": 48,
+      "qb_pts": 0,
+      "qb_teams": [],
       "edge": 112
      },
      "result": {
@@ -3828,6 +4101,7 @@ window.SITE_DATA = {
       "we_were_right": false,
       "vegas_was_right": true
      },
+     "qb_adjusted": false,
      "qb_out": []
     },
     {
@@ -3861,6 +4135,8 @@ window.SITE_DATA = {
       "home_rating": 1594,
       "away_rating": 1389,
       "home_field": 48,
+      "qb_pts": 0,
+      "qb_teams": [],
       "edge": 254
      },
      "result": {
@@ -3870,6 +4146,7 @@ window.SITE_DATA = {
       "we_were_right": true,
       "vegas_was_right": true
      },
+     "qb_adjusted": false,
      "qb_out": []
     },
     {
@@ -3903,6 +4180,8 @@ window.SITE_DATA = {
       "home_rating": 1448,
       "away_rating": 1540,
       "home_field": 48,
+      "qb_pts": 0,
+      "qb_teams": [],
       "edge": -44
      },
      "result": {
@@ -3912,11 +4191,13 @@ window.SITE_DATA = {
       "we_were_right": true,
       "vegas_was_right": true
      },
+     "qb_adjusted": false,
      "qb_out": [
       {
        "team": "TB",
        "player": "Baker Mayfield",
-       "reason": "out"
+       "reason": "out",
+       "in_pick": false
       }
      ]
     },
@@ -3951,6 +4232,8 @@ window.SITE_DATA = {
       "home_rating": 1459,
       "away_rating": 1291,
       "home_field": 48,
+      "qb_pts": 0,
+      "qb_teams": [],
       "edge": 216
      },
      "result": {
@@ -3960,6 +4243,7 @@ window.SITE_DATA = {
       "we_were_right": false,
       "vegas_was_right": false
      },
+     "qb_adjusted": false,
      "qb_out": []
     },
     {
@@ -3993,6 +4277,8 @@ window.SITE_DATA = {
       "home_rating": 1573,
       "away_rating": 1371,
       "home_field": 48,
+      "qb_pts": 0,
+      "qb_teams": [],
       "edge": 250
      },
      "result": {
@@ -4002,6 +4288,7 @@ window.SITE_DATA = {
       "we_were_right": false,
       "vegas_was_right": false
      },
+     "qb_adjusted": false,
      "qb_out": []
     },
     {
@@ -4035,6 +4322,8 @@ window.SITE_DATA = {
       "home_rating": 1427,
       "away_rating": 1642,
       "home_field": 48,
+      "qb_pts": 0,
+      "qb_teams": [],
       "edge": -167
      },
      "result": {
@@ -4044,6 +4333,7 @@ window.SITE_DATA = {
       "we_were_right": true,
       "vegas_was_right": true
      },
+     "qb_adjusted": false,
      "qb_out": []
     },
     {
@@ -4077,6 +4367,8 @@ window.SITE_DATA = {
       "home_rating": 1569,
       "away_rating": 1433,
       "home_field": 48,
+      "qb_pts": 0,
+      "qb_teams": [],
       "edge": 185
      },
      "result": {
@@ -4086,6 +4378,7 @@ window.SITE_DATA = {
       "we_were_right": true,
       "vegas_was_right": true
      },
+     "qb_adjusted": false,
      "qb_out": []
     },
     {
@@ -4119,6 +4412,8 @@ window.SITE_DATA = {
       "home_rating": 1531,
       "away_rating": 1447,
       "home_field": 48,
+      "qb_pts": 0,
+      "qb_teams": [],
       "edge": 132
      },
      "result": {
@@ -4128,6 +4423,7 @@ window.SITE_DATA = {
       "we_were_right": true,
       "vegas_was_right": true
      },
+     "qb_adjusted": false,
      "qb_out": []
     },
     {
@@ -4161,6 +4457,8 @@ window.SITE_DATA = {
       "home_rating": 1651,
       "away_rating": 1416,
       "home_field": 48,
+      "qb_pts": 0,
+      "qb_teams": [],
       "edge": 283
      },
      "result": {
@@ -4170,6 +4468,7 @@ window.SITE_DATA = {
       "we_were_right": true,
       "vegas_was_right": true
      },
+     "qb_adjusted": false,
      "qb_out": []
     }
    ]
@@ -4183,6 +4482,7 @@ window.SITE_DATA = {
     "url": "https://github.com/josh-silverman/nfl-ats-predictor/commit/233dda2dd438e8a9ebee75753cc3e1fafa4db40e",
     "text": "Locked Thu Oct 22, 3:50 PM ET, before kickoff"
    },
+   "qb_lock": null,
    "games": [
     {
      "game_id": "2026_07_NE_CHI",
@@ -4215,9 +4515,12 @@ window.SITE_DATA = {
       "home_rating": 1561,
       "away_rating": 1601,
       "home_field": 48,
+      "qb_pts": 0,
+      "qb_teams": [],
       "edge": 8
      },
      "result": null,
+     "qb_adjusted": false,
      "qb_out": []
     },
     {
@@ -4251,9 +4554,12 @@ window.SITE_DATA = {
       "home_rating": 1426,
       "away_rating": 1558,
       "home_field": 0,
+      "qb_pts": 0,
+      "qb_teams": [],
       "edge": -132
      },
      "result": null,
+     "qb_adjusted": false,
      "qb_out": []
     },
     {
@@ -4287,9 +4593,12 @@ window.SITE_DATA = {
       "home_rating": 1559,
       "away_rating": 1528,
       "home_field": 48,
+      "qb_pts": 0,
+      "qb_teams": [],
       "edge": 78
      },
      "result": null,
+     "qb_adjusted": false,
      "qb_out": []
     },
     {
@@ -4323,9 +4632,12 @@ window.SITE_DATA = {
       "home_rating": 1324,
       "away_rating": 1462,
       "home_field": 48,
+      "qb_pts": 0,
+      "qb_teams": [],
       "edge": -90
      },
      "result": null,
+     "qb_adjusted": false,
      "qb_out": []
     },
     {
@@ -4359,9 +4671,12 @@ window.SITE_DATA = {
       "home_rating": 1635,
       "away_rating": 1426,
       "home_field": 48,
+      "qb_pts": 0,
+      "qb_teams": [],
       "edge": 257
      },
      "result": null,
+     "qb_adjusted": false,
      "qb_out": []
     },
     {
@@ -4395,9 +4710,12 @@ window.SITE_DATA = {
       "home_rating": 1382,
       "away_rating": 1374,
       "home_field": 48,
+      "qb_pts": 0,
+      "qb_teams": [],
       "edge": 56
      },
      "result": null,
+     "qb_adjusted": false,
      "qb_out": []
     },
     {
@@ -4431,9 +4749,12 @@ window.SITE_DATA = {
       "home_rating": 1545,
       "away_rating": 1432,
       "home_field": 48,
+      "qb_pts": 0,
+      "qb_teams": [],
       "edge": 161
      },
      "result": null,
+     "qb_adjusted": false,
      "qb_out": []
     },
     {
@@ -4467,9 +4788,12 @@ window.SITE_DATA = {
       "home_rating": 1456,
       "away_rating": 1657,
       "home_field": 48,
+      "qb_pts": 0,
+      "qb_teams": [],
       "edge": -153
      },
      "result": null,
+     "qb_adjusted": false,
      "qb_out": []
     },
     {
@@ -4503,9 +4827,12 @@ window.SITE_DATA = {
       "home_rating": 1502,
       "away_rating": 1430,
       "home_field": 48,
+      "qb_pts": 0,
+      "qb_teams": [],
       "edge": 120
      },
      "result": null,
+     "qb_adjusted": false,
      "qb_out": []
     },
     {
@@ -4539,9 +4866,12 @@ window.SITE_DATA = {
       "home_rating": 1391,
       "away_rating": 1616,
       "home_field": 48,
+      "qb_pts": 0,
+      "qb_teams": [],
       "edge": -177
      },
      "result": null,
+     "qb_adjusted": false,
      "qb_out": []
     },
     {
@@ -4575,9 +4905,12 @@ window.SITE_DATA = {
       "home_rating": 1558,
       "away_rating": 1546,
       "home_field": 48,
+      "qb_pts": 0,
+      "qb_teams": [],
       "edge": 60
      },
      "result": null,
+     "qb_adjusted": false,
      "qb_out": []
     },
     {
@@ -4611,9 +4944,12 @@ window.SITE_DATA = {
       "home_rating": 1420,
       "away_rating": 1553,
       "home_field": 48,
+      "qb_pts": 0,
+      "qb_teams": [],
       "edge": -85
      },
      "result": null,
+     "qb_adjusted": false,
      "qb_out": []
     },
     {
@@ -4647,9 +4983,12 @@ window.SITE_DATA = {
       "home_rating": 1625,
       "away_rating": 1583,
       "home_field": 48,
+      "qb_pts": 0,
+      "qb_teams": [],
       "edge": 90
      },
      "result": null,
+     "qb_adjusted": false,
      "qb_out": []
     },
     {
@@ -4683,14 +5022,18 @@ window.SITE_DATA = {
       "home_rating": 1487,
       "away_rating": 1433,
       "home_field": 48,
+      "qb_pts": 0,
+      "qb_teams": [],
       "edge": 103
      },
      "result": null,
+     "qb_adjusted": false,
      "qb_out": [
       {
        "team": "PHI",
        "player": "Jalen Hurts",
-       "reason": "injured reserve"
+       "reason": "injured reserve",
+       "in_pick": false
       }
      ]
     }

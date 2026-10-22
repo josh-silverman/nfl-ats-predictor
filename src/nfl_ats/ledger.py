@@ -4,6 +4,9 @@
   masked before Elo runs, so the same code serves the live weekly run and the pseudo-live backfill.
 - A game is never predicted after its kickoff. Games that have already started are skipped and counted.
 - Ledger files are never overwritten.
+- From 2026 Week 8 the deliverable is the QB-adjusted Elo (H4, decision #21). Thursday's live file carries it with
+  Thursday's injury news; a Saturday `ledger/qb/` file re-locks it for unstarted games once final statuses are out.
+  Per game, the LATEST QB lock made before kickoff counts (fixed before any Week 8 result). Raw Elo stays recorded.
 """
 
 from datetime import datetime
@@ -14,12 +17,15 @@ import numpy as np
 import pandas as pd
 
 from nfl_ats.data import PROJECT_ROOT, load_schedules
-from nfl_ats.win_model import WIN_FEATURES, build_win_table, fit_fold
+from nfl_ats.elo import ELO_PER_POINT
+from nfl_ats.win_model import WIN_FEATURES, build_win_table, fit_fold, qb_adjusted_p
 
 LEDGER_DIR = PROJECT_ROOT / "ledger"
 EASTERN = ZoneInfo("America/New_York")
 FIRST_SEASON = 2015  # Elo warm-up
-MODEL_COLUMNS = {"p_elo": "raw Elo (the deliverable)", "p_v2": "v2 (Elo + logistic)"}
+MODEL_COLUMNS = {"p_elo": "raw Elo (baseline; the deliverable through Week 7)", "p_v2": "v2 (Elo + logistic)",
+                 "p_elo_qb": "QB-adjusted Elo (the deliverable from Week 8)"}
+QB_COLUMNS = ["home_qb", "away_qb", "home_qb_out", "away_qb_out", "qb_pts", "elo_spread_qb", "p_elo_qb"]
 
 
 def kickoff_times(games: pd.DataFrame) -> pd.Series:
@@ -43,10 +49,12 @@ def check_prior_weeks_final(schedules: pd.DataFrame, season: int, week: int) -> 
         raise ValueError(f"Earlier-week games without final scores (stale data?): {missing.tolist()}")
 
 
-def predict_week(schedules: pd.DataFrame, season: int, week: int, now: datetime, mode: str = "live") -> pd.DataFrame:
+def predict_week(schedules: pd.DataFrame, season: int, week: int, now: datetime, mode: str = "live",
+                 qb: tuple[pd.DataFrame, int] | None = None) -> pd.DataFrame:
     """Predictions for every not-yet-started game in `week`, using only results from earlier weeks.
 
     mode="live": `now` is the real clock. mode="backfill": `now` is that week's first kickoff (pseudo-live).
+    qb: (this week's qb.build_usual_flags rows, QB_PTS fit on earlier seasons) adds the QB-adjusted columns.
     """
     check_prior_weeks_final(schedules, season, week)
     known = as_of(schedules[schedules["season"].between(FIRST_SEASON, season)], season, week)
@@ -62,7 +70,7 @@ def predict_week(schedules: pd.DataFrame, season: int, week: int, now: datetime,
     if games.empty:
         raise ValueError(f"Every game in {season} week {week} has already kicked off; nothing to predict.")
 
-    return pd.DataFrame({
+    out = pd.DataFrame({
         "mode": mode,
         "season": season, "week": week, "game_id": games["game_id"],
         "kickoff_et": games["kickoff_et"].dt.strftime("%Y-%m-%d %H:%M"),
@@ -77,11 +85,30 @@ def predict_week(schedules: pd.DataFrame, season: int, week: int, now: datetime,
         "pulled_at_et": now.astimezone(EASTERN).strftime("%Y-%m-%d %H:%M:%S"),
         "games_skipped_already_started": int(started.sum()),
     }).reset_index(drop=True)
+    return out if qb is None else add_qb_columns(out, games.reset_index(drop=True), *qb)
+
+
+def add_qb_columns(out: pd.DataFrame, games: pd.DataFrame, flags: pd.DataFrame, qb_pts: int) -> pd.DataFrame:
+    """H4 columns: each side's No. 1 QB (name), whether he's out, QB_PTS, and the adjusted spread and probability."""
+    out = out.copy()
+    for side in ["home", "away"]:
+        f = flags[["game_id", "team", "player", "qb_out"]].rename(
+            columns={"team": f"{side}_team", "player": f"{side}_qb", "qb_out": f"{side}_qb_out"})
+        out = out.merge(f, on=["game_id", f"{side}_team"], how="left", validate="one_to_one")
+        out[f"{side}_qb_out"] = out[f"{side}_qb_out"].fillna(0).astype(int)
+    adj = games[["game_id", "elo_diff"]].merge(out[["game_id", "home_qb_out", "away_qb_out"]], on="game_id")
+    adj_diff = adj["elo_diff"] - qb_pts * adj["home_qb_out"] + qb_pts * adj["away_qb_out"]
+    out["qb_pts"] = qb_pts
+    out["elo_spread_qb"] = (adj_diff / ELO_PER_POINT).round(1).to_numpy()
+    out["p_elo_qb"] = qb_adjusted_p(adj, qb_pts).round(4).to_numpy()
+    return out
 
 
 def ledger_path(season: int, week: int, mode: str, now: datetime) -> Path:
     if mode == "backfill":
         return LEDGER_DIR / "backfill" / f"{season}_wk{week:02d}_backfill.csv"
+    if mode == "qb":
+        return LEDGER_DIR / "qb" / f"{season}_wk{week:02d}_qb_{now.astimezone(EASTERN):%Y%m%dT%H%M%S}.csv"
     return LEDGER_DIR / f"{season}_wk{week:02d}_{now.astimezone(EASTERN):%Y%m%dT%H%M%S}.csv"
 
 
@@ -102,6 +129,49 @@ def load_ledger(mode: str = "live", season: int = 2026) -> pd.DataFrame:
         return pd.DataFrame()
     df = pd.concat([pd.read_csv(f).assign(file=f.name) for f in files], ignore_index=True)
     return df.sort_values("pulled_at_et").drop_duplicates("game_id", keep="first").reset_index(drop=True)
+
+
+def load_qb_ledger(season: int = 2026, ledger_dir: Path = LEDGER_DIR) -> pd.DataFrame:
+    """The QB-adjusted lock per game: from Thursday live files and Saturday ledger/qb files, the LATEST pull counts.
+
+    Every pull is before its game's kickoff by construction (predict_week skips started games).
+    """
+    files = sorted(ledger_dir.glob(f"{season}_wk*.csv")) + sorted((ledger_dir / "qb").glob(f"{season}_wk*.csv"))
+    frames = [pd.read_csv(f).assign(qb_file=f.name) for f in files]
+    frames = [f for f in frames if "p_elo_qb" in f.columns]
+    if not frames:
+        return pd.DataFrame(columns=["game_id", *QB_COLUMNS, "qb_pulled_at_et", "qb_file"])
+    df = pd.concat(frames, ignore_index=True).rename(columns={"pulled_at_et": "qb_pulled_at_et"})
+    df = df.sort_values("qb_pulled_at_et").drop_duplicates("game_id", keep="last")
+    return df[["game_id", *QB_COLUMNS, "qb_pulled_at_et", "qb_file"]].reset_index(drop=True)
+
+
+def qb_for_week(schedules: pd.DataFrame, season: int, week: int, refresh: bool = True) -> tuple[pd.DataFrame, int]:
+    """(this week's No. 1 QB flags as of now, QB_PTS fit on 2016 .. season-1) for predict_week(qb=...)."""
+    from nfl_ats.qb import add_qb_feature, build_usual_flags
+    from nfl_ats.win_model import fit_qb_points
+    past = schedules[schedules["season"].between(FIRST_SEASON, season - 1)]
+    table = build_win_table(past)
+    table = add_qb_feature(table[table["season"] >= 2016], build_usual_flags(past, list(range(2016, season))))
+    flags = build_usual_flags(schedules, [season], refresh=refresh)
+    return flags[flags["week"] == week], fit_qb_points(table, test_season=season)
+
+
+def attach_qb(ledger: pd.DataFrame, season: int = 2026, ledger_dir: Path = LEDGER_DIR) -> pd.DataFrame:
+    """The live ledger with the QB-adjusted columns from load_qb_ledger (latest QB lock per game; NaN before Week 8)."""
+    if ledger.empty:
+        return ledger
+    base = ledger.drop(columns=[c for c in QB_COLUMNS if c in ledger.columns])
+    return base.merge(load_qb_ledger(season, ledger_dir), on="game_id", how="left", validate="one_to_one")
+
+
+def check_final_injury_report(injuries: pd.DataFrame, season: int, week: int, teams: list[str]) -> None:
+    """Saturday lock guard: refuse if most teams still lack game statuses for `week` (nflverse not updated yet)."""
+    wk = injuries[(injuries["season"] == season) & (injuries["week"] == week) & injuries["report_status"].notna()]
+    have = set(wk["team"]) & set(teams)
+    if len(have) < len(teams) / 2:
+        raise ValueError(f"Only {len(have)} of {len(teams)} teams have final injury statuses for week {week}. "
+                         "The Friday report isn't in the data yet; try again later.")
 
 
 def score_ledger(ledger: pd.DataFrame, schedules: pd.DataFrame) -> pd.DataFrame:
@@ -139,8 +209,10 @@ def live_report(scored: pd.DataFrame, n_sims: int = 1000, seed: int = 0) -> dict
     rng = np.random.default_rng(seed)
     models = {}
     for col, label in {**MODEL_COLUMNS, "p_market_at_pull": "market at pull time"}.items():
-        p = d[col].to_numpy()
+        p = d[col].to_numpy(dtype=float) if col in d else np.full(len(d), np.nan)
         ok = ~np.isnan(p)
+        if ok.sum() < 10:
+            continue
         s = score(y[ok], p[ok])
         citl = bootstrap_ci(lambda yy, pp: pp.mean(axis=-1) - yy.mean(axis=-1), y[ok], p[ok])
         n_bins = 5
@@ -158,8 +230,12 @@ def live_report(scored: pd.DataFrame, n_sims: int = 1000, seed: int = 0) -> dict
         }
     paired = {}
     for col, label in MODEL_COLUMNS.items():
+        if label not in models:
+            continue
+        ok = d[col].notna().to_numpy()
         if col != "p_elo":
-            paired[f"{label} − raw Elo"] = tuple(paired_diff(y, d["p_elo"], d[col]).loc["log_loss"].round(4))
+            paired[f"{label} − raw Elo"] = tuple(paired_diff(y[ok], d.loc[ok, "p_elo"], d.loc[ok, col]).loc["log_loss"].round(4))
+        both = ok & market_ok
         paired[f"{label} − market"] = tuple(
-            paired_diff(y[market_ok], d.loc[market_ok, "p_market_at_pull"], d.loc[market_ok, col]).loc["log_loss"].round(4))
+            paired_diff(y[both], d.loc[both, "p_market_at_pull"], d.loc[both, col]).loc["log_loss"].round(4))
     return {**info, "models": models, "paired_log_loss (diff, ci_low, ci_high)": paired}

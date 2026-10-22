@@ -56,6 +56,8 @@ The v2 model is `Pipeline(StandardScaler → LogisticRegression)` on the pregame
 
 **If S2 or S3 fails, raw Elo becomes the deliverable.** Beating the market is **not** a criterion: report the gap honestly.
 
+**Deliverable now (decision #21):** the **QB-adjusted Elo** (H4) from 2026 Week 8. Raw Elo was the deliverable through Week 7 and stays locked every Thursday as the baseline. Live results for the QB model count only on games it locked.
+
 **M2 outcome (W3):** S1 PASS, S2 PASS, **S3 FAIL**, so raw Elo is the deliverable by rule. Raw Elo also exceeds the S3a threshold, so **no model passes S3 on 2019–2025.** Never describe the deliverable as calibrated on 2019–2025. Both models over-predicted home wins (+2.4 to +3.0 pts pooled).
 
 **2026 live checks (pre-registered 2026-10-15, before any 2026 outcome was scored).** These are reported, not pass/fail, for both raw Elo and v2, on locked live weeks only (backfill reported separately):
@@ -73,7 +75,11 @@ The ATS evaluation rules (52.4% breakeven, edge only if the CI lower bound clear
 - Each week, `scripts/predict_week.py` writes v2 win probabilities, raw Elo, the Elo spread, and the market probability at pull time (with the pull timestamp) to `ledger/`. **Locked before the week's first kickoff** by a git commit, and never edited after the fact. The script refuses to overwrite and refuses weeks whose games have started.
 - Weeks already played when the ledger starts are a **"pseudo-live" backfill** in `ledger/backfill/`, labeled separately and never mixed into the live record.
 - The market may have later information than our lock time. Say so when comparing.
-- **Weekly routine:** Thursday before kickoff: `predict_week.py --week N` → `build_site.py` → commit → push. After Monday night: `score_ledger.py` → `build_site.py` → commit → push.
+- **QB lock (from Week 8, decision #21):** the Thursday file also carries `p_elo_qb` with Thursday's injury news. On Saturday, `predict_week.py --week N --qb` writes `ledger/qb/` for games not yet started, once the Friday injury report is in the data (it refuses otherwise). Per game, the **latest QB lock made before kickoff** counts. This rule was fixed before any Week 8 result.
+- **Weekly routine:**
+  - Thursday before kickoff: `predict_week.py --week N` → `build_site.py` → commit → push.
+  - Saturday before the 9:30 AM ET London game, or 1 PM ET otherwise: `predict_week.py --week N --qb` → `build_site.py` → commit → push.
+  - After Monday night: `score_ledger.py` → `build_site.py` → commit → push.
 
 ## Environment and stack
 - Use the conda env **`nfl-ats`** (Python 3.12). **Never create a `.venv`.**

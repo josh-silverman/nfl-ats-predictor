@@ -73,6 +73,7 @@ select {
 .lock::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--good); }
 .lock.late::before { background: var(--bad); }
 .lock:hover { color: var(--ink); text-decoration: underline; }
+.lock + .lock { margin-left: 14px; }
 .backfill-note { font-size: 13px; color: var(--ink-2); background: #fff4e0; padding: 4px 10px; border-radius: var(--r-sm); }
 
 main.wrap { padding-top: 4px; padding-bottom: 8px; }

@@ -8,7 +8,7 @@ from datetime import datetime
 import pandas as pd
 
 from nfl_ats.data import PROJECT_ROOT
-from nfl_ats.ledger import EASTERN, live_report, load_ledger, load_schedules_for_ledger, score_ledger
+from nfl_ats.ledger import EASTERN, attach_qb, live_report, load_ledger, load_schedules_for_ledger, score_ledger
 
 SEASON = 2026
 OUT = PROJECT_ROOT / "reports" / f"live_{SEASON}.md"
@@ -37,10 +37,12 @@ def main() -> None:
     now = datetime.now(EASTERN).strftime("%Y-%m-%d %H:%M %Z")
     lines = [f"# {SEASON} live record", "",
              f"Generated {now} by `scripts/score_ledger.py`. The checks were pre-registered in `CLAUDE.md` before any 2026 outcome was scored.",
-             "Raw Elo is the deliverable; v2 is recorded alongside. The market is the moneyline at our pull time, so it may have later information than ours and isn't comparable with the backtest's schedule moneyline.", ""]
+             "The deliverable is raw Elo through Week 7 and the QB-adjusted Elo from Week 8 (decision #21; scored only on games it locked); raw Elo stays recorded as the baseline and v2 alongside. The market is the moneyline at our pull time, so it may have later information than ours and isn't comparable with the backtest's schedule moneyline.", ""]
     for mode, title in [("live", "Live: locked before kickoff (the clean test)"),
                         ("backfill", "Pseudo-live backfill (weeks predicted after they were played; NOT part of the live record)")]:
         ledger = load_ledger(mode, SEASON)
+        if mode == "live":
+            ledger = attach_qb(ledger, SEASON)
         if ledger.empty:
             lines += [f"## {title}", "", "No locked predictions yet.", ""]
             continue

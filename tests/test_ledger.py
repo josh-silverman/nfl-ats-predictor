@@ -9,7 +9,8 @@ import pandas as pd
 
 import numpy as np
 
-from nfl_ats.ledger import EASTERN, as_of, live_report, predict_week, score_ledger, write_ledger
+from nfl_ats.ledger import (EASTERN, MODEL_COLUMNS, as_of, attach_qb, check_final_injury_report, live_report, load_qb_ledger,
+                            predict_week, score_ledger, write_ledger)
 from tests.test_win_model import _schedules
 
 
@@ -87,11 +88,49 @@ class TestLiveReport(unittest.TestCase):
     def test_calibrated_model_passes_and_biased_one_fails(self):
         rep = live_report(self._scored(bias=0.10), n_sims=200)
         self.assertTrue(rep["models"]["v2 (Elo + logistic)"]["consistent_with_calibration"])
-        self.assertFalse(rep["models"]["raw Elo (the deliverable)"]["consistent_with_calibration"])
+        self.assertFalse(rep["models"][MODEL_COLUMNS["p_elo"]]["consistent_with_calibration"])
 
     def test_too_few_games_returns_note(self):
         rep = live_report(self._scored(n=8))
         self.assertIn("note", rep)
+
+
+
+class TestQbLedger(unittest.TestCase):
+    """H4 live columns: the adjustment moves only flagged games, the latest pre-kickoff QB lock counts."""
+
+    def test_qb_columns_move_only_flagged_games(self):
+        s = _with_2019_live()
+        base = predict_week(s, 2019, 3, NOW)
+        g = base.iloc[0]
+        flags = pd.DataFrame({"game_id": [g.game_id, g.game_id], "team": [g.home_team, g.away_team],
+                              "player": ["Home QB", "Away QB"], "qb_out": [1, 0]})
+        out = predict_week(s, 2019, 3, NOW, qb=(flags, 80))
+        self.assertLess(out.loc[0, "p_elo_qb"], out.loc[0, "p_elo"])          # home QB out → home chance drops
+        self.assertAlmostEqual(out.loc[0, "elo_spread_qb"], round(out.loc[0, "elo_spread"] - 80 / 25, 1), places=1)
+        np.testing.assert_allclose(out.loc[1:, "p_elo_qb"], out.loc[1:, "p_elo"], atol=1e-4)  # unflagged: same as Elo
+        self.assertEqual(out.loc[0, "home_qb"], "Home QB")
+
+    def test_latest_qb_lock_wins_and_raw_elo_is_untouched(self):
+        with tempfile.TemporaryDirectory() as d:
+            d = Path(d)
+            (d / "qb").mkdir()
+            row = {"game_id": "g1", "home_qb": "A", "away_qb": "B", "home_qb_out": 0, "away_qb_out": 0, "qb_pts": 80,
+                   "elo_spread_qb": 2.0, "p_elo": 0.6, "p_elo_qb": 0.6, "pulled_at_et": "2026-10-29 15:00:00"}
+            pd.DataFrame([row]).to_csv(d / "2026_wk08_20261029T150000.csv", index=False)
+            pd.DataFrame([{**row, "home_qb_out": 1, "p_elo_qb": 0.49, "pulled_at_et": "2026-10-31 11:00:00"}]).to_csv(
+                d / "qb" / "2026_wk08_qb_20261031T110000.csv", index=False)
+            q = load_qb_ledger(2026, d)
+            self.assertEqual(q.loc[0, "p_elo_qb"], 0.49)
+            live = pd.DataFrame([{"game_id": "g1", "p_elo": 0.6, "p_elo_qb": 0.6}])
+            merged = attach_qb(live, 2026, d)
+            self.assertEqual((merged.loc[0, "p_elo"], merged.loc[0, "p_elo_qb"]), (0.6, 0.49))
+
+    def test_saturday_lock_refuses_without_final_statuses(self):
+        inj = pd.DataFrame({"season": 2026, "week": 8, "team": ["A", "B", "C"], "report_status": [None, None, "Out"]})
+        with self.assertRaises(ValueError):
+            check_final_injury_report(inj, 2026, 8, ["A", "B", "C", "D"])
+        check_final_injury_report(inj.assign(report_status="Out"), 2026, 8, ["A", "B", "C", "D"])
 
 
 if __name__ == "__main__":

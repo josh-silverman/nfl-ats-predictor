@@ -34,6 +34,7 @@
     backfill: "Weeks 1–5 were predicted after they were played (same rules, no peeking at results), so they don't count in the record.",
     gap: "We and Vegas differ by 15+ points. That usually means Vegas knows something our ratings don't, often a quarterback injury.",
     closing: "Vegas's final line right before kickoff.",
+    qbLock: "On Saturday, after teams post final injury reports, we re-lock the weekend games with QB news included. Also committed to GitHub before kickoff.",
   };
 
   // ---------- tooltips (hover, keyboard focus, or tap) ----------
@@ -113,13 +114,16 @@
       g.vegas_line_at_lock ? el("span", {}, "Vegas ", el("b", {}, g.vegas_line_at_lock), el("span", { class: "at" }, " at lock")) : null,
       g.closing_line ? el("span", {}, term("Closed", TIPS.closing), " ", el("b", {}, g.closing_line)) : null);
 
-    // QB news (display only: the locked % never changes). One line per team whose usual starter is out.
+    // QB news. From Week 8 the pick accounts for it (in_pick); before that, or if the news came after the lock, it doesn't.
     const QB_REASON = { "injured reserve": "is out (injured reserve)", "reserve list": "is out (reserve list)",
                         out: "is ruled out", doubtful: "is listed as doubtful" };
+    const qbAfter = (q) => !g.qb_adjusted ? "" : q.in_pick
+      ? `Our pick accounts for this (about ${Math.round(g.why.qb_pts / 25)} points). `
+      : "This came after our lock, so our pick doesn't account for it. ";
     const qbNote = (g.qb_out || []).length ? el("div", { class: "qb-note", role: "note" },
       el("b", {}, "Heads up: "),
-      g.qb_out.map((q) => `${team(q.team).name}' usual starting QB${q.player ? ", " + q.player + "," : ""} ${QB_REASON[q.reason] || "is out"}. `).join(""),
-      "Our rating doesn't account for injuries; Vegas does.") : null;
+      g.qb_out.map((q) => `${team(q.team).name}' usual starting QB${q.player ? ", " + q.player + "," : ""} ${QB_REASON[q.reason] || "is out"}. ${qbAfter(q)}`).join(""),
+      g.qb_adjusted ? "" : "Our rating doesn't account for injuries; Vegas does.") : null;
 
     const w = g.why;
     const homeTotal = w.home_rating + w.home_field;
@@ -129,10 +133,12 @@
       el("li", {}, w.home_field
         ? `${home} is rated ${w.home_rating}, plus ${w.home_field} for playing at home = ${homeTotal}. ${away} is rated ${w.away_rating}.`
         : `Neutral site, so no home-field bonus: ${home} ${w.home_rating} vs ${away} ${w.away_rating}.`),
+      ...(w.qb_teams || []).map((t) => el("li", {},
+        `${t}'s usual starting QB is out, so we take ${w.qb_pts} off ${t} (about ${Math.round(w.qb_pts / 25)} points on the scoreboard).`)),
       el("li", {}, `That's a ${Math.abs(w.edge)}-point edge for ${w.edge >= 0 ? home : away}, which works out to about ${pct(favP)} to win.`),
       vegasFav
         ? el("li", {}, g.big_gap
-          ? `Vegas has ${vegasFav} at ${vegasPct}. A gap this big usually means news our ratings can't see, like an injury.`
+          ? `Vegas has ${vegasFav} at ${vegasPct}. A gap this big usually means news our ratings can't see, like ${g.qb_adjusted ? "other injuries" : "an injury"}.`
           : `Vegas sees it similarly: ${vegasFav} at ${vegasPct}.`)
         : null));
 
@@ -182,7 +188,11 @@
                 "data-tip": TIPS.locked }, w.lock.text)
             : el("span", { class: "backfill-note" }, "Not locked yet"))
           : el("span", { class: "backfill-note" }, "Backfill: picked after the games, doesn't count. ",
-              term("Why?", TIPS.backfill)));
+              term("Why?", TIPS.backfill)),
+        w.qb_lock && w.qb_lock.locked
+          ? el("a", { class: "lock" + (w.qb_lock.before_kickoff ? "" : " late"), href: w.qb_lock.url, target: "_blank",
+              rel: "noopener", "data-tip": TIPS.qbLock }, w.qb_lock.text)
+          : "");
       const done = w.games.filter((g) => g.result && g.result.winner !== null);
       let summary = `${w.games.length} games. Scroll for one game at a time.`;
       if (done.length) {
@@ -337,7 +347,8 @@
       el("div", { class: "how-grid" },
         card("What is Elo?", "Every team has a rating. Win and your rating goes up; lose and it goes down. Beating a strong team (or losing to a weak one) moves it more. It only uses final scores."),
         card("What does 84% mean?", "If we say a team has an 84% chance, we expect it to win about 84 of every 100 games like that. It should still lose about 16 of them, so an upset doesn't mean the model is broken."),
-        card("Why can't it beat Vegas?", "Vegas also knows about injuries, weather, and late news. Our model only knows scores. Over the past seven seasons it picked about 2 of every 3 winners, a little behind Vegas."),
+        card("What about injuries?", "Since Week 8, if a team's usual starting quarterback is out (ruled out, doubtful, or on injured reserve), we take about 3 to 4 points off that team. In testing on 2019–2025 this helped a little, and it picked more winners in games with a QB out. Other injuries aren't counted."),
+        card("Why can't it beat Vegas?", "Vegas also knows about other injuries, weather, and late news. Our model knows scores and starting quarterbacks. Over the past seven seasons it picked about 2 of every 3 winners, a little behind Vegas."),
         card("How do we keep it honest?", "Every week's picks are saved and committed to GitHub before the first kickoff, so they can't be changed after the fact. The “Locked” note next to each week links to that proof.")));
     const ex = D.example;
     if (ex) {

@@ -2,7 +2,7 @@
 
 **A leakage-safe NFL model built end-to-end with pandas and scikit-learn, and tested honestly against the betting market.**
 
-It started as an attempt to beat the point spread. Rigorous testing showed public team stats can't do that, so the project pivoted to a model that *can* be useful: pregame win probabilities. The deliverable is an Elo rating model with walk-forward validation, pre-registered success criteria, and a live 2026 ledger locked before every kickoff.
+It started as an attempt to beat the point spread. Rigorous testing showed public team stats can't do that, so the project pivoted to a model that *can* be useful: pregame win probabilities. The deliverable is an Elo rating model with a starting-quarterback adjustment, walk-forward validation, pre-registered success criteria, and a live 2026 ledger locked before every kickoff.
 
 > **Live site: [josh-silverman.github.io/nfl-ats-predictor](https://josh-silverman.github.io/nfl-ats-predictor/)** shows this week's picks, the live record, and power rankings.
 > **Status (2026-10-22):** model complete; live 2026 record through Week 6, with Week 7 locked (`reports/live_2026.md`, updated weekly).
@@ -12,12 +12,14 @@ It started as an attempt to beat the point spread. Rigorous testing showed publi
 | Model | Picks the winner | Log loss (lower = better) | AUC |
 |---|---|---|---|
 | Always pick the home team | 53.2% [50.8, 55.4] | 0.693 | — |
-| **Elo (the deliverable)** | **63.6% [61.4, 65.8]** | **0.639** | **0.692** |
+| Elo | 63.6% [61.4, 65.8] | 0.639 | 0.692 |
+| **Elo + QB availability (the deliverable from 2026 Week 8)** | **64.3% [62.1, 66.4]** | **0.635** | **0.698** |
 | Elo + logistic recalibration (v2) | 63.2% [61.0, 65.5] | 0.639 | 0.691 |
 | Betting market (moneyline, devigged) | 66.5% [64.3, 68.7] | 0.608 | 0.727 |
 
 - **Useful:** Elo beats knowing nothing by about 10 points (paired log loss −0.054 [−0.070, −0.039]), in every season.
-- **Honest about the gap:** it trails the market by about 3 points. The market knows things final scores don't, like injuries and late news.
+- **QB news helps a little:** taking about 3.6 points off a team whose usual starting QB is out beat plain Elo in 6 of 7 seasons (see section 3).
+- **Honest about the gap:** it trails the market by about 2–3 points. The market knows things final scores don't, like injuries and late news.
 - **A known weakness, reported rather than hidden:** both models over-predict home wins by about 2–3 points (up to 6–7 points in 2019–2020, when home-field advantage shrank), so neither passed the pre-registered calibration criterion.
 
 ![Reliability](reports/figures/v2_win_reliability.png)
@@ -53,13 +55,14 @@ The same information predicts *winners* well. A 30-line Elo model built from fin
 - S5 a professional build: in progress
 
 ### 3. Trying to beat Elo, honestly
-Three improvements were each pre-registered (committed to git *before* running), run once, and judged against Elo with a fixed keep rule:
+Four improvements were each pre-registered (committed to git *before* running), run once, and judged against Elo with a fixed keep rule:
 
 | Idea | Log-loss change vs. Elo [95% CI] | Verdict |
 |---|---|---|
 | Home-field advantage from recent seasons | +0.0004 [−0.0021, +0.0029] | Rejected: it chases year-to-year noise |
 | Starting QB ruled out (official injury report, as-of) | −0.0006 [−0.0032, +0.0020] | Rejected. The signal is real (right sign in every season, 72.5% vs. 62.5% on affected games), but too rare (about 4% of games) |
 | Play-by-play EPA on top of Elo | −0.0013 [−0.0059, +0.0034] | Rejected: within noise |
+| **Usual starting QB out, including injured reserve (weekly rosters), as Elo points** | **−0.0041 [−0.0076, −0.0004]** | **Kept** (6/7 seasons, AUC 0.692 → 0.698). A missing No. 1 QB ≈ 90 Elo ≈ 3.6 points. The deliverable from 2026 Week 8 |
 
 ### 4. The live test (2026)
 Every week, `scripts/predict_week.py` predicts each upcoming game using only earlier results. It refuses to overwrite a file, skips games that have already kicked off, and refuses to run on stale data. The file is committed to git before Thursday's kickoff, so the timestamps prove the lock. Weeks 1–5 were backfilled after the fact and are reported separately. **Results: [`reports/live_2026.md`](reports/live_2026.md).**
@@ -78,7 +81,7 @@ Every week, `scripts/predict_week.py` predicts each upcoming game using only ear
 - **ATS features:** EPA comes from nflfastR's model, which was trained partly on the test seasons.
 
 ## What I'd do next
-1. **Better QB coverage:** starters moved to injured reserve vanish from the weekly report. Catching them would multiply the number of affected games and could make the QB signal provable.
+1. **QB quality, not just availability:** the QB adjustment is one fixed size. A backup who's nearly as good as the starter costs less than a big drop-off; a per-QB rating (as FiveThirtyEight did) could capture that.
 2. **Opening lines and closing-line value:** grading against the opener is where bettors find edges, but it needs a new data source.
 3. **More seasons, or a pooled multi-league approach**, to shrink the confidence intervals that made real-but-small effects undetectable.
 
@@ -86,8 +89,9 @@ Every week, `scripts/predict_week.py` predicts each upcoming game using only ear
 ```bash
 conda create -n nfl-ats python=3.12 -y && conda activate nfl-ats
 python -m pip install -r requirements.txt && python -m pip install -e .
-python -m unittest discover tests                    # 72 tests
-python scripts/predict_week.py --week 7              # lock this week's predictions (before Thursday kickoff)
+python -m unittest discover tests                    # 84 tests
+python scripts/predict_week.py --week 8              # lock this week's predictions (before Thursday kickoff)
+python scripts/predict_week.py --week 8 --qb         # Saturday: re-lock weekend games with final QB injury news
 python scripts/score_ledger.py                       # update reports/live_2026.md
 python scripts/build_site.py                         # rebuild the site's data (then open site/index.html)
 python scripts/run_notebook.py notebooks/10-win-model.ipynb   # re-run the scoring notebook, saving outputs
@@ -98,7 +102,7 @@ Python ≥ 3.10 is required (nflreadpy). Use the dedicated `nfl-ats` env, not a 
 | Path | Contents |
 |---|---|
 | `src/nfl_ats/` | Library: `data`, `target`, `features`, `model`, `evaluate`, `feature_eval`, `diagnostics`, `elo`, `win_model`, `qb`, `ledger`, `site` |
-| `tests/` | 72 unit tests (stdlib `unittest`), including leakage and as-of tests |
+| `tests/` | 84 unit tests (stdlib `unittest`), including leakage and as-of tests |
 | `notebooks/` | `03-eda`, `07-backtest`, `08-diagnostics`, `10-win-model` |
 | `scripts/` | `predict_week.py`, `score_ledger.py`, `build_site.py`, `run_notebook.py` |
 | `site/` | The static site ("Josh's NFL Elo"), deployed to GitHub Pages by `.github/workflows/pages.yml` |

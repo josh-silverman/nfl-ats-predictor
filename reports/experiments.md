@@ -327,4 +327,5 @@ Each test is a single change to **raw Elo, the deliverable**, judged with `compa
   - **Calibration-in-the-large:** +2.96 (Elo) vs. +2.95 pts (H4). The home-team over-prediction is unchanged; H4 doesn't fix it.
   - **Keep rule: PASSES** (CI < 0, 6/7 seasons, higher AUC). Keep/reject is Josh's call (decision #21).
   - **Caveats:** this was the second try at the QB idea on these seasons, so the CI's honest coverage is a bit worse than 95%. The gain is small in absolute terms (about 1/13 of Elo's gain over the base rate). It depends on a live Saturday lock to match the backtest's information (Friday final statuses).
+- **Decision (Josh, 2026-10-22): KEPT** (decision #21). The QB-adjusted Elo is the deliverable from 2026 Week 8, with a Saturday QB lock. Raw Elo stays locked every Thursday as the baseline.
 - **Win-model experiment count: 7.**

@@ -320,3 +320,11 @@ Each test is a single change to **raw Elo, the deliverable**, judged with `compa
 - **Primary (decides keep, M4 baseline):** vs. **raw Elo**, `compare_predictions(target="home_win")`, walk-forward 2019–2025, same decided games. **Keep rule:** paired log-loss CI upper bound < 0, **and** better in ≥ 5/7 seasons, **and** higher AUC.
 - **Also reported:** flagged test games, `QB_PTS` by fold, accuracy on flagged games (Elo vs. H4), and calibration-in-the-large.
 - **Honesty note:** this is a second attempt at H2's idea on seasons that have been viewed many times. It is run once. The 2026 live ledger stays the clean test either way.
+- **Result (run once, 2026-10-22):** **266 test games (14.3%)** have a flag, vs. H2's 80 (4.3%).
+  - **Primary, vs. raw Elo:** log loss **−0.0041 [−0.0076, −0.0004]**, better in **6/7** seasons (2019 −0.0004, 2020 −0.0027, 2021 −0.0121, 2022 +0.0045, 2023 −0.0031, 2024 −0.0075, 2025 −0.0069). AUC 0.692 → **0.698**, Brier −0.0019, accuracy +0.7 pts [+0.05, +1.4]. Prediction SD 0.170 → 0.176, so this isn't a dispersion win.
+  - **`QB_PTS` by fold:** 65, 60, 65, 95, 75, 80, 85. That's stable at about 60–95 Elo points (about 2.5–3.8 points of spread), close to the ~85 prior from H2.
+  - **On the 266 flagged games:** raw Elo 64.3% vs. H4 69.2% accuracy.
+  - **Calibration-in-the-large:** +2.96 (Elo) vs. +2.95 pts (H4). The home-team over-prediction is unchanged; H4 doesn't fix it.
+  - **Keep rule: PASSES** (CI < 0, 6/7 seasons, higher AUC). Keep/reject is Josh's call (decision #21).
+  - **Caveats:** this was the second try at the QB idea on these seasons, so the CI's honest coverage is a bit worse than 95%. The gain is small in absolute terms (about 1/13 of Elo's gain over the base rate). It depends on a live Saturday lock to match the backtest's information (Friday final statuses).
+- **Win-model experiment count: 7.**

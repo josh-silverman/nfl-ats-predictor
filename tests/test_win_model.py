@@ -7,7 +7,8 @@ import pandas as pd
 
 from nfl_ats.feature_eval import compare_predictions
 from nfl_ats.model import check_features
-from nfl_ats.win_model import TARGET, WIN_FEATURES, benchmark_predictions, build_win_table, fit_fold, win_walk_forward
+from nfl_ats.win_model import (TARGET, WIN_FEATURES, benchmark_predictions, build_win_table, fit_fold, fit_qb_points,
+                                qb_adjusted_p, qb_walk_forward, win_walk_forward)
 
 TEAMS = ["AAA", "BBB", "CCC", "DDD"]
 
@@ -94,6 +95,35 @@ class TestWinWalkForward(unittest.TestCase):
             self.assertTrue((b["game_id"].to_numpy() == preds["game_id"].to_numpy()).all(), name)
         out = compare_predictions(bench["elo"], preds, target=TARGET)
         self.assertIn("keep", out["summary"])
+
+
+
+class TestQbAdjustedElo(unittest.TestCase):
+    """H4: QB_PTS is fit on training seasons only, and 0 points reproduces raw Elo exactly."""
+
+    def _table(self):
+        t = build_win_table(_schedules(seasons=(2015, 2016, 2017, 2018)))
+        rng = np.random.default_rng(1)
+        t["home_qb_out"] = (rng.random(len(t)) < 0.1).astype(int)
+        t["away_qb_out"] = (rng.random(len(t)) < 0.1).astype(int)
+        return t
+
+    def test_zero_points_is_raw_elo(self):
+        t = self._table()
+        np.testing.assert_allclose(qb_adjusted_p(t, 0), t["p_home_win"])
+
+    def test_fit_ignores_the_test_season(self):
+        t = self._table()
+        wrecked = t.copy()
+        test = wrecked["season"] == 2018
+        wrecked.loc[test, TARGET] = 1 - wrecked.loc[test, TARGET]
+        wrecked.loc[test, "home_qb_out"] = 1
+        self.assertEqual(fit_qb_points(t, 2018), fit_qb_points(wrecked, 2018))
+
+    def test_walk_forward_returns_one_fit_per_season(self):
+        preds, pts = qb_walk_forward(self._table(), [2017, 2018])
+        self.assertEqual(sorted(pts), [2017, 2018])
+        self.assertTrue(preds["p"].between(0, 1).all())
 
 
 if __name__ == "__main__":

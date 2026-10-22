@@ -77,6 +77,34 @@ def benchmark_predictions(table: pd.DataFrame, test_seasons: list[int], first_tr
     }
 
 
+QB_GRID = range(0, 255, 5)  # H4: Elo points a missing No. 1 QB costs, searched on training seasons only
+
+
+def qb_adjusted_p(table: pd.DataFrame, qb_pts: float) -> pd.Series:
+    """H4: raw Elo's win probability with QB_PTS taken off a side whose No. 1 QB is out (needs add_qb_feature)."""
+    from nfl_ats.elo import win_prob
+    return win_prob(table["elo_diff"] - qb_pts * table["home_qb_out"] + qb_pts * table["away_qb_out"])
+
+
+def fit_qb_points(table: pd.DataFrame, test_season: int, first_train: int = 2016) -> int:
+    """The QB_GRID value with the lowest log loss on decided games from first_train through test_season − 1."""
+    from nfl_ats.evaluate import log_loss
+    graded = table[table[TARGET].notna()]
+    train = graded[graded["season"].between(first_train, test_season - 1)]
+    return min(QB_GRID, key=lambda pts: log_loss(train[TARGET].to_numpy(), qb_adjusted_p(train, pts).to_numpy()))
+
+
+def qb_walk_forward(table: pd.DataFrame, test_seasons: list[int], first_train: int = 2016) -> tuple[pd.DataFrame, dict]:
+    """H4 out-of-sample: each test season uses QB_PTS fit on earlier seasons. Returns (predictions, {season: QB_PTS})."""
+    graded = table[table[TARGET].notna()]
+    preds, pts = [], {}
+    for test_season in test_seasons:
+        pts[test_season] = fit_qb_points(table, test_season, first_train)
+        test = graded[graded["season"] == test_season]
+        preds.append(test[["season", "game_id", TARGET]].assign(p=qb_adjusted_p(test, pts[test_season]).to_numpy()))
+    return pd.concat(preds, ignore_index=True), pts
+
+
 def epa_walk_forward(table: pd.DataFrame, games: pd.DataFrame, team_games: pd.DataFrame, extra: list[str],
                      test_seasons: list[int], first_train: int = 2016) -> tuple[pd.DataFrame, dict]:
     """Experiment H3: elo_diff + EPA diffs. EPA shrinkage is refit per fold on that fold's training seasons.

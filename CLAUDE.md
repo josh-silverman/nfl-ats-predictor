@@ -65,6 +65,11 @@ The v2 model is `Pipeline(StandardScaler → LogisticRegression)` on the pregame
 - **Calibration-in-the-large:** mean(p) − actual home-win rate, with a bootstrap 95% CI. The failure mode seen in M2.
 - **Reliability vs. its noise band:** observed Brier reliability (5 equal-count bins, given the small n) compared with the 95th percentile of reliability for a perfectly calibrated model with the same predictions (1,000 simulations).
 - "Consistent with calibration" means the calibration-in-the-large CI includes 0 **and** reliability is ≤ that 95th percentile.
+- **Market moves (pre-registered 2026-10-23, before any computation; decision #22).** "Did Vegas move toward us?" is reported, not pass/fail, on played live games.
+  - **Inputs:** O = the headline pick's expected home margin (`elo_spread_qb` where a QB lock exists, else `elo_spread`). L = Vegas's home margin at the time *that* pick was locked (Thursday file, or the QB file's own pull). C = the schedule's final `spread_line`, which is not verified as the true close.
+  - **Rules:** d = O − L, counted only if |d| ≥ 1.0. m = C − L. "Toward us" if m ≠ 0 and sign(m) = sign(d); "away" if the opposite sign; "no move" if m = 0.
+  - **Reported:** counts, the share toward us among moved games with a bootstrap 95% CI, and the mean of m·sign(d) in points with a CI. Also the moneyline version (p_close − p_lock)·sign(p_ours − p_lock) on the same games. The raw-Elo Thursday lock is reported alongside as the baseline.
+  - **Reading:** ≈ 50% toward us = no informational edge.
 
 **M4 baseline (pre-registered):** any improvement (e.g. QB availability) is judged against **raw Elo**, the deliverable, with `compare_predictions(target="home_win")` and the same keep rule. Calibration-in-the-large is reported alongside.
 

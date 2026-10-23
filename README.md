@@ -110,4 +110,4 @@ Python ≥ 3.10 is required (nflreadpy). Use the dedicated `nfl-ats` env, not a 
 | `site/` | The static site ("Josh's NFL Elo"), deployed to GitHub Pages by `.github/workflows/pages.yml` |
 | `ledger/` | Locked weekly predictions (`backfill/` is pseudo-live) |
 | `reports/` | `experiments.md` (every result), `live_2026.md`, figures |
-| `docs/` | Design, roadmap, ranked next steps, decisions, learning notes |
+| `docs/` | Project rules and pre-registered criteria (`project-rules.md`), design, roadmap, ranked next steps, decisions, learning notes |

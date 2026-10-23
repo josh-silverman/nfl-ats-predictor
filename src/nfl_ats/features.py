@@ -1,4 +1,4 @@
-"""Team-level features built from play-by-play. Leakage rules live here, so read CLAUDE.md first."""
+"""Team-level features built from play-by-play. Leakage rules live here, so read docs/project-rules.md first."""
 
 import pandas as pd
 

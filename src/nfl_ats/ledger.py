@@ -1,4 +1,4 @@
-"""The 2026 ledger: locked weekly predictions, and scoring them afterward. Rules: CLAUDE.md "Live season".
+"""The 2026 ledger: locked weekly predictions, and scoring them afterward. Rules: docs/project-rules.md "Live season".
 
 - Predictions for a week use only games from EARLIER weeks: scores from the target week onward are
   masked before Elo runs, so the same code serves the live weekly run and the pseudo-live backfill.
@@ -194,7 +194,7 @@ def load_schedules_for_ledger(season: int, refresh: bool = True) -> pd.DataFrame
 
 
 def live_report(scored: pd.DataFrame, n_sims: int = 1000, seed: int = 0) -> dict:
-    """The checks pre-registered in CLAUDE.md for 2026, on decided games of a scored ledger.
+    """The checks pre-registered in docs/project-rules.md for 2026, on decided games of a scored ledger.
 
     For raw Elo (p_elo) and v2 (p_v2): log loss / Brier / accuracy with bootstrap CIs; paired log loss vs.
     raw Elo and vs. the pull-time market; calibration-in-the-large with a CI; and Brier reliability
@@ -246,7 +246,7 @@ def live_report(scored: pd.DataFrame, n_sims: int = 1000, seed: int = 0) -> dict
 
 
 def market_moves(scored: pd.DataFrame, schedules: pd.DataFrame, use_qb: bool = True) -> pd.DataFrame:
-    """Market-move check (pre-registered in CLAUDE.md): did the line move from our lock toward our number?
+    """Market-move check (pre-registered in docs/project-rules.md): did the line move from our lock toward our number?
 
     Per played game: O = our expected home margin, L = Vegas's at the time that pick was locked, C = the schedule's
     final line. d = O − L (kept only if |d| >= MOVE_MIN_GAP), m = C − L. toward = 1 / 0 for moved games, NaN if

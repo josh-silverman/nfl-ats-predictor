@@ -1,4 +1,4 @@
-"""v2: P(home team wins) from Elo. See CLAUDE.md (success criteria) and design doc section 9.
+"""v2: P(home team wins) from Elo. See docs/project-rules.md (success criteria) and design doc section 9.
 
 Elo (src/nfl_ats/elo.py) has fixed published parameters and updates only after each game, so its
 pregame numbers never use the game's own result and nothing about it is fit on test data. The only

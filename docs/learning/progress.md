@@ -2,11 +2,11 @@
 
 **Current phase:** Pivot to win probability (decision #19). **M0–M1 done.** `src/nfl_ats/win_model.py` (`build_win_table`, `win_walk_forward`, `benchmark_predictions`), `compare_predictions(target=...)`, `tests/test_win_model.py`. 46 tests pass. Smoke test: 2,895 games, 10 ties, 1,865 test games, no scores looked at.
 **M2 scored:** S1 PASS, S2 PASS, **S3 FAIL** (reliability 0.00234 > 0.002). By the pre-set rule, **raw Elo is the deliverable**. Post-hoc: raw Elo is 0.00208, and the threshold sat at about the 93rd percentile of noise (mistake #10). Logged as W3.
-**M2 skeptic:** no leakage, no blockers. Wording corrected: both models fail S3, the miss is partly a real home-team bias (+2.4 to +3.0 pts), and S1/S2 were near-certain. 2026 calibration checks and the M4 baseline (raw Elo) were pre-registered in CLAUDE.md before any 2026 outcome was viewed. Notebook outputs saved via `scripts/run_notebook.py`.
+**M2 skeptic:** no leakage, no blockers. Wording corrected: both models fail S3, the miss is partly a real home-team bias (+2.4 to +3.0 pts), and S1/S2 were near-certain. 2026 calibration checks and the M4 baseline (raw Elo) were pre-registered in docs/project-rules.md before any 2026 outcome was viewed. Notebook outputs saved via `scripts/run_notebook.py`.
 **M3 in progress:** `src/nfl_ats/ledger.py` + `scripts/predict_week.py` (as-of masking, skip-started, stale-data guard, no overwrite). 55 tests. Backfill weeks 1–5 (79 games, pseudo-live) in `ledger/backfill/`. **Week 6 locked live** 2026-10-15 14:51 ET (14 games, before the 20:15 TNF kickoff).
 **Live record:** Week 6 (first live week) scored 2026-10-22: Elo picked 8 of 14 winners, Vegas 9 of 14. One week is noise; home teams went 6-8 vs. a predicted ~9. **Week 7 locked** 2026-10-22 15:50 ET (14 games, commit 233dda2, before the 20:15 TNF kickoff).
 **Hardening sprint done (decision #20):** H1, H2, and H3 all rejected by the pre-set keep rule. **Raw Elo stays the deliverable**, with no shadow models and no Saturday lock. Win-model experiment count: 6.
-**M5 drafted:** README case study written. `scripts/score_ledger.py` writes `reports/live_2026.md` using the pre-registered 2026 checks. Week 6 is locked twice (14:51 by Claude, 15:07 by Josh: identical, and the earliest lock counts).
+**M5 drafted:** README case study written. `scripts/score_ledger.py` writes `reports/live_2026.md` using the pre-registered 2026 checks. Week 6 is locked twice (14:51 and 15:07: identical, and the earliest lock counts).
 **Site live:** https://josh-silverman.github.io/nfl-ats-predictor/ (repo github.com/josh-silverman/nfl-ats-predictor, public). "Josh's NFL Elo" in `site/` (This Week, Record, Rankings, How It Works). Light redesign (one game per screen), plain language, Chart.js. `scripts/build_site.py`, Pages workflow. 72 tests.
 **Weekly routine:** Thursday before kickoff: `predict_week.py --week N` → `build_site.py` → commit → push. Saturday (from Week 8, before the first Sunday kickoff): `predict_week.py --week N --qb` → `build_site.py` → commit → push. After Monday night: `score_ledger.py` → `build_site.py` → commit → push. Next: score Week 7 after MNF (Mon 2026-10-26); lock Week 8 before Thu 2026-10-29 kickoff. If `conda run` errors, call `~/opt/anaconda3/envs/nfl-ats/bin/python` directly.
 **H4 kept (decision #21, 2026-10-22):** the QB-adjusted Elo (usual starter out via injury report or injured reserve, 90 Elo ≈ 3.6 pts) is the deliverable from Week 8. −0.0041 [−0.0076, −0.0004] vs. raw Elo, 6/7 seasons. Win-model experiment count: 7. The site shows a QB heads-up note on cards; from Week 8 the headline % is QB-adjusted. New **Saturday step**: `predict_week.py --week N --qb` → `build_site.py` → commit → push. 84 tests.
@@ -15,7 +15,7 @@
 **Last updated:** 2026-10-22
 
 ## Done
-- Planning docs, CLAUDE.md, learning files, skeptic agent, slash commands.
+- Planning docs, project rules, learning files, skeptic review checklist.
 - Requirements installed in the `nfl-ats` conda env.
 - pyarrow 25.0.1 installed in `nfl-ats` and the import verified (via `conda run -n nfl-ats python -m pip`).
 
@@ -55,9 +55,9 @@
 ## Session log
 - 2026-10-02: Session 0, planning and setup.
 - 2026-10-02: Approved pyarrow, held Jupyter, started Phase 1.
-- 2026-10-02: Added the conda-run rule to CLAUDE.md, installed pyarrow. Back to the step 2 push question.
+- 2026-10-02: Added the conda-run rule to docs/project-rules.md, installed pyarrow. Back to the step 2 push question.
 - 2026-10-02: Changed teaching focus to coding/pandas/sklearn (decision #10). Summarized steps 3–4 and ran the Phase 1 gate.
-- 2026-10-13: Switched to build mode (decision #11). Claude writes the code, and phase-end key-points logs replace the quizzes. Phase 1 closed.
+- 2026-10-13: Switched to build mode (decision #11). Code is written in small reviewed steps, and phase-end key-points logs replace the quizzes. Phase 1 closed.
 - 2026-10-13: Phase 2 step 1 done (`data.py`, schedules cached).
 - 2026-10-13: Phase 2 step 2 done (schedule validation).
 - 2026-10-13: Phase 2 step 3 done (spread sign confirmed with Josh on CAR@DEN 2016).

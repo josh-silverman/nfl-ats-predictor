@@ -56,4 +56,4 @@ Each idea is scored on two things: **Info** (how likely it is to hold informatio
 3. **First improvement to try: B1, QB availability** from verified pre-game sources, as a single change on top of Elo. Check the data's timing before writing any feature.
 4. **Parked:** A4 and B7 need a new data source and Josh's approval.
 
-This changes the project's core question (`CLAUDE.md`, design doc, roadmap). Those files change only after Josh signs off.
+This changes the project's core question (`docs/project-rules.md`, design doc, roadmap). Those files change only after Josh signs off.

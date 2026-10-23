@@ -1,6 +1,6 @@
 # Key things to know
 
-At the end of each phase, Claude adds 3–6 bullets with the points worth remembering from it.
+At the end of each phase, 3–6 bullets are added with the points worth remembering from it.
 
 <!-- Template
 ## Phase N: <name>

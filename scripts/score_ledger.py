@@ -34,7 +34,7 @@ def section(title: str, rep: dict) -> list[str]:
 
 
 def move_section(scored: pd.DataFrame, schedules: pd.DataFrame) -> list[str]:
-    """The pre-registered market-move check (CLAUDE.md): did the line move from our lock toward our number?"""
+    """The pre-registered market-move check (docs/project-rules.md): did the line move from our lock toward our number?"""
     lines = ["## Did the market move toward us? (live games)", "",
              f"Games where our number and Vegas's line at our lock differed by {MOVE_MIN_GAP:g}+ points. "
              "\"Toward us\" = the final line in the data (not verified as the true close) moved in the direction we disagreed. "
@@ -56,7 +56,7 @@ def main() -> None:
     schedules = load_schedules_for_ledger(SEASON, refresh=True)
     now = datetime.now(EASTERN).strftime("%Y-%m-%d %H:%M %Z")
     lines = [f"# {SEASON} live record", "",
-             f"Generated {now} by `scripts/score_ledger.py`. The checks were pre-registered in `CLAUDE.md` before any 2026 outcome was scored.",
+             f"Generated {now} by `scripts/score_ledger.py`. The checks were pre-registered in `docs/project-rules.md` before any 2026 outcome was scored.",
              "The deliverable is raw Elo through Week 7 and the QB-adjusted Elo from Week 8 (decision #21; scored only on games it locked); raw Elo stays recorded as the baseline and v2 alongside. The market is the moneyline at our pull time, so it may have later information than ours and isn't comparable with the backtest's schedule moneyline.", ""]
     for mode, title in [("live", "Live: locked before kickoff (the clean test)"),
                         ("backfill", "Pseudo-live backfill (weeks predicted after they were played; NOT part of the live record)")]:

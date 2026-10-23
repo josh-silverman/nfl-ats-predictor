@@ -1,6 +1,6 @@
 # Experiment log
 
-Every result goes here, including failures (CLAUDE.md, single-change rule). Each entry records the date, the change, the metrics with CIs, kept or rejected, and why.
+Every result goes here, including failures (docs/project-rules.md, single-change rule). Each entry records the date, the change, the metrics with CIs, kept or rejected, and why.
 
 **Types**
 - **ATS:** a walk-forward backtest of the model. These are the only results that can support an edge claim, and they count toward the multiple-testing total.
@@ -231,7 +231,7 @@ Every result goes here, including failures (CLAUDE.md, single-change rule). Each
 
 ---
 ## Hardening sprint (decided 2026-10-15 with Josh: "both at once")
-Each test is a single change to **raw Elo, the deliverable**, judged with `compare_predictions(target="home_win")` and the pre-set keep rule: paired log-loss CI < 0, ≥ 5/7 seasons better, and higher AUC. That keep rule and the M4 baseline were pre-registered in CLAUDE.md. Calibration-in-the-large is reported alongside. A candidate that's ready joins the ledger as a locked **shadow model** from its first ready week. The headline model changes only if the keep rule passes. **Caveat for all three:** the ideas were motivated by viewing 2019–2025, so a backtest pass there is weaker evidence. 2026 shadow results are the clean test.
+Each test is a single change to **raw Elo, the deliverable**, judged with `compare_predictions(target="home_win")` and the pre-set keep rule: paired log-loss CI < 0, ≥ 5/7 seasons better, and higher AUC. That keep rule and the M4 baseline were pre-registered in docs/project-rules.md. Calibration-in-the-large is reported alongside. A candidate that's ready joins the ledger as a locked **shadow model** from its first ready week. The headline model changes only if the keep rule passes. **Caveat for all three:** the ideas were motivated by viewing 2019–2025, so a backtest pass there is weaker evidence. 2026 shadow results are the clean test.
 
 ### H1 · PRE-REGISTERED 2026-10-15, before running · As-of home-field advantage
 - **Change:** replace Elo's fixed home field (48 Elo points ≈ 1.9 points of spread) with a value set **before each season** from the **trailing 3 seasons'** mean home margin in regular-season, non-neutral games, × 25 Elo per point. Seasons without 3 prior seasons use the seasons available, and the first loaded season uses 48. The window of 3 is fixed up front and not tuned. Elo's updates use the same home field, so everything stays as-of.
@@ -269,7 +269,7 @@ Each test is a single change to **raw Elo, the deliverable**, judged with `compa
 - **Expected starter (as-of):** the QB with the most pass attempts (`passer_player_id`, pbp) in the team's **previous** regular-season game of the same season. Week 1 and teams with no prior game get no flag.
 - **`qb_out`:** 1 if that expected starter is listed **Out or Doubtful** on the team's official injury report for this game week (`load_injuries`, matched on gsis_id), else 0. Questionable counts as available. Benchings and non-injury absences aren't captured.
 - **Feature:** `qb_out_diff = home_qb_out − away_qb_out`.
-- **Primary test (decides keep, per CLAUDE.md M4 baseline):** `Pipeline(StandardScaler → LogisticRegression)` on `[elo_diff, qb_out_diff]`, walk-forward 2019–2025, vs. **raw Elo**, with the keep rule (paired log-loss CI < 0, ≥ 5/7 seasons better, higher AUC).
+- **Primary test (decides keep, per docs/project-rules.md M4 baseline):** `Pipeline(StandardScaler → LogisticRegression)` on `[elo_diff, qb_out_diff]`, walk-forward 2019–2025, vs. **raw Elo**, with the keep rule (paired log-loss CI < 0, ≥ 5/7 seasons better, higher AUC).
 - **Secondary (diagnostic only, isolates the QB change):** the same model vs. v2 (`[elo_diff]` alone), paired log loss.
 - **Also reported:** how many test games have `qb_out_diff ≠ 0`, the fitted QB coefficient by fold, and calibration-in-the-large.
 - **Result (run once, 2026-10-15):** 100 flagged team-games in 2016–2025. **80 test games** (4.3%) have `qb_out_diff ≠ 0`. Spot checks (e.g. Purdy 2024 wk 12, Roethlisberger 2020 wk 17, Trubisky 2018 wk 12) are correct.

@@ -1,9 +1,9 @@
 # 01 — Roadmap
 
-Claude writes the code in every phase and explains the key patterns as it goes. Josh reviews (decision #11). Every phase ends with a **log**: its key things to know go into `docs/learning/concepts.md`, Claude posts a 3-line recap, and work stops until Josh says go. The **Log:** line under each phase lists the topics to capture.
+Code is written in small steps in every phase, with the key patterns explained as it goes. Josh reviews (decision #11). Every phase ends with a **log**: its key things to know go into `docs/learning/concepts.md`, a 3-line recap is posted, and work stops until Josh says go. The **Log:** line under each phase lists the topics to capture.
 
 ## Phase 0: Setup ✅
-CLAUDE.md, the design and roadmap docs, the learning files, the skeptic agent, the slash commands, and the env install.
+`docs/project-rules.md`, the design and roadmap docs, the learning files, the skeptic review checklist, and the env install.
 
 ## Phase 1: Problem framing ✅
 1. What "covering" means, how closing lines form, and why closing lines are hard to beat.
@@ -69,10 +69,10 @@ Before this phase, decide whether to add Jupyter (it needs Josh's agreement).
 **Log:** calibration, multiple testing.
 
 ## Pivot (decision #19): win-probability model, milestones M0–M5
-The ATS study ends as a documented negative result. Phases 8–9 are replaced by these milestones. Success criteria S1–S5 are pre-registered in `CLAUDE.md`. Each milestone ends with a stop for Josh's go.
+The ATS study ends as a documented negative result. Phases 8–9 are replaced by these milestones. Success criteria S1–S5 are pre-registered in `docs/project-rules.md`. Each milestone ends with a stop for Josh's go.
 
 ### M0: Pivot paperwork ✅
-CLAUDE.md (new question, success criteria, archived ATS rules), design section 9, this roadmap, decision #19.
+docs/project-rules.md (new question, success criteria, archived ATS rules), design section 9, this roadmap, decision #19.
 
 ### M1: Win-model code ✅
 1. `src/nfl_ats/win_model.py`: `build_win_table` (runs Elo over 2015–2025, adds the `home_win` target, flags and counts ties), `WIN_FEATURES = ["elo_diff"]`, `win_walk_forward` (reuses `make_model`, `check_features`).

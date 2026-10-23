@@ -1,24 +1,8 @@
 # NFL Win-Probability Model: Project Rules
 
-**Since decision #19 (2026-10-15), the model predicts the probability that the home team wins** (ties excluded and counted). The original question, whether the home team covers the closing spread, is now the **archived ATS study**: a documented negative result (D1–D5 in `reports/experiments.md`). Claude builds the project and explains as it goes. **The priority is finishing the project.** Learning happens along the way, not through quizzes (decision #11). The source brief is `docs/kickoff-prompt.md`, the design is in `docs/plans/00-design.md` (section 9 covers v2), the phases are in `docs/plans/01-roadmap.md`, and the evidence for the pivot is in `docs/plans/02-next-steps.md`.
+**Since decision #19 (2026-10-15), the model predicts the probability that the home team wins** (ties excluded and counted). The original question, whether the home team covers the closing spread, is now the **archived ATS study**: a documented negative result (D1–D5 in `reports/experiments.md`). The design is in `docs/plans/00-design.md` (section 9 covers v2), the phases are in `docs/plans/01-roadmap.md`, and the evidence for the pivot is in `docs/plans/02-next-steps.md`.
 
-## How to talk to Josh
-- Act as a mentor, not a textbook. Be honest about what matters and what doesn't.
-- **Keep replies short. One small step at a time.**
-- Josh has an MSBA and is rusty but capable. Josh already knows leakage, as-of snapshots, backtesting, and Brier scores from a PGA Tour project, so don't re-teach those.
-- When Josh says they're done for the day, update `docs/learning/progress.md` so `/status` can resume next session.
-
-## Working style
-1. **Claude writes the code**, in small steps, and Josh reviews it. After each step, give 2–4 lines on the key pandas or sklearn pattern or decision behind it, and what a pro would watch for.
-2. Teach stats and betting concepts only when a code decision depends on them, in a few sentences.
-3. **End of phase:** append the phase's "Key things to know" (3–6 bullets) to `docs/learning/concepts.md`, post a 3-line recap, then **stop until Josh says go**. No check questions. Never roll into the next phase on your own.
-4. `/explain` and `/quiz` run only when Josh asks.
-5. Josh still makes the calls that need a human: the spread-sign check in Phase 2, acting on skeptic findings, and keeping or rejecting each experiment.
-6. Keep these files current:
-   - `docs/learning/progress.md`: the current phase and what's next.
-   - `docs/learning/concepts.md`: the key things to know from each phase.
-   - `docs/decisions.md`: each decision, what was chosen, and why.
-   - `docs/learning/mistakes.md`: what broke and what it taught.
+These rules came first and override anything else in the repo. The pre-registered criteria below were written before the results they judge, and never changed after.
 
 ## Leakage rules (non-negotiable)
 - Every feature for a game uses **only games played before that week's kickoff**.
@@ -89,12 +73,9 @@ The ATS evaluation rules (52.4% breakeven, edge only if the CI lower bound clear
 ## Environment and stack
 - Use the conda env **`nfl-ats`** (Python 3.12). **Never create a `.venv`.**
 - Before any install, run `python --version` and `which python` and confirm they point to `nfl-ats`. If they don't, **stop and tell Josh**.
-- Always launch Claude Code from the nfl-ats env. Use `conda run -n nfl-ats` for any python or pip command.
 - The stack is **nflreadpy, pandas, scikit-learn, seaborn**. Add nothing else unless you explain why and Josh agrees.
 - nflreadpy returns **Polars** DataFrames. Convert with `.to_pandas()` at the load boundary, and keep everything downstream in pandas.
 
-## Skeptic reviews
-Run the `skeptic` subagent (`.claude/agents/skeptic.md`) at the end of **milestones M2 and M5** (and it already ran after Phases 4 and 7 and diagnostic Steps 3 and 6), before the gate. Share its findings with Josh and fix any blockers.
 
 ## Layout
 - `src/nfl_ats/`: library code.
@@ -105,4 +86,4 @@ Run the `skeptic` subagent (`.claude/agents/skeptic.md`) at the end of **milesto
 - `data/raw/`, `data/processed/`: data, gitignored.
 - `reports/`: experiment log and figures.
 - `ledger/`: locked live predictions.
-- `docs/`: plans, decisions, and learning files.
+- `docs/`: these rules, plans, decisions, and learning files.

@@ -73,6 +73,7 @@ class TestSiteData(unittest.TestCase):
         done = game_cards(self._scored(24, 17), closing={"g1": -4.0}, now=before)[0]  # a result also reveals it
         self.assertEqual(done["closing_line"], f"CAR {MINUS}4.0")
         self.assertTrue(done["result"]["we_were_right"])
+        self.assertEqual(done["expected_margin"], 4.0)          # shown next to the result, not graded
 
     def test_qb_note_rides_along_without_changing_the_pick(self):
         flags = pd.DataFrame({"game_id": ["g1", "g1"], "team": ["PHI", "CAR"], "player": ["Jalen Hurts", None],

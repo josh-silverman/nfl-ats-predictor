@@ -135,6 +135,7 @@ main.wrap { padding-top: 4px; padding-bottom: 8px; }
 .why ul { margin: 6px 0 2px; padding-left: 20px; color: var(--ink-2); font-size: 14px; max-width: 70ch; }
 .why li { margin: 3px 0; }
 .result { margin-top: 12px; padding: 10px 14px; background: var(--card-2); border: 1px solid var(--line); border-radius: var(--r-md); font-size: 14px; display: flex; flex-wrap: wrap; gap: 4px 14px; align-items: center; }
+.result .margin { color: var(--ink-2); }
 .right { color: var(--good); font-weight: 600; }
 .wrong { color: var(--bad); font-weight: 600; }
 

@@ -142,13 +142,20 @@
           : `Vegas sees it similarly: ${vegasFav} at ${vegasPct}.`)
         : null));
 
+    // Result: we grade the winner only. The margin line shows how close our expected margin was (not graded).
     let result = null;
     if (g.result) {
       const r = g.result;
+      const by = Math.abs(r.home_score - r.away_score);
+      const exp = g.expected_margin === null ? null : Math.round(g.expected_margin);
+      const expText = exp === null ? "" : exp < 1 ? " (we expected a toss-up)"
+        : r.we_were_right ? ` (we expected ~${exp})` : ` (we expected ${g.favorite} by ~${exp})`;
       result = el("div", { class: "result" },
         el("span", {}, `Final: ${away} ${r.away_score}, ${home} ${r.home_score}`),
         r.winner === null ? el("span", {}, "Tie")
-          : r.we_were_right ? el("span", { class: "right" }, "✓ Picked right") : el("span", { class: "wrong" }, "✗ Missed"));
+          : r.we_were_right ? el("span", { class: "right" }, "✓ Picked the winner") : el("span", { class: "wrong" }, "✗ Missed the winner"),
+        r.winner === null ? null
+          : el("span", { class: "margin" }, (r.we_were_right ? `Won by ${by}` : `${r.winner} won by ${by}`) + expText));
     }
 
     return el("article", { class: "game", "aria-label": `${team(away).name} at ${team(home).name}` },
@@ -198,7 +205,7 @@
       if (done.length) {
         const ours = done.filter((g) => g.result.we_were_right).length;
         const vDone = done.filter((g) => g.result.vegas_was_right !== null);
-        summary = `We picked ${ours} of ${done.length} right this week. Vegas: ${vDone.filter((g) => g.result.vegas_was_right).length} of ${vDone.length}.`;
+        summary = `We picked ${ours} of ${done.length} winners this week. Vegas: ${vDone.filter((g) => g.result.vegas_was_right).length} of ${vDone.length}.`;
       }
       intro.replaceChildren(
         el("h2", {}, `Week ${w.week}`),

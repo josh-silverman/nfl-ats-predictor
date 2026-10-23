@@ -185,6 +185,7 @@ def game_cards(scored: pd.DataFrame, context: dict | None = None, closing: dict 
             "p_home": round(p_home, 3), "p_vegas_home": None if p_mkt is None else round(p_mkt, 3),
             "favorite": fav, "confidence": confidence(p_home),
             "our_line": format_line(g.pick_spread, g.home_team, g.away_team),
+            "expected_margin": None if pd.isna(g.pick_spread) else round(abs(float(g.pick_spread)), 1),
             "vegas_line_at_lock": format_line(_num(getattr(g, "spread_line_at_pull", np.nan)), g.home_team, g.away_team),
             "closing_line": format_line(closing.get(g.game_id), g.home_team, g.away_team) if started else None,
             "big_gap": p_mkt is not None and abs(p_home - p_mkt) >= BIG_GAP,

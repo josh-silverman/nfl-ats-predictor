@@ -26,6 +26,8 @@ FIRST_SEASON = 2015  # Elo warm-up
 MODEL_COLUMNS = {"p_elo": "raw Elo (baseline; the deliverable through Week 7)", "p_v2": "v2 (Elo + logistic)",
                  "p_elo_qb": "QB-adjusted Elo (the deliverable from Week 8)"}
 QB_COLUMNS = ["home_qb", "away_qb", "home_qb_out", "away_qb_out", "qb_pts", "elo_spread_qb", "p_elo_qb"]
+QB_PULL_COLUMNS = ["qb_spread_line_at_pull", "qb_p_market_at_pull", "qb_pulled_at_et", "qb_file"]  # the QB lock's own pull
+MOVE_MIN_GAP = 1.0  # market-move check: only games where we and Vegas differed by 1+ point at lock (pre-registered)
 
 
 def kickoff_times(games: pd.DataFrame) -> pd.Series:
@@ -140,10 +142,12 @@ def load_qb_ledger(season: int = 2026, ledger_dir: Path = LEDGER_DIR) -> pd.Data
     frames = [pd.read_csv(f).assign(qb_file=f.name) for f in files]
     frames = [f for f in frames if "p_elo_qb" in f.columns]
     if not frames:
-        return pd.DataFrame(columns=["game_id", *QB_COLUMNS, "qb_pulled_at_et", "qb_file"])
-    df = pd.concat(frames, ignore_index=True).rename(columns={"pulled_at_et": "qb_pulled_at_et"})
+        return pd.DataFrame(columns=["game_id", *QB_COLUMNS, *QB_PULL_COLUMNS])
+    df = pd.concat(frames, ignore_index=True).rename(columns={
+        "pulled_at_et": "qb_pulled_at_et", "spread_line_at_pull": "qb_spread_line_at_pull",
+        "p_market_at_pull": "qb_p_market_at_pull"})
     df = df.sort_values("qb_pulled_at_et").drop_duplicates("game_id", keep="last")
-    return df[["game_id", *QB_COLUMNS, "qb_pulled_at_et", "qb_file"]].reset_index(drop=True)
+    return df.reindex(columns=["game_id", *QB_COLUMNS, *QB_PULL_COLUMNS]).reset_index(drop=True)
 
 
 def qb_for_week(schedules: pd.DataFrame, season: int, week: int, refresh: bool = True) -> tuple[pd.DataFrame, int]:
@@ -161,7 +165,7 @@ def attach_qb(ledger: pd.DataFrame, season: int = 2026, ledger_dir: Path = LEDGE
     """The live ledger with the QB-adjusted columns from load_qb_ledger (latest QB lock per game; NaN before Week 8)."""
     if ledger.empty:
         return ledger
-    base = ledger.drop(columns=[c for c in QB_COLUMNS if c in ledger.columns])
+    base = ledger.drop(columns=[c for c in QB_COLUMNS + QB_PULL_COLUMNS if c in ledger.columns])
     return base.merge(load_qb_ledger(season, ledger_dir), on="game_id", how="left", validate="one_to_one")
 
 
@@ -239,3 +243,51 @@ def live_report(scored: pd.DataFrame, n_sims: int = 1000, seed: int = 0) -> dict
         paired[f"{label} − market"] = tuple(
             paired_diff(y[both], d.loc[both, "p_market_at_pull"], d.loc[both, col]).loc["log_loss"].round(4))
     return {**info, "models": models, "paired_log_loss (diff, ci_low, ci_high)": paired}
+
+
+def market_moves(scored: pd.DataFrame, schedules: pd.DataFrame, use_qb: bool = True) -> pd.DataFrame:
+    """Market-move check (pre-registered in CLAUDE.md): did the line move from our lock toward our number?
+
+    Per played game: O = our expected home margin, L = Vegas's at the time that pick was locked, C = the schedule's
+    final line. d = O − L (kept only if |d| >= MOVE_MIN_GAP), m = C − L. toward = 1 / 0 for moved games, NaN if
+    no move. dir_move = m·sign(d) points; clv_prob = the same idea in devigged moneyline probability.
+    use_qb=False scores the raw-Elo Thursday lock (the baseline).
+    """
+    from nfl_ats.diagnostics import moneyline_prob
+    close = schedules[["game_id", "spread_line", "home_moneyline", "away_moneyline"]].rename(
+        columns={"spread_line": "close_line"})
+    close["p_close"] = moneyline_prob(close["home_moneyline"], close["away_moneyline"])
+    d = scored[scored["home_score"].notna()].merge(close[["game_id", "close_line", "p_close"]], on="game_id",
+                                                   how="left", validate="one_to_one")
+    qb = (d["p_elo_qb"].notna() if use_qb and "p_elo_qb" in d else pd.Series(False, index=d.index)).to_numpy()
+    pick = lambda qb_col, col: np.where(qb, d[qb_col], d[col]) if qb.any() else d[col].to_numpy(dtype=float)
+    out = pd.DataFrame({
+        "game_id": d["game_id"], "week": d["week"], "qb_lock": qb,
+        "ours": pick("elo_spread_qb", "elo_spread"), "lock_line": pick("qb_spread_line_at_pull", "spread_line_at_pull"),
+        "close_line": d["close_line"], "p_ours": pick("p_elo_qb", "p_elo"),
+        "p_lock": pick("qb_p_market_at_pull", "p_market_at_pull"), "p_close": d["p_close"],
+    }).astype({c: float for c in ["ours", "lock_line", "close_line", "p_ours", "p_lock", "p_close"]})
+    out["gap"] = out["ours"] - out["lock_line"]
+    out["move"] = out["close_line"] - out["lock_line"]
+    out = out[(out["gap"].abs() >= MOVE_MIN_GAP) & out["move"].notna()].copy()
+    sign = np.sign(out["gap"])
+    out["dir_move"] = out["move"] * sign
+    out["toward"] = (out["dir_move"] > 0).astype(float).where(out["move"] != 0)
+    out["clv_prob"] = (out["p_close"] - out["p_lock"]) * np.sign(out["p_ours"] - out["p_lock"])
+    return out.reset_index(drop=True)
+
+
+def market_move_summary(moves: pd.DataFrame) -> dict:
+    """Counts, share toward us among moved games, and mean moves with bootstrap 95% CIs."""
+    from nfl_ats.evaluate import bootstrap_ci
+    moved = moves[moves["toward"].notna()]
+    out = {"games": len(moves), "toward": int(moved["toward"].sum()), "away": int(len(moved) - moved["toward"].sum()),
+           "no_move": int(moves["toward"].isna().sum())}
+    if len(moved) >= 2:
+        out["share_toward"] = bootstrap_ci(lambda y, p: y.mean(axis=-1), moved["toward"], moved["toward"])
+    if len(moves) >= 2:
+        out["mean_dir_move_pts"] = bootstrap_ci(lambda y, p: y.mean(axis=-1), moves["dir_move"], moves["dir_move"])
+        clv = moves["clv_prob"].dropna()
+        if len(clv) >= 2:
+            out["mean_clv_prob_pts"] = tuple(100 * v for v in bootstrap_ci(lambda y, p: y.mean(axis=-1), clv, clv))
+    return out

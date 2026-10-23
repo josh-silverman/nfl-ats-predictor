@@ -67,6 +67,8 @@ Four improvements were each pre-registered (committed to git *before* running), 
 ### 4. The live test (2026)
 Every week, `scripts/predict_week.py` predicts each upcoming game using only earlier results. It refuses to overwrite a file, skips games that have already kicked off, and refuses to run on stale data. The file is committed to git before Thursday's kickoff, so the timestamps prove the lock. Weeks 1–5 were backfilled after the fact and are reported separately. **Results: [`reports/live_2026.md`](reports/live_2026.md).**
 
+The live report also tracks **whether the betting line moves toward our number** after we lock: a closing-line-value check, the standard test of whether a model knows something the market doesn't. About 50% means no edge. It was pre-registered before any of it was computed.
+
 ## How it guards against fooling itself
 - **No leakage:** every feature uses only games before kickoff. Perturbation tests wreck a game's data and assert that nothing at or before it changes. Post-game columns, including the schedule's "who actually started at QB", are blocked as features in code.
 - **Walk-forward only:** no random splits. Scalers, shrinkage and models are fit inside each training fold.

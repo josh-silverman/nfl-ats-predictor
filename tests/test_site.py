@@ -8,7 +8,7 @@ import numpy as np
 import pandas as pd
 
 from nfl_ats.elo import rating_history, run_elo
-from nfl_ats.site import (MINUS, TEAMS, confidence, day_group, format_line, game_cards, lock_status, qb_notes,
+from nfl_ats.site import (MINUS, TEAMS, confidence, day_group, format_line, game_cards, lock_status, move_line, qb_notes,
                           record_summary, team_context)
 from tests.test_win_model import _schedules
 
@@ -101,6 +101,16 @@ class TestSiteData(unittest.TestCase):
         self.assertEqual(rec["by_week"][0]["ours"], 1)        # the record grades the QB-adjusted pick
 
 
+
+    def test_market_move_line_needs_five_games(self):
+        self.assertIsNone(move_line({"games": 4, "toward": 2, "away": 1, "no_move": 1}))
+        line = move_line({"games": 13, "toward": 3, "away": 2, "no_move": 8})
+        self.assertIn("3 of 5 games", line)
+        self.assertIn("8 didn't move", line)
+        rec = record_summary(pd.DataFrame({"week": [6], "home_win": [1.0], "p_elo": [0.6], "p_market_at_pull": [0.6]}),
+                             {"games": 13, "toward": 3, "away": 2, "no_move": 8})
+        self.assertEqual(rec["extra"][0], line)
+        json.dumps(rec)
 
     def test_line_formatting(self):
         self.assertEqual(format_line(0.0, "A", "B"), "Pick'em")

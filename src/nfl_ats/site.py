@@ -13,7 +13,8 @@ import pandas as pd
 from nfl_ats.data import PROJECT_ROOT, regular_season
 from nfl_ats.elo import HOME_FIELD, rating_history
 from nfl_ats.evaluate import accuracy, bootstrap_ci
-from nfl_ats.ledger import EASTERN, LEDGER_DIR, attach_qb, kickoff_times, load_ledger, score_ledger
+from nfl_ats.ledger import (EASTERN, LEDGER_DIR, attach_qb, kickoff_times, load_ledger, market_move_summary, market_moves,
+                            score_ledger)
 
 REPO_URL = "https://github.com/josh-silverman/nfl-ats-predictor"
 BIG_GAP = 0.15  # flag games where we and Vegas differ by 15+ points of win chance
@@ -201,8 +202,17 @@ def game_cards(scored: pd.DataFrame, context: dict | None = None, closing: dict 
     return cards
 
 
-def record_summary(scored_live: pd.DataFrame) -> dict:
-    """W-L for us and Vegas on live weeks only, week by week, plus up to three plain extra lines."""
+def move_line(moves: dict | None) -> str | None:
+    """One plain sentence for the pre-registered market-move check (market_move_summary), once there are 5+ games."""
+    if not moves or moves["games"] < 5:
+        return None
+    moved = moves["toward"] + moves["away"]
+    return (f"When we disagreed with Vegas by a point or more, the betting line later moved our way in {moves['toward']} "
+            f"of {moved} games where it moved ({moves['no_move']} didn't move). About half would mean no edge.")
+
+
+def record_summary(scored_live: pd.DataFrame, moves: dict | None = None) -> dict:
+    """W-L for us and Vegas on live weeks only, week by week, plus up to four plain extra lines."""
     d = headline(scored_live[scored_live["home_win"].notna()])
     if d.empty:
         return {"games": 0, "by_week": [], "extra": []}
@@ -213,7 +223,7 @@ def record_summary(scored_live: pd.DataFrame) -> dict:
                                    vegas_games=("vegas", "count")).cumsum()
     by_week = [{"week": int(w), "games": int(r.games), "ours": int(r.ours), "vegas": int(r.vegas),
                 "vegas_games": int(r.vegas_games)} for w, r in weekly.iterrows()]
-    extra = []
+    extra = [line] if (line := move_line(moves)) else []
     if len(d) >= 10:
         _, lo, hi = bootstrap_ci(accuracy, d["home_win"].to_numpy(), (d["p_pick"] >= 0.5).astype(float).to_numpy())
         extra.append(f"Honest range for our hit rate so far: {lo:.0%} to {hi:.0%} (small samples swing a lot).")
@@ -225,7 +235,7 @@ def record_summary(scored_live: pd.DataFrame) -> dict:
             extra.append(f"When we gave a team 60%+ to win, we expected about {expected:.0%} of them to win. "
                          f"{actual:.0%} did ({int(d.loc[sure, 'ours'].sum())} of {int(sure.sum())}).")
     extra.append("Full details: reports/live_2026.md on GitHub.")
-    return {"games": int(len(d)), "by_week": by_week, "extra": extra[:3]}
+    return {"games": int(len(d)), "by_week": by_week, "extra": extra[:4]}
 
 
 def rankings(history: pd.DataFrame, schedules: pd.DataFrame, current_cards: list[dict], season: int) -> list[dict]:
@@ -314,7 +324,8 @@ def build_site_data(schedules: pd.DataFrame, season: int = 2026, backtest: dict 
                  "current_week": current["week"] if current else None},
         "teams": {t: {"name": n, "color": c} for t, (n, c) in TEAMS.items()},
         "weeks": weeks,
-        "record": record_summary(live) if not live.empty else {"games": 0, "by_week": [], "extra": []},
+        "record": record_summary(live, market_move_summary(market_moves(live, schedules)))
+                  if not live.empty else {"games": 0, "by_week": [], "extra": []},
         "rankings": rankings(history, reg.assign(game_type="REG"), current["games"] if current else [], season),
         "elo_history": {t: [[int(w), round(float(r), 1)] for w, r in zip(g["week"], g["rating"])]
                         for t, g in hist_season.groupby("team")},

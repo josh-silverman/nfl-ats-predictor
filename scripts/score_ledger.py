@@ -8,7 +8,8 @@ from datetime import datetime
 import pandas as pd
 
 from nfl_ats.data import PROJECT_ROOT
-from nfl_ats.ledger import EASTERN, attach_qb, live_report, load_ledger, load_schedules_for_ledger, score_ledger
+from nfl_ats.ledger import (EASTERN, MOVE_MIN_GAP, attach_qb, live_report, load_ledger, load_schedules_for_ledger,
+                            market_move_summary, market_moves, score_ledger)
 
 SEASON = 2026
 OUT = PROJECT_ROOT / "reports" / f"live_{SEASON}.md"
@@ -32,6 +33,25 @@ def section(title: str, rep: dict) -> list[str]:
     return lines + [""]
 
 
+def move_section(scored: pd.DataFrame, schedules: pd.DataFrame) -> list[str]:
+    """The pre-registered market-move check (CLAUDE.md): did the line move from our lock toward our number?"""
+    lines = ["## Did the market move toward us? (live games)", "",
+             f"Games where our number and Vegas's line at our lock differed by {MOVE_MIN_GAP:g}+ points. "
+             "\"Toward us\" = the final line in the data (not verified as the true close) moved in the direction we disagreed. "
+             "About 50% means no informational edge.", "",
+             "| Pick | Games | Toward / away / no move | Share toward us (moved games) [95% CI] | Mean move our way, pts [CI] | Mean move our way, win-prob pts [CI] |",
+             "|---|---|---|---|---|---|"]
+    fmt = lambda t, k: "—" if t is None else f"{t[0]:+.{k}f} [{t[1]:+.{k}f}, {t[2]:+.{k}f}]"
+    for name, use_qb in [("Headline pick (QB-adjusted where locked)", True), ("Raw Elo, Thursday lock (baseline)", False)]:
+        s = market_move_summary(market_moves(scored, schedules, use_qb))
+        share = s.get("share_toward")
+        lines.append(f"| {name} | {s['games']} | {s['toward']} / {s['away']} / {s['no_move']} | "
+                     + ("—" if share is None else f"{share[0]:.0%} [{share[1]:.0%}, {share[2]:.0%}]")
+                     + f" | {fmt(s.get('mean_dir_move_pts'), 2)} | {fmt(s.get('mean_clv_prob_pts'), 1)} |")
+    return lines + ["", "*Line moves are mostly news (injuries, weather). The Saturday QB lock has already seen some of it, "
+                        "so compare it with the Thursday baseline. Small samples: wide intervals until late season.*", ""]
+
+
 def main() -> None:
     schedules = load_schedules_for_ledger(SEASON, refresh=True)
     now = datetime.now(EASTERN).strftime("%Y-%m-%d %H:%M %Z")
@@ -46,7 +66,10 @@ def main() -> None:
         if ledger.empty:
             lines += [f"## {title}", "", "No locked predictions yet.", ""]
             continue
-        lines += section(title, live_report(score_ledger(ledger, schedules)))
+        scored = score_ledger(ledger, schedules)
+        lines += section(title, live_report(scored))
+        if mode == "live":
+            lines += move_section(scored, schedules)
         if mode == "backfill":
             lines += ["*Backfill note: these weeks were predicted on 2026-10-15, after they were played. Their \"market at pull time\" "
                       "is the schedule moneyline as of that date (likely near-closing), not a pre-game snapshot. With about 80 games, "

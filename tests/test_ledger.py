@@ -10,6 +10,7 @@ import pandas as pd
 import numpy as np
 
 from nfl_ats.ledger import (EASTERN, MODEL_COLUMNS, as_of, attach_qb, check_final_injury_report, live_report, load_qb_ledger,
+                            market_move_summary, market_moves,
                             predict_week, score_ledger, write_ledger)
 from tests.test_win_model import _schedules
 
@@ -131,6 +132,50 @@ class TestQbLedger(unittest.TestCase):
         with self.assertRaises(ValueError):
             check_final_injury_report(inj, 2026, 8, ["A", "B", "C", "D"])
         check_final_injury_report(inj.assign(report_status="Out"), 2026, 8, ["A", "B", "C", "D"])
+
+
+
+class TestMarketMoves(unittest.TestCase):
+    """Pre-registered market-move check: signs, the 1-point gap rule, no-move, the QB lock's own line."""
+
+    def _games(self):
+        # ours / lock / close are HOME margins. g1: we like home more (+2) and the line moved +1.5 → toward.
+        # g2: we like away more (-3) and the line moved +1 (toward home) → away. g3: gap 0.5 → excluded.
+        # g4: gap +2, no move. g5: not played yet → excluded. g6: QB lock uses its own (Saturday) line.
+        scored = pd.DataFrame({
+            "game_id": [f"g{i}" for i in range(1, 7)], "week": 8,
+            "home_score": [20, 20, 20, 20, np.nan, 20], "away_score": [10] * 6,
+            "elo_spread": [5.0, -1.0, 3.5, 4.0, 6.0, 2.0], "spread_line_at_pull": [3.0, 2.0, 3.0, 2.0, 1.0, 2.0],
+            "p_elo": [0.65, 0.47, 0.6, 0.62, 0.7, 0.58], "p_market_at_pull": [0.60, 0.55, 0.6, 0.57, 0.5, 0.57],
+            "p_elo_qb": [np.nan] * 5 + [0.45], "elo_spread_qb": [np.nan] * 5 + [-1.6],
+            "qb_spread_line_at_pull": [np.nan] * 5 + [-3.0], "qb_p_market_at_pull": [np.nan] * 5 + [0.40]})
+        sched = pd.DataFrame({"game_id": [f"g{i}" for i in range(1, 7)],
+                              "spread_line": [4.5, 3.0, 3.5, 2.0, 1.0, -2.0],
+                              "home_moneyline": [-200, -150, -160, -130, -110, 140],
+                              "away_moneyline": [170, 130, 140, 110, -110, -160]})
+        return scored, sched
+
+    def test_signs_gap_rule_and_no_move(self):
+        m = market_moves(*self._games()).set_index("game_id")
+        self.assertEqual(sorted(m.index), ["g1", "g2", "g4", "g6"])        # g3 gap < 1, g5 unplayed
+        self.assertEqual(m.loc["g1", "toward"], 1.0)
+        self.assertEqual(m.loc["g2", "toward"], 0.0)
+        self.assertTrue(np.isnan(m.loc["g4", "toward"]))                   # no move
+        self.assertAlmostEqual(m.loc["g2", "dir_move"], -1.0)
+
+    def test_qb_lock_is_judged_against_its_own_line(self):
+        m = market_moves(*self._games()).set_index("game_id")
+        # QB pick: home by -1.6 vs Saturday line -3.0 → gap +1.4; close -2.0 → moved +1.0 toward us.
+        self.assertTrue(m.loc["g6", "qb_lock"])
+        self.assertAlmostEqual(m.loc["g6", "gap"], 1.4)
+        self.assertEqual(m.loc["g6", "toward"], 1.0)
+        base = market_moves(*self._games(), use_qb=False).set_index("game_id")
+        self.assertNotIn("g6", base.index)                                  # Thursday: gap 0.0 → excluded
+
+    def test_summary_counts(self):
+        s = market_move_summary(market_moves(*self._games()))
+        self.assertEqual((s["games"], s["toward"], s["away"], s["no_move"]), (4, 2, 1, 1))
+        self.assertAlmostEqual(s["share_toward"][0], 2 / 3)
 
 
 if __name__ == "__main__":

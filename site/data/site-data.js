@@ -4,7 +4,7 @@ window.SITE_DATA = {
   "title": "Josh's NFL Elo",
   "season": 2026,
   "repo": "https://github.com/josh-silverman/nfl-ats-predictor",
-  "generated": "Oct 22, 2026 10:35 PM ET",
+  "generated": "Oct 23, 2026 4:11 PM ET",
   "current_week": 7
  },
  "teams": {
@@ -4613,7 +4613,13 @@ window.SITE_DATA = {
       "qb_teams": [],
       "edge": 8
      },
-     "result": null,
+     "result": {
+      "home_score": 30,
+      "away_score": 24,
+      "winner": "CHI",
+      "we_were_right": true,
+      "vegas_was_right": true
+     },
      "qb_adjusted": false,
      "qb_out": []
     },
@@ -5148,7 +5154,7 @@ window.SITE_DATA = {
   }
  ],
  "record": {
-  "games": 14,
+  "games": 15,
   "by_week": [
    {
     "week": 6,
@@ -5156,10 +5162,18 @@ window.SITE_DATA = {
     "ours": 8,
     "vegas": 9,
     "vegas_games": 14
+   },
+   {
+    "week": 7,
+    "games": 15,
+    "ours": 9,
+    "vegas": 10,
+    "vegas_games": 15
    }
   ],
   "extra": [
-   "Honest range for our hit rate so far: 29% to 86% (small samples swing a lot).",
+   "When we disagreed with Vegas by a point or more, the betting line later moved our way in 3 of 5 games where it moved (8 didn't move). About half would mean no edge.",
+   "Honest range for our hit rate so far: 33% to 87% (small samples swing a lot).",
    "When we gave a team 60%+ to win, we expected about 72% of them to win. 45% did (5 of 11).",
    "Full details: reports/live_2026.md on GitHub."
   ]
@@ -5191,7 +5205,7 @@ window.SITE_DATA = {
    "rank": 3,
    "team": "MIN",
    "rating": 1634.9,
-   "rank_change": 1,
+   "rank_change": 0,
    "record": "5-0",
    "next": {
     "opp": "IND",
@@ -5204,7 +5218,7 @@ window.SITE_DATA = {
    "rank": 4,
    "team": "SEA",
    "rating": 1624.8,
-   "rank_change": -1,
+   "rank_change": 0,
    "record": "3-3",
    "next": {
     "opp": "KC",
@@ -5217,7 +5231,7 @@ window.SITE_DATA = {
    "rank": 5,
    "team": "DEN",
    "rating": 1616.5,
-   "rank_change": 1,
+   "rank_change": 0,
    "record": "4-2",
    "next": {
     "opp": "ARI",
@@ -5230,29 +5244,16 @@ window.SITE_DATA = {
    "rank": 6,
    "team": "JAX",
    "rating": 1612.2,
-   "rank_change": -1,
+   "rank_change": 0,
    "record": "4-2",
    "next": null,
    "bye": true
   },
   {
    "rank": 7,
-   "team": "NE",
-   "rating": 1601.2,
-   "rank_change": 0,
-   "record": "4-2",
-   "next": {
-    "opp": "CHI",
-    "home": false,
-    "p_win": 0.489
-   },
-   "bye": false
-  },
-  {
-   "rank": 8,
    "team": "KC",
    "rating": 1582.7,
-   "rank_change": 2,
+   "rank_change": 1,
    "record": "5-0",
    "next": {
     "opp": "SEA",
@@ -5262,23 +5263,28 @@ window.SITE_DATA = {
    "bye": false
   },
   {
+   "rank": 8,
+   "team": "NE",
+   "rating": 1582.3,
+   "rank_change": -1,
+   "record": "4-3",
+   "next": null,
+   "bye": false
+  },
+  {
    "rank": 9,
    "team": "CHI",
-   "rating": 1561.2,
-   "rank_change": 3,
-   "record": "4-2",
-   "next": {
-    "opp": "NE",
-    "home": true,
-    "p_win": 0.511
-   },
+   "rating": 1580.2,
+   "rank_change": 0,
+   "record": "5-2",
+   "next": null,
    "bye": false
   },
   {
    "rank": 10,
    "team": "BAL",
    "rating": 1558.6,
-   "rank_change": -2,
+   "rank_change": 0,
    "record": "4-2",
    "next": {
     "opp": "CIN",
@@ -5304,7 +5310,7 @@ window.SITE_DATA = {
    "rank": 12,
    "team": "PIT",
    "rating": 1557.5,
-   "rank_change": 1,
+   "rank_change": 0,
    "record": "4-2",
    "next": {
     "opp": "NO",
@@ -5317,7 +5323,7 @@ window.SITE_DATA = {
    "rank": 13,
    "team": "LA",
    "rating": 1553.2,
-   "rank_change": -4,
+   "rank_change": 0,
    "record": "2-4",
    "next": {
     "opp": "LV",
@@ -5343,7 +5349,7 @@ window.SITE_DATA = {
    "rank": 15,
    "team": "HOU",
    "rating": 1544.9,
-   "rank_change": 1,
+   "rank_change": 0,
    "record": "2-4",
    "next": {
     "opp": "NYG",
@@ -5356,7 +5362,7 @@ window.SITE_DATA = {
    "rank": 16,
    "team": "CIN",
    "rating": 1528.1,
-   "rank_change": -1,
+   "rank_change": 0,
    "record": "3-2",
    "next": {
     "opp": "BAL",
@@ -5369,7 +5375,7 @@ window.SITE_DATA = {
    "rank": 17,
    "team": "CAR",
    "rating": 1502.1,
-   "rank_change": 2,
+   "rank_change": 0,
    "record": "3-2",
    "next": {
     "opp": "TB",
@@ -5382,7 +5388,7 @@ window.SITE_DATA = {
    "rank": 18,
    "team": "PHI",
    "rating": 1487.4,
-   "rank_change": -1,
+   "rank_change": 0,
    "record": "2-4",
    "next": {
     "opp": "DAL",
@@ -5395,7 +5401,7 @@ window.SITE_DATA = {
    "rank": 19,
    "team": "CLE",
    "rating": 1461.7,
-   "rank_change": 5,
+   "rank_change": 0,
    "record": "4-2",
    "next": {
     "opp": "TEN",
@@ -5408,7 +5414,7 @@ window.SITE_DATA = {
    "rank": 20,
    "team": "ATL",
    "rating": 1456.0,
-   "rank_change": -2,
+   "rank_change": 0,
    "record": "2-4",
    "next": {
     "opp": "SF",
@@ -5421,7 +5427,7 @@ window.SITE_DATA = {
    "rank": 21,
    "team": "DAL",
    "rating": 1432.8,
-   "rank_change": 2,
+   "rank_change": 0,
    "record": "2-4",
    "next": {
     "opp": "PHI",
@@ -5434,7 +5440,7 @@ window.SITE_DATA = {
    "rank": 22,
    "team": "NYG",
    "rating": 1432.0,
-   "rank_change": -2,
+   "rank_change": 0,
    "record": "3-2-1",
    "next": {
     "opp": "HOU",
@@ -5447,7 +5453,7 @@ window.SITE_DATA = {
    "rank": 23,
    "team": "TB",
    "rating": 1430.3,
-   "rank_change": -1,
+   "rank_change": 0,
    "record": "1-5",
    "next": {
     "opp": "CAR",
@@ -5460,7 +5466,7 @@ window.SITE_DATA = {
    "rank": 24,
    "team": "NO",
    "rating": 1425.5,
-   "rank_change": 4,
+   "rank_change": 0,
    "record": "2-4",
    "next": {
     "opp": "PIT",
@@ -5473,7 +5479,7 @@ window.SITE_DATA = {
    "rank": 25,
    "team": "IND",
    "rating": 1425.5,
-   "rank_change": -4,
+   "rank_change": 0,
    "record": "2-4",
    "next": {
     "opp": "MIN",
@@ -5499,7 +5505,7 @@ window.SITE_DATA = {
    "rank": 27,
    "team": "LAC",
    "rating": 1419.2,
-   "rank_change": -2,
+   "rank_change": 0,
    "record": "0-6",
    "next": null,
    "bye": true
@@ -5508,7 +5514,7 @@ window.SITE_DATA = {
    "rank": 28,
    "team": "WAS",
    "rating": 1410.6,
-   "rank_change": -1,
+   "rank_change": 0,
    "record": "1-4-1",
    "next": null,
    "bye": true
@@ -5517,7 +5523,7 @@ window.SITE_DATA = {
    "rank": 29,
    "team": "ARI",
    "rating": 1391.4,
-   "rank_change": 2,
+   "rank_change": 0,
    "record": "2-4",
    "next": {
     "opp": "DEN",
@@ -5530,7 +5536,7 @@ window.SITE_DATA = {
    "rank": 30,
    "team": "NYJ",
    "rating": 1381.7,
-   "rank_change": -1,
+   "rank_change": 0,
    "record": "2-4",
    "next": {
     "opp": "MIA",
@@ -5543,7 +5549,7 @@ window.SITE_DATA = {
    "rank": 31,
    "team": "MIA",
    "rating": 1374.0,
-   "rank_change": -1,
+   "rank_change": 0,
    "record": "0-5",
    "next": {
     "opp": "NYJ",
@@ -5595,6 +5601,10 @@ window.SITE_DATA = {
    [
     6,
     1391.4
+   ],
+   [
+    7,
+    1391.4
    ]
   ],
   "ATL": [
@@ -5624,6 +5634,10 @@ window.SITE_DATA = {
    ],
    [
     6,
+    1456.0
+   ],
+   [
+    7,
     1456.0
    ]
   ],
@@ -5655,6 +5669,10 @@ window.SITE_DATA = {
    [
     6,
     1558.6
+   ],
+   [
+    7,
+    1558.6
    ]
   ],
   "BUF": [
@@ -5684,6 +5702,10 @@ window.SITE_DATA = {
    ],
    [
     6,
+    1649.2
+   ],
+   [
+    7,
     1649.2
    ]
   ],
@@ -5715,6 +5737,10 @@ window.SITE_DATA = {
    [
     6,
     1502.1
+   ],
+   [
+    7,
+    1502.1
    ]
   ],
   "CHI": [
@@ -5745,6 +5771,10 @@ window.SITE_DATA = {
    [
     6,
     1561.2
+   ],
+   [
+    7,
+    1580.2
    ]
   ],
   "CIN": [
@@ -5774,6 +5804,10 @@ window.SITE_DATA = {
    ],
    [
     6,
+    1528.1
+   ],
+   [
+    7,
     1528.1
    ]
   ],
@@ -5805,6 +5839,10 @@ window.SITE_DATA = {
    [
     6,
     1461.7
+   ],
+   [
+    7,
+    1461.7
    ]
   ],
   "DAL": [
@@ -5834,6 +5872,10 @@ window.SITE_DATA = {
    ],
    [
     6,
+    1432.8
+   ],
+   [
+    7,
     1432.8
    ]
   ],
@@ -5865,6 +5907,10 @@ window.SITE_DATA = {
    [
     6,
     1616.5
+   ],
+   [
+    7,
+    1616.5
    ]
   ],
   "DET": [
@@ -5894,6 +5940,10 @@ window.SITE_DATA = {
    ],
    [
     6,
+    1558.1
+   ],
+   [
+    7,
     1558.1
    ]
   ],
@@ -5925,6 +5975,10 @@ window.SITE_DATA = {
    [
     6,
     1545.6
+   ],
+   [
+    7,
+    1545.6
    ]
   ],
   "HOU": [
@@ -5954,6 +6008,10 @@ window.SITE_DATA = {
    ],
    [
     6,
+    1544.9
+   ],
+   [
+    7,
     1544.9
    ]
   ],
@@ -5985,6 +6043,10 @@ window.SITE_DATA = {
    [
     6,
     1425.5
+   ],
+   [
+    7,
+    1425.5
    ]
   ],
   "JAX": [
@@ -6014,6 +6076,10 @@ window.SITE_DATA = {
    ],
    [
     6,
+    1612.2
+   ],
+   [
+    7,
     1612.2
    ]
   ],
@@ -6045,6 +6111,10 @@ window.SITE_DATA = {
    [
     6,
     1582.7
+   ],
+   [
+    7,
+    1582.7
    ]
   ],
   "LA": [
@@ -6074,6 +6144,10 @@ window.SITE_DATA = {
    ],
    [
     6,
+    1553.2
+   ],
+   [
+    7,
     1553.2
    ]
   ],
@@ -6105,6 +6179,10 @@ window.SITE_DATA = {
    [
     6,
     1419.2
+   ],
+   [
+    7,
+    1419.2
    ]
   ],
   "LV": [
@@ -6134,6 +6212,10 @@ window.SITE_DATA = {
    ],
    [
     6,
+    1420.0
+   ],
+   [
+    7,
     1420.0
    ]
   ],
@@ -6165,6 +6247,10 @@ window.SITE_DATA = {
    [
     6,
     1374.0
+   ],
+   [
+    7,
+    1374.0
    ]
   ],
   "MIN": [
@@ -6194,6 +6280,10 @@ window.SITE_DATA = {
    ],
    [
     6,
+    1634.9
+   ],
+   [
+    7,
     1634.9
    ]
   ],
@@ -6225,6 +6315,10 @@ window.SITE_DATA = {
    [
     6,
     1601.2
+   ],
+   [
+    7,
+    1582.3
    ]
   ],
   "NO": [
@@ -6254,6 +6348,10 @@ window.SITE_DATA = {
    ],
    [
     6,
+    1425.5
+   ],
+   [
+    7,
     1425.5
    ]
   ],
@@ -6285,6 +6383,10 @@ window.SITE_DATA = {
    [
     6,
     1432.0
+   ],
+   [
+    7,
+    1432.0
    ]
   ],
   "NYJ": [
@@ -6314,6 +6416,10 @@ window.SITE_DATA = {
    ],
    [
     6,
+    1381.7
+   ],
+   [
+    7,
     1381.7
    ]
   ],
@@ -6345,6 +6451,10 @@ window.SITE_DATA = {
    [
     6,
     1487.4
+   ],
+   [
+    7,
+    1487.4
    ]
   ],
   "PIT": [
@@ -6374,6 +6484,10 @@ window.SITE_DATA = {
    ],
    [
     6,
+    1557.5
+   ],
+   [
+    7,
     1557.5
    ]
   ],
@@ -6405,6 +6519,10 @@ window.SITE_DATA = {
    [
     6,
     1624.8
+   ],
+   [
+    7,
+    1624.8
    ]
   ],
   "SF": [
@@ -6434,6 +6552,10 @@ window.SITE_DATA = {
    ],
    [
     6,
+    1657.0
+   ],
+   [
+    7,
     1657.0
    ]
   ],
@@ -6465,6 +6587,10 @@ window.SITE_DATA = {
    [
     6,
     1430.3
+   ],
+   [
+    7,
+    1430.3
    ]
   ],
   "TEN": [
@@ -6494,6 +6620,10 @@ window.SITE_DATA = {
    ],
    [
     6,
+    1324.2
+   ],
+   [
+    7,
     1324.2
    ]
   ],
@@ -6525,6 +6655,10 @@ window.SITE_DATA = {
    [
     6,
     1410.6
+   ],
+   [
+    7,
+    1410.6
    ]
   ]
  },
@@ -6535,17 +6669,17 @@ window.SITE_DATA = {
   "always_home": 0.532
  },
  "example": {
-  "week": 6,
-  "home": "SF",
-  "away": "WAS",
-  "home_rating": 1651,
-  "away_rating": 1416,
+  "week": 7,
+  "home": "CHI",
+  "away": "NE",
+  "home_rating": 1561,
+  "away_rating": 1601,
   "home_field": 48,
-  "gap": 283,
-  "p_home": 0.836,
-  "home_score": 23,
-  "away_score": 17,
-  "home_after": 1657,
-  "away_after": 1411
+  "gap": 8,
+  "p_home": 0.511,
+  "home_score": 30,
+  "away_score": 24,
+  "home_after": 1580,
+  "away_after": 1582
  }
 };

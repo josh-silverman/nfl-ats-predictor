@@ -13,6 +13,7 @@ import pandas as pd
 from nfl_ats.data import PROJECT_ROOT, regular_season
 from nfl_ats.elo import HOME_FIELD, rating_history
 from nfl_ats.evaluate import accuracy, bootstrap_ci
+from nfl_ats.playoffs import season_odds
 from nfl_ats.ledger import (EASTERN, LEDGER_DIR, attach_qb, kickoff_times, load_ledger, market_move_summary, market_moves,
                             score_ledger)
 
@@ -238,8 +239,10 @@ def record_summary(scored_live: pd.DataFrame, moves: dict | None = None) -> dict
     return {"games": int(len(d)), "by_week": by_week, "extra": extra[:4]}
 
 
-def rankings(history: pd.DataFrame, schedules: pd.DataFrame, current_cards: list[dict], season: int) -> list[dict]:
-    """All teams by current rating, with change since the previous week, W-L-T, and next game from this week's locks."""
+def rankings(history: pd.DataFrame, schedules: pd.DataFrame, current_cards: list[dict], season: int,
+             odds: pd.DataFrame | None = None) -> list[dict]:
+    """All teams by current rating, with change since the previous week, W-L-T, next game from this week's locks,
+    and playoff odds (playoffs.season_odds) when given."""
     h = history[history["season"] == season]
     weeks = sorted(h["week"].unique())
     now = h[h["week"] == weeks[-1]].set_index("team")["rating"]
@@ -261,13 +264,19 @@ def rankings(history: pd.DataFrame, schedules: pd.DataFrame, current_cards: list
             upcoming[c["home"]] = {"opp": c["away"], "home": True, "p_win": c["p_home"]}
             upcoming[c["away"]] = {"opp": c["home"], "home": False, "p_win": round(1 - c["p_home"], 3)}
     playing = {t for c in current_cards for t in (c["home"], c["away"])}
+    odds = odds.set_index("team") if odds is not None else None
     out = []
     for team in rank_now.sort_values().index:
         w, l, t = rec.get(team, [0, 0, 0])
         out.append({"rank": int(rank_now[team]), "team": team, "rating": round(float(now[team]), 1),
                     "rank_change": int(rank_prev.get(team, rank_now[team]) - rank_now[team]),
                     "record": f"{w}-{l}" + (f"-{t}" if t else ""), "next": upcoming.get(team),
-                    "bye": bool(current_cards) and team not in playing})
+                    "bye": bool(current_cards) and team not in playing,
+                    "odds": None if odds is None or team not in odds.index else {
+                        "wins": round(float(odds.loc[team, "wins"]), 1), "losses": round(float(odds.loc[team, "losses"]), 1),
+                        "playoff": round(float(odds.loc[team, "playoff"]), 3),
+                        "division": round(float(odds.loc[team, "division"]), 3),
+                        "top_seed": round(float(odds.loc[team, "top_seed"]), 3)}})
     return out
 
 
@@ -326,7 +335,9 @@ def build_site_data(schedules: pd.DataFrame, season: int = 2026, backtest: dict 
         "weeks": weeks,
         "record": record_summary(live, market_move_summary(market_moves(live, schedules)))
                   if not live.empty else {"games": 0, "by_week": [], "extra": []},
-        "rankings": rankings(history, reg.assign(game_type="REG"), current["games"] if current else [], season),
+        "rankings": rankings(history, reg.assign(game_type="REG"), current["games"] if current else [], season,
+                             season_odds(schedules, season, {c["game_id"]: c["p_home"] for c in (current["games"] if current else [])
+                                                             if c["result"] is None})),
         "elo_history": {t: [[int(w), round(float(r), 1)] for w, r in zip(g["week"], g["rating"])]
                         for t, g in hist_season.groupby("team")},
         "backtest": backtest or {},

@@ -34,6 +34,8 @@
     backfill: "Weeks 1–5 were predicted after they were played (same rules, no peeking at results), so they don't count in the record.",
     gap: "We and Vegas differ by 15+ points. That usually means Vegas knows something our ratings don't, often a quarterback injury.",
     closing: "Vegas's final line right before kickoff.",
+    proj: "Average final record when we play out the rest of the season 10,000 times with our win chances.",
+    playoff: "How often the team made the playoffs in those 10,000 simulated seasons. Tap a number for division and #1-seed chances.",
     qbLock: "On Saturday, after teams post final injury reports, we re-lock the weekend games with QB news included. Also committed to GitHub before kickoff.",
   };
 
@@ -278,34 +280,41 @@
 
   // ---------- Rankings ----------
   function renderRankings(root) {
-    let rows = D.rankings.slice();
+    let rows = D.rankings.map((r) => ({ ...r, proj: r.odds ? r.odds.wins : null, playoff: r.odds ? r.odds.playoff : null }));
     const picked = rows.slice(0, 3).map((r) => r.team);
     const cols = [
       { key: "rank", label: "#", num: true }, { key: "team", label: "Team" },
-      { key: "rating", label: "Rating", num: true, tip: TIPS.elo }, { key: "rank_change", label: "Move", num: true },
-      { key: "record", label: "Record" }, { key: "next", label: "Next game" }];
+      { key: "rating", label: "Rating", num: true, tip: TIPS.elo }, { key: "rank_change", label: "Move", num: true, cls: "move" },
+      { key: "record", label: "Record" }, { key: "proj", label: "Proj. record", num: true, tip: TIPS.proj, cls: "proj" },
+      { key: "playoff", label: "Playoffs", num: true, tip: TIPS.playoff }, { key: "next", label: "Next game", cls: "next" }];
     let sortKey = "rank", sortDir = 1;
     const tbody = el("tbody");
     const thead = el("thead", {}, el("tr", {}, cols.map((c) =>
-      el("th", { class: c.num ? "num" : "", scope: "col", tabindex: "0",
+      el("th", { class: (c.num ? "num " : "") + (c.cls || ""), scope: "col", tabindex: "0",
         onclick: () => sortBy(c.key), onkeydown: (e) => { if (e.key === "Enter") sortBy(c.key); } },
         c.tip ? term(c.label, c.tip) : c.label))));
     function sortBy(key) {
       if (key === "next" || key === "record") return;
-      sortDir = key === sortKey ? -sortDir : (key === "rating" || key === "rank_change" ? -1 : 1); sortKey = key;
+      sortDir = key === sortKey ? -sortDir : (["rating", "rank_change", "proj", "playoff"].includes(key) ? -1 : 1); sortKey = key;
       rows.sort((a, b) => (a[key] > b[key] ? 1 : a[key] < b[key] ? -1 : 0) * sortDir);
       thead.querySelectorAll("th").forEach((th, i) => th.setAttribute("aria-sort", cols[i].key === sortKey ? (sortDir > 0 ? "ascending" : "descending") : "none"));
       drawRows();
     }
+    const oddsPct = (x) => x < 0.005 ? "<1%" : x > 0.995 ? ">99%" : pct(x);
+    const projCell = (o) => { if (!o) return "—"; const games = Math.round(o.wins + o.losses), w = Math.round(o.wins); return `${w}-${games - w}`; };
+    const playoffCell = (o) => !o ? "—" : el("span", { class: "term", tabindex: "0",
+      "data-tip": `Win the division: ${oddsPct(o.division)} · #1 seed (first-round bye): ${oddsPct(o.top_seed)}` }, oddsPct(o.playoff));
     const moveCell = (n) => n > 0 ? el("span", { class: "up" }, "▲" + n) : n < 0 ? el("span", { class: "down" }, "▼" + -n) : el("span", { class: "flat" }, "—");
     function drawRows() {
       tbody.replaceChildren(...rows.map((r) => el("tr", { class: picked.includes(r.team) ? "picked" : "", tabindex: "0",
         onclick: () => togglePick(r.team), onkeydown: (e) => { if (e.key === "Enter") togglePick(r.team); } },
         el("td", { class: "num" }, r.rank),
-        el("td", {}, el("span", { class: "team-cell", title: team(r.team).name }, sq(r.team), team(r.team).name)),
-        el("td", { class: "num" }, Math.round(r.rating)), el("td", { class: "num" }, moveCell(r.rank_change)),
+        el("td", {}, el("span", { class: "team-cell", title: team(r.team).name }, sq(r.team),
+          el("span", { class: "full" }, team(r.team).name), el("span", { class: "abbr" }, r.team))),
+        el("td", { class: "num" }, Math.round(r.rating)), el("td", { class: "num move" }, moveCell(r.rank_change)),
         el("td", {}, r.record),
-        el("td", {}, r.next ? `${r.next.home ? "vs" : "@"} ${r.next.opp} · ${pct(r.next.p_win)}` : r.bye ? "Bye" : "—"))));
+        el("td", { class: "num proj" }, projCell(r.odds)), el("td", { class: "num" }, playoffCell(r.odds)),
+        el("td", { class: "next" }, r.next ? `${r.next.home ? "vs" : "@"} ${r.next.opp} · ${pct(r.next.p_win)}` : r.bye ? "Bye" : "—"))));
     }
     root.append(el("div", { class: "panel-head" }, el("h2", {}, "Power rankings"),
       el("p", {}, "Every team's current ", term("Elo", TIPS.elo), " rating. \"Move\" is the change in rank since last week. Tap teams to compare them in the chart (up to 3).")),
@@ -356,6 +365,7 @@
         card("What does 84% mean?", "If we say a team has an 84% chance, we expect it to win about 84 of every 100 games like that. It should still lose about 16 of them, so an upset doesn't mean the model is broken."),
         card("What about injuries?", "Since Week 8, if a team's usual starting quarterback is out (ruled out, doubtful, or on injured reserve), we take about 3 to 4 points off that team. In testing on 2019–2025 this helped a little, and it picked more winners in games with a QB out. Other injuries aren't counted."),
         card("Why can't it beat Vegas?", "Vegas also knows about other injuries, weather, and late news. Our model knows scores and starting quarterbacks. Over the past seven seasons it picked about 2 of every 3 winners, a little behind Vegas."),
+        card("Playoff odds", "We play out the rest of the season 10,000 times using our win chances, updating ratings as the simulated games go. Tiebreakers are simplified (ties in the standings are broken at random). Checked on 2019–2025: teams we gave 75%+ at midseason made it about 84% of the time."),
         card("How do we keep it honest?", "Every week's picks are saved and committed to GitHub before the first kickoff, so they can't be changed after the fact. The “Locked” note next to each week links to that proof.")));
     const ex = D.example;
     if (ex) {

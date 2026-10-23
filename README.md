@@ -4,7 +4,7 @@
 
 It started as an attempt to beat the point spread. Rigorous testing showed public team stats can't do that, so the project pivoted to a model that *can* be useful: pregame win probabilities. The deliverable is an Elo rating model with a starting-quarterback adjustment, walk-forward validation, pre-registered success criteria, and a live 2026 ledger locked before every kickoff.
 
-> **Live site: [josh-silverman.github.io/nfl-ats-predictor](https://josh-silverman.github.io/nfl-ats-predictor/)** shows this week's picks, the live record, and power rankings.
+> **Live site: [josh-silverman.github.io/nfl-ats-predictor](https://josh-silverman.github.io/nfl-ats-predictor/)** shows this week's picks, the live record, and power rankings with playoff odds (10,000 simulated seasons; at midseason in 2019–2025, teams given 75%+ made it 84% of the time).
 > **Status (2026-10-22):** model complete; live 2026 record through Week 6, with Week 7 locked (`reports/live_2026.md`, updated weekly).
 
 ## Headline results (walk-forward 2019–2025, 1,865 games, 95% bootstrap CIs)

@@ -329,3 +329,14 @@ Each test is a single change to **raw Elo, the deliverable**, judged with `compa
   - **Caveats:** this was the second try at the QB idea on these seasons, so the CI's honest coverage is a bit worse than 95%. The gain is small in absolute terms (about 1/13 of Elo's gain over the base rate). It depends on a live Saturday lock to match the backtest's information (Friday final statuses).
 - **Decision (Josh, 2026-10-22): KEPT** (decision #21). The QB-adjusted Elo is the deliverable from 2026 Week 8, with a Saturday QB lock. Raw Elo stays locked every Thursday as the baseline.
 - **Win-model experiment count: 7.**
+
+### Playoff odds · sanity check (2026-10-23) · reported, not tuned
+- **What:** `src/nfl_ats/playoffs.py` simulates the rest of a season 10,000 times.
+  - "Hot" Elo: ratings update after each simulated game, using the 2016–(season−1) average margin-of-victory multiplier.
+  - This week's locked picks are used for this week's games.
+  - Field per conference: 4 division winners + wild cards (3 from 2020, 2 before). Random tiebreaks.
+- **Check:** odds as of **Week 8** (results before Week 8 only, via `ledger.as_of`) for 2019–2025, vs. who actually made the playoffs. 224 team-seasons, 96 made it.
+  - **Brier score:** sim **0.136** vs. "in a playoff spot right now" 0.196 vs. a constant 7/16 0.245.
+  - **Reliability:** <10% predicted 3.0% → 2.0% made it (51 teams); 10–40%: 22.0% → 24.2% (62); 40–75%: 57.0% → 60.7% (56); 75%+: 88.9% → 83.6% (55).
+  - **By season:** 2019 0.105, 2020 0.083, 2021 0.180, 2022 0.146, 2023 0.140, 2024 0.101, 2025 0.193.
+- **Reading:** sensible, and slightly overconfident at the top. Nothing was tuned on this check, so it doesn't count as a model experiment.

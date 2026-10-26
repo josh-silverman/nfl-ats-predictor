@@ -340,3 +340,11 @@ Each test is a single change to **raw Elo, the deliverable**, judged with `compa
   - **Reliability:** <10% predicted 3.0% → 2.0% made it (51 teams); 10–40%: 22.0% → 24.2% (62); 40–75%: 57.0% → 60.7% (56); 75%+: 88.9% → 83.6% (55).
   - **By season:** 2019 0.105, 2020 0.083, 2021 0.180, 2022 0.146, 2023 0.140, 2024 0.101, 2025 0.193.
 - **Reading:** sensible, and slightly overconfident at the top. Nothing was tuned on this check, so it doesn't count as a model experiment.
+
+### H5 · PRE-REGISTERED 2026-10-26, before building · Rest / bye-week edge
+- **Why:** teams off a bye or facing an opponent on a short week may play better (FiveThirtyEight used a bye bonus). Rest days come from the schedule (`home_rest`, `away_rest`), so they're known before kickoff with no leakage. About 1 game in 5 has a rest gap of 3+ days.
+- **The change (single change from the kept version, H4):** `p = elo.win_prob(elo_diff − QB_PTS·home_qb_out + QB_PTS·away_qb_out + REST_PTS·clip(home_rest − away_rest, −7, 7))`. Ratings are untouched.
+- **`REST_PTS`:** Elo points per extra day of rest, fit **inside each fold** on training seasons only, with that fold's QB_PTS held fixed. Grid 0–10 in steps of 0.5 (≥ 0 by prior), minimizing training log loss.
+- **Primary (decides keep):** vs. **H4** (single-change rule), `compare_predictions(target="home_win")`, walk-forward 2019–2025, same decided games. **Keep rule:** paired log-loss CI upper bound < 0, **and** better in ≥ 5/7 seasons, **and** higher AUC.
+- **Also reported:** vs. raw Elo, `REST_PTS` by fold, accuracy on games with a gap of 3+ days, calibration-in-the-large.
+- **If kept:** live from the 2026 Week 8 Thursday lock (Oct 29), as `p_elo_adj` (QB + rest), the new headline. Raw Elo and QB-only stay recorded.

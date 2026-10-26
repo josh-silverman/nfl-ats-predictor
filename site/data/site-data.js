@@ -4,7 +4,7 @@ window.SITE_DATA = {
   "title": "Josh's NFL Elo",
   "season": 2026,
   "repo": "https://github.com/josh-silverman/nfl-ats-predictor",
-  "generated": "Oct 23, 2026 4:41 PM ET",
+  "generated": "Oct 26, 2026 9:52 AM ET",
   "current_week": 7
  },
  "teams": {
@@ -188,6 +188,7 @@ window.SITE_DATA = {
       "vegas_was_right": true
      },
      "qb_adjusted": false,
+     "rest": null,
      "qb_out": []
     },
     {
@@ -234,6 +235,7 @@ window.SITE_DATA = {
       "vegas_was_right": false
      },
      "qb_adjusted": false,
+     "rest": null,
      "qb_out": []
     },
     {
@@ -280,6 +282,7 @@ window.SITE_DATA = {
       "vegas_was_right": true
      },
      "qb_adjusted": false,
+     "rest": null,
      "qb_out": []
     },
     {
@@ -326,6 +329,7 @@ window.SITE_DATA = {
       "vegas_was_right": true
      },
      "qb_adjusted": false,
+     "rest": null,
      "qb_out": []
     },
     {
@@ -372,6 +376,7 @@ window.SITE_DATA = {
       "vegas_was_right": true
      },
      "qb_adjusted": false,
+     "rest": null,
      "qb_out": []
     },
     {
@@ -418,6 +423,7 @@ window.SITE_DATA = {
       "vegas_was_right": true
      },
      "qb_adjusted": false,
+     "rest": null,
      "qb_out": []
     },
     {
@@ -464,6 +470,7 @@ window.SITE_DATA = {
       "vegas_was_right": true
      },
      "qb_adjusted": false,
+     "rest": null,
      "qb_out": []
     },
     {
@@ -510,6 +517,7 @@ window.SITE_DATA = {
       "vegas_was_right": true
      },
      "qb_adjusted": false,
+     "rest": null,
      "qb_out": []
     },
     {
@@ -556,6 +564,7 @@ window.SITE_DATA = {
       "vegas_was_right": false
      },
      "qb_adjusted": false,
+     "rest": null,
      "qb_out": []
     },
     {
@@ -602,6 +611,7 @@ window.SITE_DATA = {
       "vegas_was_right": true
      },
      "qb_adjusted": false,
+     "rest": null,
      "qb_out": []
     },
     {
@@ -648,6 +658,7 @@ window.SITE_DATA = {
       "vegas_was_right": false
      },
      "qb_adjusted": false,
+     "rest": null,
      "qb_out": []
     },
     {
@@ -694,6 +705,7 @@ window.SITE_DATA = {
       "vegas_was_right": true
      },
      "qb_adjusted": false,
+     "rest": null,
      "qb_out": []
     },
     {
@@ -740,6 +752,7 @@ window.SITE_DATA = {
       "vegas_was_right": true
      },
      "qb_adjusted": false,
+     "rest": null,
      "qb_out": []
     },
     {
@@ -786,6 +799,7 @@ window.SITE_DATA = {
       "vegas_was_right": true
      },
      "qb_adjusted": false,
+     "rest": null,
      "qb_out": []
     },
     {
@@ -832,6 +846,7 @@ window.SITE_DATA = {
       "vegas_was_right": false
      },
      "qb_adjusted": false,
+     "rest": null,
      "qb_out": []
     },
     {
@@ -878,6 +893,7 @@ window.SITE_DATA = {
       "vegas_was_right": true
      },
      "qb_adjusted": false,
+     "rest": null,
      "qb_out": []
     }
    ]
@@ -932,6 +948,7 @@ window.SITE_DATA = {
       "vegas_was_right": true
      },
      "qb_adjusted": false,
+     "rest": null,
      "qb_out": []
     },
     {
@@ -978,6 +995,7 @@ window.SITE_DATA = {
       "vegas_was_right": true
      },
      "qb_adjusted": false,
+     "rest": null,
      "qb_out": []
     },
     {
@@ -1024,6 +1042,7 @@ window.SITE_DATA = {
       "vegas_was_right": false
      },
      "qb_adjusted": false,
+     "rest": null,
      "qb_out": []
     },
     {
@@ -1070,6 +1089,7 @@ window.SITE_DATA = {
       "vegas_was_right": false
      },
      "qb_adjusted": false,
+     "rest": null,
      "qb_out": []
     },
     {
@@ -1116,6 +1136,7 @@ window.SITE_DATA = {
       "vegas_was_right": true
      },
      "qb_adjusted": false,
+     "rest": null,
      "qb_out": []
     },
     {
@@ -1162,6 +1183,7 @@ window.SITE_DATA = {
       "vegas_was_right": false
      },
      "qb_adjusted": false,
+     "rest": null,
      "qb_out": []
     },
     {
@@ -1208,6 +1230,7 @@ window.SITE_DATA = {
       "vegas_was_right": false
      },
      "qb_adjusted": false,
+     "rest": null,
      "qb_out": []
     },
     {
@@ -1254,6 +1277,7 @@ window.SITE_DATA = {
       "vegas_was_right": true
      },
      "qb_adjusted": false,
+     "rest": null,
      "qb_out": []
     },
     {
@@ -1300,6 +1324,10 @@ window.SITE_DATA = {
       "vegas_was_right": true
      },
      "qb_adjusted": false,
+     "rest": {
+      "home": 11,
+      "away": 7
+     },
      "qb_out": []
     },
     {
@@ -1346,6 +1374,7 @@ window.SITE_DATA = {
       "vegas_was_right": true
      },
      "qb_adjusted": false,
+     "rest": null,
      "qb_out": []
     },
     {
@@ -1392,6 +1421,7 @@ window.SITE_DATA = {
       "vegas_was_right": false
      },
      "qb_adjusted": false,
+     "rest": null,
      "qb_out": []
     },
     {
@@ -1438,6 +1468,10 @@ window.SITE_DATA = {
       "vegas_was_right": true
      },
      "qb_adjusted": false,
+     "rest": {
+      "home": 10,
+      "away": 7
+     },
      "qb_out": []
     },
     {
@@ -1484,6 +1518,10 @@ window.SITE_DATA = {
       "vegas_was_right": true
      },
      "qb_adjusted": false,
+     "rest": {
+      "home": 7,
+      "away": 11
+     },
      "qb_out": [
       {
        "team": "SEA",
@@ -1537,6 +1575,7 @@ window.SITE_DATA = {
       "vegas_was_right": true
      },
      "qb_adjusted": false,
+     "rest": null,
      "qb_out": []
     },
     {
@@ -1583,6 +1622,7 @@ window.SITE_DATA = {
       "vegas_was_right": true
      },
      "qb_adjusted": false,
+     "rest": null,
      "qb_out": []
     },
     {
@@ -1629,6 +1669,10 @@ window.SITE_DATA = {
       "vegas_was_right": true
      },
      "qb_adjusted": false,
+     "rest": {
+      "home": 11,
+      "away": 8
+     },
      "qb_out": []
     }
    ]
@@ -1683,6 +1727,7 @@ window.SITE_DATA = {
       "vegas_was_right": false
      },
      "qb_adjusted": false,
+     "rest": null,
      "qb_out": []
     },
     {
@@ -1729,6 +1774,7 @@ window.SITE_DATA = {
       "vegas_was_right": false
      },
      "qb_adjusted": false,
+     "rest": null,
      "qb_out": []
     },
     {
@@ -1775,6 +1821,7 @@ window.SITE_DATA = {
       "vegas_was_right": false
      },
      "qb_adjusted": false,
+     "rest": null,
      "qb_out": []
     },
     {
@@ -1821,6 +1868,7 @@ window.SITE_DATA = {
       "vegas_was_right": false
      },
      "qb_adjusted": false,
+     "rest": null,
      "qb_out": []
     },
     {
@@ -1867,6 +1915,7 @@ window.SITE_DATA = {
       "vegas_was_right": true
      },
      "qb_adjusted": false,
+     "rest": null,
      "qb_out": []
     },
     {
@@ -1913,6 +1962,10 @@ window.SITE_DATA = {
       "vegas_was_right": true
      },
      "qb_adjusted": false,
+     "rest": {
+      "home": 10,
+      "away": 7
+     },
      "qb_out": []
     },
     {
@@ -1959,6 +2012,7 @@ window.SITE_DATA = {
       "vegas_was_right": true
      },
      "qb_adjusted": false,
+     "rest": null,
      "qb_out": []
     },
     {
@@ -2005,6 +2059,10 @@ window.SITE_DATA = {
       "vegas_was_right": true
      },
      "qb_adjusted": false,
+     "rest": {
+      "home": 10,
+      "away": 7
+     },
      "qb_out": []
     },
     {
@@ -2051,6 +2109,7 @@ window.SITE_DATA = {
       "vegas_was_right": false
      },
      "qb_adjusted": false,
+     "rest": null,
      "qb_out": [
       {
        "team": "WAS",
@@ -2104,6 +2163,7 @@ window.SITE_DATA = {
       "vegas_was_right": true
      },
      "qb_adjusted": false,
+     "rest": null,
      "qb_out": [
       {
        "team": "NYG",
@@ -2157,6 +2217,7 @@ window.SITE_DATA = {
       "vegas_was_right": true
      },
      "qb_adjusted": false,
+     "rest": null,
      "qb_out": []
     },
     {
@@ -2203,6 +2264,7 @@ window.SITE_DATA = {
       "vegas_was_right": true
      },
      "qb_adjusted": false,
+     "rest": null,
      "qb_out": []
     },
     {
@@ -2249,6 +2311,7 @@ window.SITE_DATA = {
       "vegas_was_right": true
      },
      "qb_adjusted": false,
+     "rest": null,
      "qb_out": []
     },
     {
@@ -2295,6 +2358,7 @@ window.SITE_DATA = {
       "vegas_was_right": false
      },
      "qb_adjusted": false,
+     "rest": null,
      "qb_out": []
     },
     {
@@ -2341,6 +2405,7 @@ window.SITE_DATA = {
       "vegas_was_right": true
      },
      "qb_adjusted": false,
+     "rest": null,
      "qb_out": []
     },
     {
@@ -2387,6 +2452,7 @@ window.SITE_DATA = {
       "vegas_was_right": false
      },
      "qb_adjusted": false,
+     "rest": null,
      "qb_out": [
       {
        "team": "CHI",
@@ -2448,6 +2514,7 @@ window.SITE_DATA = {
       "vegas_was_right": false
      },
      "qb_adjusted": false,
+     "rest": null,
      "qb_out": []
     },
     {
@@ -2494,6 +2561,7 @@ window.SITE_DATA = {
       "vegas_was_right": true
      },
      "qb_adjusted": false,
+     "rest": null,
      "qb_out": []
     },
     {
@@ -2540,6 +2608,7 @@ window.SITE_DATA = {
       "vegas_was_right": false
      },
      "qb_adjusted": false,
+     "rest": null,
      "qb_out": [
       {
        "team": "NYG",
@@ -2593,6 +2662,7 @@ window.SITE_DATA = {
       "vegas_was_right": false
      },
      "qb_adjusted": false,
+     "rest": null,
      "qb_out": []
     },
     {
@@ -2639,6 +2709,10 @@ window.SITE_DATA = {
       "vegas_was_right": true
      },
      "qb_adjusted": false,
+     "rest": {
+      "home": 7,
+      "away": 10
+     },
      "qb_out": [
       {
        "team": "TB",
@@ -2692,6 +2766,7 @@ window.SITE_DATA = {
       "vegas_was_right": false
      },
      "qb_adjusted": false,
+     "rest": null,
      "qb_out": []
     },
     {
@@ -2738,6 +2813,7 @@ window.SITE_DATA = {
       "vegas_was_right": true
      },
      "qb_adjusted": false,
+     "rest": null,
      "qb_out": []
     },
     {
@@ -2784,6 +2860,7 @@ window.SITE_DATA = {
       "vegas_was_right": false
      },
      "qb_adjusted": false,
+     "rest": null,
      "qb_out": []
     },
     {
@@ -2830,6 +2907,7 @@ window.SITE_DATA = {
       "vegas_was_right": true
      },
      "qb_adjusted": false,
+     "rest": null,
      "qb_out": [
       {
        "team": "CHI",
@@ -2883,6 +2961,7 @@ window.SITE_DATA = {
       "vegas_was_right": true
      },
      "qb_adjusted": false,
+     "rest": null,
      "qb_out": []
     },
     {
@@ -2929,6 +3008,7 @@ window.SITE_DATA = {
       "vegas_was_right": true
      },
      "qb_adjusted": false,
+     "rest": null,
      "qb_out": []
     },
     {
@@ -2975,6 +3055,7 @@ window.SITE_DATA = {
       "vegas_was_right": true
      },
      "qb_adjusted": false,
+     "rest": null,
      "qb_out": []
     },
     {
@@ -3021,6 +3102,7 @@ window.SITE_DATA = {
       "vegas_was_right": true
      },
      "qb_adjusted": false,
+     "rest": null,
      "qb_out": []
     },
     {
@@ -3067,6 +3149,7 @@ window.SITE_DATA = {
       "vegas_was_right": true
      },
      "qb_adjusted": false,
+     "rest": null,
      "qb_out": []
     },
     {
@@ -3113,6 +3196,7 @@ window.SITE_DATA = {
       "vegas_was_right": false
      },
      "qb_adjusted": false,
+     "rest": null,
      "qb_out": []
     },
     {
@@ -3159,6 +3243,10 @@ window.SITE_DATA = {
       "vegas_was_right": false
      },
      "qb_adjusted": false,
+     "rest": {
+      "home": 8,
+      "away": 11
+     },
      "qb_out": []
     }
    ]
@@ -3213,6 +3301,7 @@ window.SITE_DATA = {
       "vegas_was_right": false
      },
      "qb_adjusted": false,
+     "rest": null,
      "qb_out": [
       {
        "team": "TB",
@@ -3266,6 +3355,7 @@ window.SITE_DATA = {
       "vegas_was_right": true
      },
      "qb_adjusted": false,
+     "rest": null,
      "qb_out": []
     },
     {
@@ -3312,6 +3402,7 @@ window.SITE_DATA = {
       "vegas_was_right": false
      },
      "qb_adjusted": false,
+     "rest": null,
      "qb_out": []
     },
     {
@@ -3358,6 +3449,7 @@ window.SITE_DATA = {
       "vegas_was_right": true
      },
      "qb_adjusted": false,
+     "rest": null,
      "qb_out": []
     },
     {
@@ -3404,6 +3496,10 @@ window.SITE_DATA = {
       "vegas_was_right": true
      },
      "qb_adjusted": false,
+     "rest": {
+      "home": 7,
+      "away": 10
+     },
      "qb_out": []
     },
     {
@@ -3450,6 +3546,7 @@ window.SITE_DATA = {
       "vegas_was_right": true
      },
      "qb_adjusted": false,
+     "rest": null,
      "qb_out": []
     },
     {
@@ -3496,6 +3593,10 @@ window.SITE_DATA = {
       "vegas_was_right": true
      },
      "qb_adjusted": false,
+     "rest": {
+      "home": 10,
+      "away": 7
+     },
      "qb_out": []
     },
     {
@@ -3542,6 +3643,7 @@ window.SITE_DATA = {
       "vegas_was_right": true
      },
      "qb_adjusted": false,
+     "rest": null,
      "qb_out": []
     },
     {
@@ -3588,6 +3690,7 @@ window.SITE_DATA = {
       "vegas_was_right": true
      },
      "qb_adjusted": false,
+     "rest": null,
      "qb_out": []
     },
     {
@@ -3634,6 +3737,7 @@ window.SITE_DATA = {
       "vegas_was_right": null
      },
      "qb_adjusted": false,
+     "rest": null,
      "qb_out": [
       {
        "team": "WAS",
@@ -3693,6 +3797,7 @@ window.SITE_DATA = {
       "vegas_was_right": true
      },
      "qb_adjusted": false,
+     "rest": null,
      "qb_out": []
     },
     {
@@ -3739,6 +3844,7 @@ window.SITE_DATA = {
       "vegas_was_right": true
      },
      "qb_adjusted": false,
+     "rest": null,
      "qb_out": []
     },
     {
@@ -3785,6 +3891,7 @@ window.SITE_DATA = {
       "vegas_was_right": false
      },
      "qb_adjusted": false,
+     "rest": null,
      "qb_out": []
     },
     {
@@ -3831,6 +3938,7 @@ window.SITE_DATA = {
       "vegas_was_right": false
      },
      "qb_adjusted": false,
+     "rest": null,
      "qb_out": [
       {
        "team": "BAL",
@@ -3884,6 +3992,7 @@ window.SITE_DATA = {
       "vegas_was_right": false
      },
      "qb_adjusted": false,
+     "rest": null,
      "qb_out": []
     }
    ]
@@ -3943,6 +4052,7 @@ window.SITE_DATA = {
       "vegas_was_right": false
      },
      "qb_adjusted": false,
+     "rest": null,
      "qb_out": []
     },
     {
@@ -3989,6 +4099,7 @@ window.SITE_DATA = {
       "vegas_was_right": false
      },
      "qb_adjusted": false,
+     "rest": null,
      "qb_out": []
     },
     {
@@ -4035,6 +4146,7 @@ window.SITE_DATA = {
       "vegas_was_right": false
      },
      "qb_adjusted": false,
+     "rest": null,
      "qb_out": [
       {
        "team": "BAL",
@@ -4088,6 +4200,10 @@ window.SITE_DATA = {
       "vegas_was_right": true
      },
      "qb_adjusted": false,
+     "rest": {
+      "home": 7,
+      "away": 14
+     },
      "qb_out": [
       {
        "team": "PHI",
@@ -4141,6 +4257,7 @@ window.SITE_DATA = {
       "vegas_was_right": true
      },
      "qb_adjusted": false,
+     "rest": null,
      "qb_out": []
     },
     {
@@ -4187,6 +4304,7 @@ window.SITE_DATA = {
       "vegas_was_right": true
      },
      "qb_adjusted": false,
+     "rest": null,
      "qb_out": []
     },
     {
@@ -4233,6 +4351,7 @@ window.SITE_DATA = {
       "vegas_was_right": true
      },
      "qb_adjusted": false,
+     "rest": null,
      "qb_out": []
     },
     {
@@ -4279,6 +4398,10 @@ window.SITE_DATA = {
       "vegas_was_right": true
      },
      "qb_adjusted": false,
+     "rest": {
+      "home": 10,
+      "away": 7
+     },
      "qb_out": [
       {
        "team": "TB",
@@ -4332,6 +4455,7 @@ window.SITE_DATA = {
       "vegas_was_right": false
      },
      "qb_adjusted": false,
+     "rest": null,
      "qb_out": []
     },
     {
@@ -4378,6 +4502,7 @@ window.SITE_DATA = {
       "vegas_was_right": false
      },
      "qb_adjusted": false,
+     "rest": null,
      "qb_out": []
     },
     {
@@ -4424,6 +4549,7 @@ window.SITE_DATA = {
       "vegas_was_right": true
      },
      "qb_adjusted": false,
+     "rest": null,
      "qb_out": []
     },
     {
@@ -4470,6 +4596,10 @@ window.SITE_DATA = {
       "vegas_was_right": true
      },
      "qb_adjusted": false,
+     "rest": {
+      "home": 14,
+      "away": 7
+     },
      "qb_out": []
     },
     {
@@ -4516,6 +4646,10 @@ window.SITE_DATA = {
       "vegas_was_right": true
      },
      "qb_adjusted": false,
+     "rest": {
+      "home": 7,
+      "away": 10
+     },
      "qb_out": []
     },
     {
@@ -4562,6 +4696,7 @@ window.SITE_DATA = {
       "vegas_was_right": true
      },
      "qb_adjusted": false,
+     "rest": null,
      "qb_out": []
     }
    ]
@@ -4621,6 +4756,7 @@ window.SITE_DATA = {
       "vegas_was_right": true
      },
      "qb_adjusted": false,
+     "rest": null,
      "qb_out": []
     },
     {
@@ -4637,7 +4773,7 @@ window.SITE_DATA = {
      "our_line": "PIT \u22125.3",
      "expected_margin": 5.3,
      "vegas_line_at_lock": "PIT \u22123.5",
-     "closing_line": null,
+     "closing_line": "PIT \u22123.0",
      "big_gap": false,
      "home_side": {
       "team": "NO",
@@ -4659,8 +4795,15 @@ window.SITE_DATA = {
       "qb_teams": [],
       "edge": -132
      },
-     "result": null,
+     "result": {
+      "home_score": 10,
+      "away_score": 16,
+      "winner": "PIT",
+      "we_were_right": true,
+      "vegas_was_right": true
+     },
      "qb_adjusted": false,
+     "rest": null,
      "qb_out": []
     },
     {
@@ -4677,7 +4820,7 @@ window.SITE_DATA = {
      "our_line": "BAL \u22123.1",
      "expected_margin": 3.1,
      "vegas_line_at_lock": "BAL \u22121.5",
-     "closing_line": null,
+     "closing_line": "CIN \u22123.0",
      "big_gap": false,
      "home_side": {
       "team": "BAL",
@@ -4699,9 +4842,26 @@ window.SITE_DATA = {
       "qb_teams": [],
       "edge": 78
      },
-     "result": null,
+     "result": {
+      "home_score": 13,
+      "away_score": 35,
+      "winner": "CIN",
+      "we_were_right": false,
+      "vegas_was_right": false
+     },
      "qb_adjusted": false,
-     "qb_out": []
+     "rest": {
+      "home": 7,
+      "away": 14
+     },
+     "qb_out": [
+      {
+       "team": "BAL",
+       "player": "Lamar Jackson",
+       "reason": "out",
+       "in_pick": false
+      }
+     ]
     },
     {
      "game_id": "2026_07_CLE_TEN",
@@ -4717,7 +4877,7 @@ window.SITE_DATA = {
      "our_line": "CLE \u22123.6",
      "expected_margin": 3.6,
      "vegas_line_at_lock": "CLE \u22121.5",
-     "closing_line": null,
+     "closing_line": "CLE \u22121.5",
      "big_gap": false,
      "home_side": {
       "team": "TEN",
@@ -4739,8 +4899,15 @@ window.SITE_DATA = {
       "qb_teams": [],
       "edge": -90
      },
-     "result": null,
+     "result": {
+      "home_score": 24,
+      "away_score": 27,
+      "winner": "CLE",
+      "we_were_right": true,
+      "vegas_was_right": true
+     },
      "qb_adjusted": false,
+     "rest": null,
      "qb_out": []
     },
     {
@@ -4757,7 +4924,7 @@ window.SITE_DATA = {
      "our_line": "MIN \u221210.3",
      "expected_margin": 10.3,
      "vegas_line_at_lock": "MIN \u22126.5",
-     "closing_line": null,
+     "closing_line": "MIN \u22126.5",
      "big_gap": false,
      "home_side": {
       "team": "MIN",
@@ -4779,8 +4946,18 @@ window.SITE_DATA = {
       "qb_teams": [],
       "edge": 257
      },
-     "result": null,
+     "result": {
+      "home_score": 16,
+      "away_score": 10,
+      "winner": "MIN",
+      "we_were_right": true,
+      "vegas_was_right": true
+     },
      "qb_adjusted": false,
+     "rest": {
+      "home": 14,
+      "away": 7
+     },
      "qb_out": []
     },
     {
@@ -4797,7 +4974,7 @@ window.SITE_DATA = {
      "our_line": "NYJ \u22122.2",
      "expected_margin": 2.2,
      "vegas_line_at_lock": "NYJ \u22124.5",
-     "closing_line": null,
+     "closing_line": "NYJ \u22123.5",
      "big_gap": false,
      "home_side": {
       "team": "NYJ",
@@ -4819,8 +4996,18 @@ window.SITE_DATA = {
       "qb_teams": [],
       "edge": 56
      },
-     "result": null,
+     "result": {
+      "home_score": 25,
+      "away_score": 28,
+      "winner": "MIA",
+      "we_were_right": false,
+      "vegas_was_right": false
+     },
      "qb_adjusted": false,
+     "rest": {
+      "home": 7,
+      "away": 14
+     },
      "qb_out": []
     },
     {
@@ -4837,7 +5024,7 @@ window.SITE_DATA = {
      "our_line": "HOU \u22126.4",
      "expected_margin": 6.4,
      "vegas_line_at_lock": "HOU \u221210.5",
-     "closing_line": null,
+     "closing_line": "HOU \u221210.0",
      "big_gap": false,
      "home_side": {
       "team": "HOU",
@@ -4859,8 +5046,15 @@ window.SITE_DATA = {
       "qb_teams": [],
       "edge": 161
      },
-     "result": null,
+     "result": {
+      "home_score": 21,
+      "away_score": 27,
+      "winner": "NYG",
+      "we_were_right": false,
+      "vegas_was_right": false
+     },
      "qb_adjusted": false,
+     "rest": null,
      "qb_out": []
     },
     {
@@ -4877,7 +5071,7 @@ window.SITE_DATA = {
      "our_line": "SF \u22126.1",
      "expected_margin": 6.1,
      "vegas_line_at_lock": "SF \u22122.5",
-     "closing_line": null,
+     "closing_line": "SF \u22122.5",
      "big_gap": false,
      "home_side": {
       "team": "ATL",
@@ -4899,8 +5093,15 @@ window.SITE_DATA = {
       "qb_teams": [],
       "edge": -153
      },
-     "result": null,
+     "result": {
+      "home_score": 29,
+      "away_score": 20,
+      "winner": "ATL",
+      "we_were_right": false,
+      "vegas_was_right": false
+     },
      "qb_adjusted": false,
+     "rest": null,
      "qb_out": []
     },
     {
@@ -4917,7 +5118,7 @@ window.SITE_DATA = {
      "our_line": "CAR \u22124.8",
      "expected_margin": 4.8,
      "vegas_line_at_lock": "CAR \u22123.0",
-     "closing_line": null,
+     "closing_line": "CAR \u22123.0",
      "big_gap": false,
      "home_side": {
       "team": "CAR",
@@ -4939,8 +5140,15 @@ window.SITE_DATA = {
       "qb_teams": [],
       "edge": 120
      },
-     "result": null,
+     "result": {
+      "home_score": 13,
+      "away_score": 43,
+      "winner": "TB",
+      "we_were_right": false,
+      "vegas_was_right": false
+     },
      "qb_adjusted": false,
+     "rest": null,
      "qb_out": []
     },
     {
@@ -4957,7 +5165,7 @@ window.SITE_DATA = {
      "our_line": "DEN \u22127.1",
      "expected_margin": 7.1,
      "vegas_line_at_lock": "DEN \u22124.5",
-     "closing_line": null,
+     "closing_line": "DEN \u22124.5",
      "big_gap": false,
      "home_side": {
       "team": "ARI",
@@ -4979,8 +5187,18 @@ window.SITE_DATA = {
       "qb_teams": [],
       "edge": -177
      },
-     "result": null,
+     "result": {
+      "home_score": 16,
+      "away_score": 30,
+      "winner": "DEN",
+      "we_were_right": true,
+      "vegas_was_right": true
+     },
      "qb_adjusted": false,
+     "rest": {
+      "home": 7,
+      "away": 10
+     },
      "qb_out": []
     },
     {
@@ -4997,7 +5215,7 @@ window.SITE_DATA = {
      "our_line": "DET \u22122.4",
      "expected_margin": 2.4,
      "vegas_line_at_lock": "DET \u22123.0",
-     "closing_line": null,
+     "closing_line": "DET \u22123.5",
      "big_gap": false,
      "home_side": {
       "team": "DET",
@@ -5019,8 +5237,18 @@ window.SITE_DATA = {
       "qb_teams": [],
       "edge": 60
      },
-     "result": null,
+     "result": {
+      "home_score": 20,
+      "away_score": 17,
+      "winner": "DET",
+      "we_were_right": true,
+      "vegas_was_right": true
+     },
      "qb_adjusted": false,
+     "rest": {
+      "home": 14,
+      "away": 7
+     },
      "qb_out": []
     },
     {
@@ -5037,7 +5265,7 @@ window.SITE_DATA = {
      "our_line": "LA \u22123.4",
      "expected_margin": 3.4,
      "vegas_line_at_lock": "LA \u22123.5",
-     "closing_line": null,
+     "closing_line": "LA \u22123.5",
      "big_gap": false,
      "home_side": {
       "team": "LV",
@@ -5059,8 +5287,15 @@ window.SITE_DATA = {
       "qb_teams": [],
       "edge": -85
      },
-     "result": null,
+     "result": {
+      "home_score": 21,
+      "away_score": 35,
+      "winner": "LA",
+      "we_were_right": true,
+      "vegas_was_right": true
+     },
      "qb_adjusted": false,
+     "rest": null,
      "qb_out": []
     },
     {
@@ -5077,7 +5312,7 @@ window.SITE_DATA = {
      "our_line": "SEA \u22123.6",
      "expected_margin": 3.6,
      "vegas_line_at_lock": "SEA \u22123.0",
-     "closing_line": null,
+     "closing_line": "SEA \u22123.0",
      "big_gap": false,
      "home_side": {
       "team": "SEA",
@@ -5099,8 +5334,18 @@ window.SITE_DATA = {
       "qb_teams": [],
       "edge": 90
      },
-     "result": null,
+     "result": {
+      "home_score": 20,
+      "away_score": 3,
+      "winner": "SEA",
+      "we_were_right": true,
+      "vegas_was_right": true
+     },
      "qb_adjusted": false,
+     "rest": {
+      "home": 10,
+      "away": 7
+     },
      "qb_out": []
     },
     {
@@ -5141,6 +5386,7 @@ window.SITE_DATA = {
      },
      "result": null,
      "qb_adjusted": false,
+     "rest": null,
      "qb_out": [
       {
        "team": "PHI",
@@ -5154,7 +5400,7 @@ window.SITE_DATA = {
   }
  ],
  "record": {
-  "games": 15,
+  "games": 27,
   "by_week": [
    {
     "week": 6,
@@ -5165,114 +5411,98 @@ window.SITE_DATA = {
    },
    {
     "week": 7,
-    "games": 15,
-    "ours": 9,
-    "vegas": 10,
-    "vegas_games": 15
+    "games": 27,
+    "ours": 16,
+    "vegas": 17,
+    "vegas_games": 27
    }
   ],
   "extra": [
-   "When we disagreed with Vegas by a point or more, the betting line later moved our way in 3 of 5 games where it moved (8 didn't move). About half would mean no edge.",
-   "Honest range for our hit rate so far: 33% to 87% (small samples swing a lot).",
-   "When we gave a team 60%+ to win, we expected about 72% of them to win. 45% did (5 of 11).",
+   "When we disagreed with Vegas by a point or more, the betting line later moved our way in 5 of 9 games where it moved (13 didn't move). About half would mean no edge.",
+   "Honest range for our hit rate so far: 41% to 78% (small samples swing a lot).",
+   "When we gave a team 60%+ to win, we expected about 70% of them to win. 52% did (11 of 21).",
    "Full details: reports/live_2026.md on GitHub."
   ]
  },
  "rankings": [
   {
    "rank": 1,
-   "team": "SF",
-   "rating": 1657.0,
-   "rank_change": 0,
-   "record": "6-0",
-   "next": {
-    "opp": "ATL",
-    "home": false,
-    "p_win": 0.707
-   },
-   "bye": false,
-   "odds": {
-    "wins": 13.7,
-    "losses": 3.3,
-    "playoff": 0.981,
-    "division": 0.864,
-    "top_seed": 0.527
-   }
-  },
-  {
-   "rank": 2,
    "team": "BUF",
    "rating": 1649.2,
-   "rank_change": 0,
+   "rank_change": 1,
    "record": "5-1",
    "next": null,
    "bye": true,
    "odds": {
-    "wins": 12.3,
-    "losses": 4.7,
-    "playoff": 0.928,
-    "division": 0.78,
-    "top_seed": 0.297
+    "wins": 12.4,
+    "losses": 4.6,
+    "playoff": 0.934,
+    "division": 0.793,
+    "top_seed": 0.286
+   }
+  },
+  {
+   "rank": 2,
+   "team": "SEA",
+   "rating": 1645.6,
+   "rank_change": 2,
+   "record": "4-3",
+   "next": null,
+   "bye": false,
+   "odds": {
+    "wins": 10.9,
+    "losses": 6.1,
+    "playoff": 0.785,
+    "division": 0.262,
+    "top_seed": 0.067
    }
   },
   {
    "rank": 3,
    "team": "MIN",
-   "rating": 1634.9,
+   "rating": 1641.4,
    "rank_change": 0,
-   "record": "5-0",
-   "next": {
-    "opp": "IND",
-    "home": true,
-    "p_win": 0.815
-   },
+   "record": "6-0",
+   "next": null,
    "bye": false,
    "odds": {
-    "wins": 12.8,
-    "losses": 4.2,
-    "playoff": 0.937,
-    "division": 0.633,
-    "top_seed": 0.329
+    "wins": 13.1,
+    "losses": 3.9,
+    "playoff": 0.95,
+    "division": 0.693,
+    "top_seed": 0.478
    }
   },
   {
    "rank": 4,
-   "team": "SEA",
-   "rating": 1624.8,
-   "rank_change": 0,
-   "record": "3-3",
-   "next": {
-    "opp": "KC",
-    "home": true,
-    "p_win": 0.627
-   },
+   "team": "DEN",
+   "rating": 1629.8,
+   "rank_change": 1,
+   "record": "5-2",
+   "next": null,
    "bye": false,
    "odds": {
-    "wins": 10.2,
-    "losses": 6.8,
-    "playoff": 0.686,
-    "division": 0.11,
-    "top_seed": 0.029
+    "wins": 11.9,
+    "losses": 5.1,
+    "playoff": 0.911,
+    "division": 0.618,
+    "top_seed": 0.191
    }
   },
   {
    "rank": 5,
-   "team": "DEN",
-   "rating": 1616.5,
-   "rank_change": 0,
-   "record": "4-2",
-   "next": {
-    "opp": "ARI",
-    "home": false,
-    "p_win": 0.735
-   },
+   "team": "SF",
+   "rating": 1622.0,
+   "rank_change": -4,
+   "record": "6-1",
+   "next": null,
    "bye": false,
    "odds": {
-    "wins": 11.3,
-    "losses": 5.7,
-    "playoff": 0.832,
-    "division": 0.439,
-    "top_seed": 0.136
+    "wins": 12.5,
+    "losses": 4.5,
+    "playoff": 0.939,
+    "division": 0.675,
+    "top_seed": 0.301
    }
   },
   {
@@ -5286,221 +5516,185 @@ window.SITE_DATA = {
    "odds": {
     "wins": 11.5,
     "losses": 5.5,
-    "playoff": 0.885,
-    "division": 0.813,
-    "top_seed": 0.133
+    "playoff": 0.922,
+    "division": 0.894,
+    "top_seed": 0.134
    }
   },
   {
    "rank": 7,
-   "team": "KC",
-   "rating": 1582.7,
-   "rank_change": 1,
-   "record": "5-0",
-   "next": {
-    "opp": "SEA",
-    "home": false,
-    "p_win": 0.373
-   },
-   "bye": false,
-   "odds": {
-    "wins": 11.7,
-    "losses": 5.3,
-    "playoff": 0.851,
-    "division": 0.535,
-    "top_seed": 0.219
-   }
-  },
-  {
-   "rank": 8,
    "team": "NE",
    "rating": 1582.3,
-   "rank_change": -1,
+   "rank_change": 0,
    "record": "4-3",
    "next": null,
    "bye": false,
    "odds": {
-    "wins": 9.9,
-    "losses": 7.1,
-    "playoff": 0.611,
-    "division": 0.21,
-    "top_seed": 0.033
+    "wins": 10.0,
+    "losses": 7.0,
+    "playoff": 0.628,
+    "division": 0.202,
+    "top_seed": 0.032
    }
   },
   {
-   "rank": 9,
+   "rank": 8,
    "team": "CHI",
    "rating": 1580.2,
-   "rank_change": 0,
+   "rank_change": 1,
    "record": "5-2",
    "next": null,
    "bye": false,
    "odds": {
-    "wins": 10.5,
-    "losses": 6.5,
-    "playoff": 0.718,
-    "division": 0.151,
-    "top_seed": 0.04
+    "wins": 10.4,
+    "losses": 6.6,
+    "playoff": 0.688,
+    "division": 0.123,
+    "top_seed": 0.054
+   }
+  },
+  {
+   "rank": 9,
+   "team": "LA",
+   "rating": 1573.0,
+   "rank_change": 4,
+   "record": "3-4",
+   "next": null,
+   "bye": false,
+   "odds": {
+    "wins": 8.8,
+    "losses": 8.2,
+    "playoff": 0.371,
+    "division": 0.061,
+    "top_seed": 0.007
    }
   },
   {
    "rank": 10,
-   "team": "BAL",
-   "rating": 1558.6,
-   "rank_change": 0,
-   "record": "4-2",
-   "next": {
-    "opp": "CIN",
-    "home": true,
-    "p_win": 0.611
-   },
-   "bye": false,
-   "odds": {
-    "wins": 10.0,
-    "losses": 7.0,
-    "playoff": 0.604,
-    "division": 0.285,
-    "top_seed": 0.052
-   }
-  },
-  {
-   "rank": 11,
    "team": "DET",
-   "rating": 1558.1,
-   "rank_change": 0,
-   "record": "3-2",
-   "next": {
-    "opp": "GB",
-    "home": true,
-    "p_win": 0.586
-   },
-   "bye": false,
-   "odds": {
-    "wins": 9.8,
-    "losses": 7.2,
-    "playoff": 0.59,
-    "division": 0.125,
-    "top_seed": 0.033
-   }
-  },
-  {
-   "rank": 12,
-   "team": "PIT",
-   "rating": 1557.5,
-   "rank_change": 0,
+   "rating": 1569.3,
+   "rank_change": 1,
    "record": "4-2",
-   "next": {
-    "opp": "NO",
-    "home": false,
-    "p_win": 0.681
-   },
+   "next": null,
    "bye": false,
    "odds": {
     "wins": 10.2,
     "losses": 6.8,
-    "playoff": 0.634,
-    "division": 0.29,
-    "top_seed": 0.055
+    "playoff": 0.643,
+    "division": 0.142,
+    "top_seed": 0.063
+   }
+  },
+  {
+   "rank": 11,
+   "team": "PIT",
+   "rating": 1569.2,
+   "rank_change": 1,
+   "record": "5-2",
+   "next": null,
+   "bye": false,
+   "odds": {
+    "wins": 10.8,
+    "losses": 6.2,
+    "playoff": 0.753,
+    "division": 0.332,
+    "top_seed": 0.081
+   }
+  },
+  {
+   "rank": 12,
+   "team": "CIN",
+   "rating": 1567.8,
+   "rank_change": 4,
+   "record": "4-2",
+   "next": null,
+   "bye": false,
+   "odds": {
+    "wins": 11.1,
+    "losses": 5.9,
+    "playoff": 0.792,
+    "division": 0.421,
+    "top_seed": 0.12
    }
   },
   {
    "rank": 13,
-   "team": "LA",
-   "rating": 1553.2,
-   "rank_change": 0,
-   "record": "2-4",
-   "next": {
-    "opp": "LV",
-    "home": false,
-    "p_win": 0.62
-   },
+   "team": "KC",
+   "rating": 1562.0,
+   "rank_change": -5,
+   "record": "5-1",
+   "next": null,
    "bye": false,
    "odds": {
-    "wins": 8.2,
-    "losses": 8.8,
-    "playoff": 0.294,
-    "division": 0.023,
-    "top_seed": 0.002
+    "wins": 11.0,
+    "losses": 6.0,
+    "playoff": 0.792,
+    "division": 0.37,
+    "top_seed": 0.118
    }
   },
   {
    "rank": 14,
    "team": "GB",
-   "rating": 1545.6,
+   "rating": 1534.4,
    "rank_change": 0,
-   "record": "4-2",
-   "next": {
-    "opp": "DET",
-    "home": false,
-    "p_win": 0.414
-   },
+   "record": "4-3",
+   "next": null,
    "bye": false,
    "odds": {
-    "wins": 9.6,
-    "losses": 7.4,
-    "playoff": 0.55,
-    "division": 0.092,
-    "top_seed": 0.023
+    "wins": 9.1,
+    "losses": 7.9,
+    "playoff": 0.419,
+    "division": 0.042,
+    "top_seed": 0.012
    }
   },
   {
    "rank": 15,
-   "team": "HOU",
-   "rating": 1544.9,
-   "rank_change": 0,
-   "record": "2-4",
-   "next": {
-    "opp": "NYG",
-    "home": true,
-    "p_win": 0.716
-   },
-   "bye": false,
-   "odds": {
-    "wins": 8.4,
-    "losses": 8.6,
-    "playoff": 0.336,
-    "division": 0.143,
-    "top_seed": 0.004
-   }
-  },
-  {
-   "rank": 16,
-   "team": "CIN",
-   "rating": 1528.1,
-   "rank_change": 0,
-   "record": "3-2",
-   "next": {
-    "opp": "BAL",
-    "home": false,
-    "p_win": 0.389
-   },
-   "bye": false,
-   "odds": {
-    "wins": 9.9,
-    "losses": 7.1,
-    "playoff": 0.576,
-    "division": 0.266,
-    "top_seed": 0.047
-   }
-  },
-  {
-   "rank": 17,
-   "team": "CAR",
-   "rating": 1502.1,
-   "rank_change": 0,
-   "record": "3-2",
-   "next": {
-    "opp": "TB",
-    "home": true,
-    "p_win": 0.666
-   },
+   "team": "BAL",
+   "rating": 1518.8,
+   "rank_change": -5,
+   "record": "4-3",
+   "next": null,
    "bye": false,
    "odds": {
     "wins": 8.8,
     "losses": 8.2,
-    "playoff": 0.594,
-    "division": 0.567,
+    "playoff": 0.383,
+    "division": 0.086,
     "top_seed": 0.011
+   }
+  },
+  {
+   "rank": 16,
+   "team": "HOU",
+   "rating": 1514.8,
+   "rank_change": -1,
+   "record": "2-5",
+   "next": null,
+   "bye": false,
+   "odds": {
+    "wins": 7.4,
+    "losses": 9.6,
+    "playoff": 0.177,
+    "division": 0.073,
+    "top_seed": 0.001
+   }
+  },
+  {
+   "rank": 17,
+   "team": "ATL",
+   "rating": 1491.0,
+   "rank_change": 3,
+   "record": "3-4",
+   "next": null,
+   "bye": false,
+   "odds": {
+    "wins": 7.8,
+    "losses": 9.2,
+    "playoff": 0.385,
+    "division": 0.363,
+    "top_seed": 0.002
    }
   },
   {
@@ -5518,56 +5712,80 @@ window.SITE_DATA = {
    "odds": {
     "wins": 7.6,
     "losses": 9.4,
-    "playoff": 0.394,
-    "division": 0.365,
-    "top_seed": 0.001
+    "playoff": 0.323,
+    "division": 0.287,
+    "top_seed": 0.002
    }
   },
   {
    "rank": 19,
-   "team": "CLE",
-   "rating": 1461.7,
-   "rank_change": 0,
-   "record": "4-2",
-   "next": {
-    "opp": "TEN",
-    "home": false,
-    "p_win": 0.626
-   },
+   "team": "TB",
+   "rating": 1478.6,
+   "rank_change": 4,
+   "record": "2-5",
+   "next": null,
    "bye": false,
    "odds": {
-    "wins": 9.3,
-    "losses": 7.7,
-    "playoff": 0.47,
-    "division": 0.159,
-    "top_seed": 0.022
+    "wins": 6.8,
+    "losses": 10.2,
+    "playoff": 0.231,
+    "division": 0.216,
+    "top_seed": 0.0
    }
   },
   {
    "rank": 20,
-   "team": "ATL",
-   "rating": 1456.0,
-   "rank_change": 0,
-   "record": "2-4",
-   "next": {
-    "opp": "SF",
-    "home": true,
-    "p_win": 0.293
-   },
+   "team": "CLE",
+   "rating": 1471.7,
+   "rank_change": -1,
+   "record": "5-2",
+   "next": null,
    "bye": false,
    "odds": {
-    "wins": 6.7,
-    "losses": 10.3,
-    "playoff": 0.199,
-    "division": 0.17,
-    "top_seed": 0.001
+    "wins": 9.7,
+    "losses": 7.3,
+    "playoff": 0.548,
+    "division": 0.161,
+    "top_seed": 0.026
    }
   },
   {
    "rank": 21,
+   "team": "NYG",
+   "rating": 1462.1,
+   "rank_change": 1,
+   "record": "4-2-1",
+   "next": null,
+   "bye": false,
+   "odds": {
+    "wins": 8.8,
+    "losses": 8.2,
+    "playoff": 0.536,
+    "division": 0.501,
+    "top_seed": 0.01
+   }
+  },
+  {
+   "rank": 22,
+   "team": "CAR",
+   "rating": 1453.7,
+   "rank_change": -5,
+   "record": "3-3",
+   "next": null,
+   "bye": false,
+   "odds": {
+    "wins": 7.4,
+    "losses": 9.6,
+    "playoff": 0.316,
+    "division": 0.296,
+    "top_seed": 0.003
+   }
+  },
+  {
+   "rank": 23,
    "team": "DAL",
    "rating": 1432.8,
-   "rank_change": 0,
+   "rank_change": -2,
    "record": "2-4",
    "next": {
     "opp": "PHI",
@@ -5576,201 +5794,137 @@ window.SITE_DATA = {
    },
    "bye": false,
    "odds": {
-    "wins": 6.8,
-    "losses": 10.2,
-    "playoff": 0.211,
-    "division": 0.188,
+    "wins": 6.7,
+    "losses": 10.3,
+    "playoff": 0.17,
+    "division": 0.143,
     "top_seed": 0.001
    }
   },
   {
-   "rank": 22,
-   "team": "NYG",
-   "rating": 1432.0,
-   "rank_change": 0,
-   "record": "3-2-1",
-   "next": {
-    "opp": "HOU",
-    "home": false,
-    "p_win": 0.284
-   },
-   "bye": false,
-   "odds": {
-    "wins": 7.7,
-    "losses": 9.3,
-    "playoff": 0.367,
-    "division": 0.338,
-    "top_seed": 0.003
-   }
-  },
-  {
-   "rank": 23,
-   "team": "TB",
-   "rating": 1430.3,
-   "rank_change": 0,
-   "record": "1-5",
-   "next": {
-    "opp": "CAR",
-    "home": false,
-    "p_win": 0.334
-   },
-   "bye": false,
-   "odds": {
-    "wins": 5.5,
-    "losses": 11.5,
-    "playoff": 0.104,
-    "division": 0.092,
-    "top_seed": 0.0
-   }
-  },
-  {
    "rank": 24,
-   "team": "NO",
-   "rating": 1425.5,
-   "rank_change": 0,
-   "record": "2-4",
-   "next": {
-    "opp": "PIT",
-    "home": true,
-    "p_win": 0.319
-   },
-   "bye": false,
+   "team": "LAC",
+   "rating": 1419.2,
+   "rank_change": 3,
+   "record": "0-6",
+   "next": null,
+   "bye": true,
    "odds": {
-    "wins": 6.6,
-    "losses": 10.4,
-    "playoff": 0.195,
-    "division": 0.17,
+    "wins": 4.1,
+    "losses": 12.9,
+    "playoff": 0.007,
+    "division": 0.0,
     "top_seed": 0.0
    }
   },
   {
    "rank": 25,
    "team": "IND",
-   "rating": 1425.5,
+   "rating": 1419.0,
    "rank_change": 0,
-   "record": "2-4",
-   "next": {
-    "opp": "MIN",
-    "home": false,
-    "p_win": 0.185
-   },
-   "bye": false,
-   "odds": {
-    "wins": 6.4,
-    "losses": 10.6,
-    "playoff": 0.084,
-    "division": 0.041,
-    "top_seed": 0.001
-   }
-  },
-  {
-   "rank": 26,
-   "team": "LV",
-   "rating": 1420.0,
-   "rank_change": 0,
-   "record": "3-3",
-   "next": {
-    "opp": "LA",
-    "home": true,
-    "p_win": 0.38
-   },
-   "bye": false,
-   "odds": {
-    "wins": 7.2,
-    "losses": 9.8,
-    "playoff": 0.13,
-    "division": 0.025,
-    "top_seed": 0.002
-   }
-  },
-  {
-   "rank": 27,
-   "team": "LAC",
-   "rating": 1419.2,
-   "rank_change": 0,
-   "record": "0-6",
+   "record": "2-5",
    "next": null,
-   "bye": true,
+   "bye": false,
    "odds": {
-    "wins": 4.0,
-    "losses": 13.0,
-    "playoff": 0.006,
-    "division": 0.001,
+    "wins": 6.1,
+    "losses": 10.9,
+    "playoff": 0.06,
+    "division": 0.031,
     "top_seed": 0.0
    }
   },
   {
-   "rank": 28,
+   "rank": 26,
+   "team": "NO",
+   "rating": 1413.8,
+   "rank_change": -2,
+   "record": "2-5",
+   "next": null,
+   "bye": false,
+   "odds": {
+    "wins": 6.0,
+    "losses": 11.0,
+    "playoff": 0.134,
+    "division": 0.125,
+    "top_seed": 0.0
+   }
+  },
+  {
+   "rank": 27,
    "team": "WAS",
    "rating": 1410.6,
-   "rank_change": 0,
+   "rank_change": 1,
    "record": "1-4-1",
    "next": null,
    "bye": true,
    "odds": {
     "wins": 5.9,
     "losses": 11.1,
-    "playoff": 0.125,
-    "division": 0.109,
+    "playoff": 0.083,
+    "division": 0.069,
+    "top_seed": 0.0
+   }
+  },
+  {
+   "rank": 28,
+   "team": "LV",
+   "rating": 1400.2,
+   "rank_change": -2,
+   "record": "3-4",
+   "next": null,
+   "bye": false,
+   "odds": {
+    "wins": 6.6,
+    "losses": 10.4,
+    "playoff": 0.068,
+    "division": 0.012,
     "top_seed": 0.0
    }
   },
   {
    "rank": 29,
-   "team": "ARI",
-   "rating": 1391.4,
-   "rank_change": 0,
-   "record": "2-4",
-   "next": {
-    "opp": "DEN",
-    "home": true,
-    "p_win": 0.265
-   },
+   "team": "MIA",
+   "rating": 1390.5,
+   "rank_change": 2,
+   "record": "1-5",
+   "next": null,
    "bye": false,
    "odds": {
-    "wins": 6.1,
-    "losses": 10.9,
-    "playoff": 0.056,
+    "wins": 4.5,
+    "losses": 12.5,
+    "playoff": 0.011,
     "division": 0.003,
     "top_seed": 0.0
    }
   },
   {
    "rank": 30,
-   "team": "NYJ",
-   "rating": 1381.7,
-   "rank_change": 0,
-   "record": "2-4",
-   "next": {
-    "opp": "MIA",
-    "home": true,
-    "p_win": 0.58
-   },
+   "team": "ARI",
+   "rating": 1378.1,
+   "rank_change": -1,
+   "record": "2-5",
+   "next": null,
    "bye": false,
    "odds": {
     "wins": 5.7,
     "losses": 11.3,
-    "playoff": 0.039,
-    "division": 0.008,
+    "playoff": 0.027,
+    "division": 0.002,
     "top_seed": 0.0
    }
   },
   {
    "rank": 31,
-   "team": "MIA",
-   "rating": 1374.0,
-   "rank_change": 0,
-   "record": "0-5",
-   "next": {
-    "opp": "NYJ",
-    "home": false,
-    "p_win": 0.42
-   },
+   "team": "NYJ",
+   "rating": 1365.2,
+   "rank_change": -1,
+   "record": "2-5",
+   "next": null,
    "bye": false,
    "odds": {
-    "wins": 3.7,
-    "losses": 13.3,
-    "playoff": 0.007,
+    "wins": 4.9,
+    "losses": 12.1,
+    "playoff": 0.011,
     "division": 0.002,
     "top_seed": 0.0
    }
@@ -5778,20 +5932,16 @@ window.SITE_DATA = {
   {
    "rank": 32,
    "team": "TEN",
-   "rating": 1324.2,
+   "rating": 1314.2,
    "rank_change": 0,
-   "record": "1-5",
-   "next": {
-    "opp": "CLE",
-    "home": true,
-    "p_win": 0.374
-   },
+   "record": "1-6",
+   "next": null,
    "bye": false,
    "odds": {
-    "wins": 4.0,
-    "losses": 13.0,
-    "playoff": 0.006,
-    "division": 0.003,
+    "wins": 3.5,
+    "losses": 13.5,
+    "playoff": 0.002,
+    "division": 0.001,
     "top_seed": 0.0
    }
   }
@@ -5828,7 +5978,7 @@ window.SITE_DATA = {
    ],
    [
     7,
-    1391.4
+    1378.1
    ]
   ],
   "ATL": [
@@ -5862,7 +6012,7 @@ window.SITE_DATA = {
    ],
    [
     7,
-    1456.0
+    1491.0
    ]
   ],
   "BAL": [
@@ -5896,7 +6046,7 @@ window.SITE_DATA = {
    ],
    [
     7,
-    1558.6
+    1518.8
    ]
   ],
   "BUF": [
@@ -5964,7 +6114,7 @@ window.SITE_DATA = {
    ],
    [
     7,
-    1502.1
+    1453.7
    ]
   ],
   "CHI": [
@@ -6032,7 +6182,7 @@ window.SITE_DATA = {
    ],
    [
     7,
-    1528.1
+    1567.8
    ]
   ],
   "CLE": [
@@ -6066,7 +6216,7 @@ window.SITE_DATA = {
    ],
    [
     7,
-    1461.7
+    1471.7
    ]
   ],
   "DAL": [
@@ -6134,7 +6284,7 @@ window.SITE_DATA = {
    ],
    [
     7,
-    1616.5
+    1629.8
    ]
   ],
   "DET": [
@@ -6168,7 +6318,7 @@ window.SITE_DATA = {
    ],
    [
     7,
-    1558.1
+    1569.3
    ]
   ],
   "GB": [
@@ -6202,7 +6352,7 @@ window.SITE_DATA = {
    ],
    [
     7,
-    1545.6
+    1534.4
    ]
   ],
   "HOU": [
@@ -6236,7 +6386,7 @@ window.SITE_DATA = {
    ],
    [
     7,
-    1544.9
+    1514.8
    ]
   ],
   "IND": [
@@ -6270,7 +6420,7 @@ window.SITE_DATA = {
    ],
    [
     7,
-    1425.5
+    1419.0
    ]
   ],
   "JAX": [
@@ -6338,7 +6488,7 @@ window.SITE_DATA = {
    ],
    [
     7,
-    1582.7
+    1562.0
    ]
   ],
   "LA": [
@@ -6372,7 +6522,7 @@ window.SITE_DATA = {
    ],
    [
     7,
-    1553.2
+    1573.0
    ]
   ],
   "LAC": [
@@ -6440,7 +6590,7 @@ window.SITE_DATA = {
    ],
    [
     7,
-    1420.0
+    1400.2
    ]
   ],
   "MIA": [
@@ -6474,7 +6624,7 @@ window.SITE_DATA = {
    ],
    [
     7,
-    1374.0
+    1390.5
    ]
   ],
   "MIN": [
@@ -6508,7 +6658,7 @@ window.SITE_DATA = {
    ],
    [
     7,
-    1634.9
+    1641.4
    ]
   ],
   "NE": [
@@ -6576,7 +6726,7 @@ window.SITE_DATA = {
    ],
    [
     7,
-    1425.5
+    1413.8
    ]
   ],
   "NYG": [
@@ -6610,7 +6760,7 @@ window.SITE_DATA = {
    ],
    [
     7,
-    1432.0
+    1462.1
    ]
   ],
   "NYJ": [
@@ -6644,7 +6794,7 @@ window.SITE_DATA = {
    ],
    [
     7,
-    1381.7
+    1365.2
    ]
   ],
   "PHI": [
@@ -6712,7 +6862,7 @@ window.SITE_DATA = {
    ],
    [
     7,
-    1557.5
+    1569.2
    ]
   ],
   "SEA": [
@@ -6746,7 +6896,7 @@ window.SITE_DATA = {
    ],
    [
     7,
-    1624.8
+    1645.6
    ]
   ],
   "SF": [
@@ -6780,7 +6930,7 @@ window.SITE_DATA = {
    ],
    [
     7,
-    1657.0
+    1622.0
    ]
   ],
   "TB": [
@@ -6814,7 +6964,7 @@ window.SITE_DATA = {
    ],
    [
     7,
-    1430.3
+    1478.6
    ]
   ],
   "TEN": [
@@ -6848,7 +6998,7 @@ window.SITE_DATA = {
    ],
    [
     7,
-    1324.2
+    1314.2
    ]
   ],
   "WAS": [
@@ -6894,16 +7044,16 @@ window.SITE_DATA = {
  },
  "example": {
   "week": 7,
-  "home": "CHI",
-  "away": "NE",
-  "home_rating": 1561,
-  "away_rating": 1601,
+  "home": "MIN",
+  "away": "IND",
+  "home_rating": 1635,
+  "away_rating": 1426,
   "home_field": 48,
-  "gap": 8,
-  "p_home": 0.511,
-  "home_score": 30,
-  "away_score": 24,
-  "home_after": 1580,
-  "away_after": 1582
+  "gap": 257,
+  "p_home": 0.815,
+  "home_score": 16,
+  "away_score": 10,
+  "home_after": 1641,
+  "away_after": 1419
  }
 };

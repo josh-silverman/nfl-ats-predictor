@@ -55,7 +55,7 @@ The same information predicts *winners* well. A 30-line Elo model built from fin
 - S5 a professional build: in progress
 
 ### 3. Trying to beat Elo, honestly
-Four improvements were each pre-registered (committed to git *before* running), run once, and judged against Elo with a fixed keep rule:
+Five improvements were each pre-registered (committed to git *before* running), run once, and judged against Elo with a fixed keep rule:
 
 | Idea | Log-loss change vs. Elo [95% CI] | Verdict |
 |---|---|---|
@@ -63,6 +63,7 @@ Four improvements were each pre-registered (committed to git *before* running), 
 | Starting QB ruled out (official injury report, as-of) | −0.0006 [−0.0032, +0.0020] | Rejected. The signal is real (right sign in every season, 72.5% vs. 62.5% on affected games), but too rare (about 4% of games) |
 | Play-by-play EPA on top of Elo | −0.0013 [−0.0059, +0.0034] | Rejected: within noise |
 | **Usual starting QB out, including injured reserve (weekly rosters), as Elo points** | **−0.0041 [−0.0076, −0.0004]** | **Kept** (6/7 seasons, AUC 0.692 → 0.698). A missing No. 1 QB ≈ 90 Elo ≈ 3.6 points. The deliverable from 2026 Week 8 |
+| Rest / bye-week edge on top of the QB model | +0.0004 [−0.0008, +0.0016] vs. the QB model | Rejected: 3/7 seasons; the rest effect doesn't hold out of sample |
 
 ### 4. The live test (2026)
 Every week, `scripts/predict_week.py` predicts each upcoming game using only earlier results. It refuses to overwrite a file, skips games that have already kicked off, and refuses to run on stale data. The file is committed to git before Thursday's kickoff, so the timestamps prove the lock. Weeks 1–5 were backfilled after the fact and are reported separately. **Results: [`reports/live_2026.md`](reports/live_2026.md).**

@@ -145,6 +145,17 @@ def team_context(reg: pd.DataFrame, history: pd.DataFrame, season: int, week: in
                 "last": c["last"]} for t, c in ctx.items()}
 
 
+REST_EDGE_DAYS = 3  # show the rest gauge only when the teams' rest differs by this many days or more
+
+
+def _rest(days) -> dict | None:
+    """{"home": d, "away": d} for the rest gauge when the gap is REST_EDGE_DAYS+, else None."""
+    if days is None or any(pd.isna(d) for d in days):
+        return None
+    home, away = int(days[0]), int(days[1])
+    return {"home": home, "away": away} if abs(home - away) >= REST_EDGE_DAYS else None
+
+
 def qb_notes(flags: pd.DataFrame | None) -> dict:
     """{game_id: [{team, player, reason}]} for games where a team's usual starting QB is out (display only)."""
     if flags is None or flags.empty:
@@ -155,14 +166,15 @@ def qb_notes(flags: pd.DataFrame | None) -> dict:
 
 
 def game_cards(scored: pd.DataFrame, context: dict | None = None, closing: dict | None = None,
-               now: pd.Timestamp | None = None, notes: dict | None = None) -> list[dict]:
+               now: pd.Timestamp | None = None, notes: dict | None = None, rest: dict | None = None) -> list[dict]:
     """One plain dict per game for the cards.
 
     context: team_context() for this week (as of lock). closing: {game_id: current schedule spread_line};
     the closing line is only shown once the game has kicked off or has a result. notes: qb_notes() (news, not
-    a prediction input: the locked probability never changes).
+    a prediction input: the locked probability never changes). rest: {game_id: (home_rest, away_rest)} days since
+    each team's last game, from the schedule (display only: H5 found rest doesn't improve the model).
     """
-    context, closing, notes = context or {}, closing or {}, notes or {}
+    context, closing, notes, rest = context or {}, closing or {}, notes or {}, rest or {}
     cards = []
     for g in headline(scored).sort_values(["kickoff_et", "game_id"]).itertuples(index=False):
         p_home, p_mkt = float(g.p_pick), _num(g.p_market_at_pull)
@@ -198,6 +210,7 @@ def game_cards(scored: pd.DataFrame, context: dict | None = None, closing: dict 
                                   - qb_pts * (g.home_team in qb_teams) + qb_pts * (g.away_team in qb_teams))},
             "result": result,
             "qb_adjusted": bool(g.qb_adjusted),
+            "rest": _rest(rest.get(g.game_id)),
             "qb_out": [{**q, "in_pick": q["team"] in qb_teams} for q in notes.get(g.game_id, [])],
         })
     return cards
@@ -305,6 +318,9 @@ def build_site_data(schedules: pd.DataFrame, season: int = 2026, backtest: dict 
     first_kick = kickoff_times(reg[reg["season"] == season]).groupby(reg.loc[reg["season"] == season, "week"]).min()
 
     closing = reg.loc[reg["season"] == season].set_index("game_id")["spread_line"].to_dict()
+    this_season = reg.loc[reg["season"] == season]
+    rest = ({gid: (h, a) for gid, h, a in zip(this_season["game_id"], this_season["home_rest"], this_season["away_rest"])}
+            if {"home_rest", "away_rest"} <= set(reg.columns) else {})
     now = pd.Timestamp.now(tz=EASTERN)
     notes = qb_notes(qb_flags)
     weeks, scored_by_mode = [], {}
@@ -319,7 +335,7 @@ def build_site_data(schedules: pd.DataFrame, season: int = 2026, backtest: dict 
                           "lock": lock_status(first_commit(path), first_kick[week]) if mode == "live" else None,
                           "qb_lock": qb_lock_status(season, week) if mode == "live" else None,
                           "games": game_cards(s[s["week"] == week], team_context(reg, history, season, week),
-                                              closing, now, notes)})
+                                              closing, now, notes, rest)})
     weeks.sort(key=lambda w: w["week"])
     live_weeks = [w for w in weeks if w["mode"] == "live"]
     current = (live_weeks or weeks)[-1] if weeks else None

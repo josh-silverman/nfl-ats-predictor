@@ -26,6 +26,7 @@ def build_win_table(schedules: pd.DataFrame, home_field: float | dict[int, float
     elo = run_elo(reg, home_field)
     cols = ["season", "week", "gameday", "game_id", "home_team", "away_team", "location",
             "home_score", "away_score", "spread_line", "home_moneyline", "away_moneyline"]
+    cols += [c for c in ("home_rest", "away_rest") if c in reg.columns]  # pre-game schedule info (H5)
     table = reg[cols].merge(elo, on="game_id", how="left", validate="one_to_one")
 
     table["margin"] = table["home_score"] - table["away_score"]
@@ -102,6 +103,44 @@ def qb_walk_forward(table: pd.DataFrame, test_seasons: list[int], first_train: i
         pts[test_season] = fit_qb_points(table, test_season, first_train)
         test = graded[graded["season"] == test_season]
         preds.append(test[["season", "game_id", TARGET]].assign(p=qb_adjusted_p(test, pts[test_season]).to_numpy()))
+    return pd.concat(preds, ignore_index=True), pts
+
+
+REST_GRID = [x / 2 for x in range(0, 21)]  # H5: Elo points per extra day of rest, 0–10 in steps of 0.5
+REST_CAP = 7  # rest gaps beyond a week count as a week
+
+
+def rest_diff(table: pd.DataFrame) -> pd.Series:
+    """Home minus away days since each team's last game, capped at ±REST_CAP (schedule data: known pre-game)."""
+    return (table["home_rest"] - table["away_rest"]).clip(-REST_CAP, REST_CAP).fillna(0)
+
+
+def rest_adjusted_p(table: pd.DataFrame, qb_pts: float, rest_pts: float) -> pd.Series:
+    """H5: the QB-adjusted Elo edge plus REST_PTS per day of rest advantage."""
+    from nfl_ats.elo import win_prob
+    edge = table["elo_diff"] - qb_pts * table["home_qb_out"] + qb_pts * table["away_qb_out"] + rest_pts * rest_diff(table)
+    return win_prob(edge)
+
+
+def fit_rest_points(table: pd.DataFrame, test_season: int, qb_pts: float, first_train: int = 2016) -> float:
+    """The REST_GRID value with the lowest training log loss (seasons first_train .. test_season − 1), QB_PTS fixed."""
+    from nfl_ats.evaluate import log_loss
+    graded = table[table[TARGET].notna()]
+    train = graded[graded["season"].between(first_train, test_season - 1)]
+    y = train[TARGET].to_numpy()
+    return min(REST_GRID, key=lambda pts: log_loss(y, rest_adjusted_p(train, qb_pts, pts).to_numpy()))
+
+
+def rest_walk_forward(table: pd.DataFrame, test_seasons: list[int], first_train: int = 2016) -> tuple[pd.DataFrame, dict]:
+    """H5 out-of-sample: per fold, fit QB_PTS (as H4), then REST_PTS with it fixed. Returns (predictions, {season: (qb, rest)})."""
+    graded = table[table[TARGET].notna()]
+    preds, pts = [], {}
+    for test_season in test_seasons:
+        qb_pts = fit_qb_points(table, test_season, first_train)
+        rest_pts = fit_rest_points(table, test_season, qb_pts, first_train)
+        pts[test_season] = (qb_pts, rest_pts)
+        test = graded[graded["season"] == test_season]
+        preds.append(test[["season", "game_id", TARGET]].assign(p=rest_adjusted_p(test, qb_pts, rest_pts).to_numpy()))
     return pd.concat(preds, ignore_index=True), pts
 
 

@@ -8,7 +8,7 @@ import pandas as pd
 from nfl_ats.feature_eval import compare_predictions
 from nfl_ats.model import check_features
 from nfl_ats.win_model import (TARGET, WIN_FEATURES, benchmark_predictions, build_win_table, fit_fold, fit_qb_points,
-                                qb_adjusted_p, qb_walk_forward, win_walk_forward)
+                                qb_adjusted_p, qb_walk_forward, rest_adjusted_p, rest_diff, fit_rest_points, win_walk_forward)
 
 TEAMS = ["AAA", "BBB", "CCC", "DDD"]
 
@@ -124,6 +124,34 @@ class TestQbAdjustedElo(unittest.TestCase):
         preds, pts = qb_walk_forward(self._table(), [2017, 2018])
         self.assertEqual(sorted(pts), [2017, 2018])
         self.assertTrue(preds["p"].between(0, 1).all())
+
+
+
+class TestRestAdjustedElo(unittest.TestCase):
+    """H5: zero rest points equals H4, the gap is capped at a week, and the fit ignores the test season."""
+
+    def _table(self):
+        t = TestQbAdjustedElo._table(self)
+        rng = np.random.default_rng(2)
+        t["home_rest"] = rng.choice([4, 7, 7, 7, 14], len(t))
+        t["away_rest"] = rng.choice([4, 7, 7, 7, 14], len(t))
+        return t
+
+    def test_zero_rest_points_is_h4(self):
+        t = self._table()
+        np.testing.assert_allclose(rest_adjusted_p(t, 80, 0), qb_adjusted_p(t, 80))
+
+    def test_gap_is_capped(self):
+        t = pd.DataFrame({"home_rest": [14, 4, 7], "away_rest": [4, 14, np.nan]})
+        self.assertEqual(rest_diff(t).tolist(), [7, -7, 0])
+
+    def test_fit_ignores_the_test_season(self):
+        t = self._table()
+        wrecked = t.copy()
+        test = wrecked["season"] == 2018
+        wrecked.loc[test, TARGET] = 1 - wrecked.loc[test, TARGET]
+        wrecked.loc[test, "home_rest"] = 30
+        self.assertEqual(fit_rest_points(t, 2018, 60), fit_rest_points(wrecked, 2018, 60))
 
 
 if __name__ == "__main__":

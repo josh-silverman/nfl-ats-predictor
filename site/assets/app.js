@@ -34,6 +34,7 @@
     backfill: "Weeks 1–5 were predicted after they were played (same rules, no peeking at results), so they don't count in the record.",
     gap: "We and Vegas differ by 15+ points. That usually means Vegas knows something our ratings don't, often a quarterback injury.",
     closing: "Vegas's final line right before kickoff.",
+    rest: "Days since each team's last game. Shown when one team is much more rested (like coming off a bye). We tested adding it to our numbers; it didn't help, so it's info only.",
     proj: "Average final record when we play out the rest of the season 10,000 times with our win chances.",
     playoff: "How often the team made the playoffs in those 10,000 simulated seasons. Tap a number for division and #1-seed chances.",
     qbLock: "On Saturday, after teams post final injury reports, we re-lock the weekend games with QB news included. Also committed to GitHub before kickoff.",
@@ -89,14 +90,28 @@
         el("div", { class: "team-name" }, sq(s.team), team(s.team).name),
         el("div", { class: "chance", "aria-label": `${pct(chance)} chance to win` }, pct(chance))),
       el("div", { class: "meta" }, metaBits),
-      el("div", { class: "meta last" }, s.last ? `Last: ${s.last}` : "First game of the season"));
+      el("div", { class: "meta last" }, s.last ? `Last: ${s.last}` : "First game of the season"),
+      s.rest ? restGauge(s.team, s.rest, s.rested) : null);
+  }
+
+  // Rest gauge: one tick per day since the team's last game (max 14). Only on cards with a 3+ day gap; display only.
+  function restGauge(t, days, rested) {
+    const why = days >= 13 ? " · off a bye" : days <= 5 ? " · short week" : "";
+    return el("div", { class: "rest" + (rested ? " more" : "") },
+      el("span", { class: "rest-label", "data-tip": TIPS.rest, tabindex: "0" }, "Rest"),
+      el("span", { class: "ticks", role: "img", "aria-label": `${days} days of rest${why}`,
+                   style: rested ? { boxShadow: `0 0 0 1px ${team(t).color}55` } : null },
+        Array.from({ length: 14 }, (_, i) => el("i", i < days ? { class: "on", style: { background: team(t).color } } : {}))),
+      el("span", { class: "rest-days" }, `${days} days${why}`));
   }
 
   function gameCard(g) {
     const pHome = g.p_home, pAway = 1 - pHome;
     const favP = Math.max(pHome, pAway);
     const home = g.home, away = g.away;
-    const awaySide = { ...g.away_side, elo: g.why.away_rating }, homeSide = { ...g.home_side, elo: g.why.home_rating };
+    const rest = g.rest;
+    const awaySide = { ...g.away_side, elo: g.why.away_rating, rest: rest && rest.away, rested: rest && rest.away > rest.home },
+          homeSide = { ...g.home_side, elo: g.why.home_rating, rest: rest && rest.home, rested: rest && rest.home > rest.away };
 
     // Win-chance bar in team colors (underdog faded); the dark tick marks Vegas's view.
     const bar = el("div", { class: "bar", role: "img",

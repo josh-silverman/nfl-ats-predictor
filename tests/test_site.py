@@ -112,6 +112,12 @@ class TestSiteData(unittest.TestCase):
         self.assertEqual(rec["extra"][0], line)
         json.dumps(rec)
 
+    def test_rest_gauge_only_for_real_gaps(self):
+        self.assertEqual(game_cards(self._scored(), rest={"g1": (14, 7)})[0]["rest"], {"home": 14, "away": 7})
+        self.assertIsNone(game_cards(self._scored(), rest={"g1": (7, 6)})[0]["rest"])     # 1-day gap: hidden
+        self.assertIsNone(game_cards(self._scored())[0]["rest"])
+        self.assertEqual(game_cards(self._scored(), rest={"g1": (14, 7)})[0]["p_home"], 0.64)  # display only
+
     def test_line_formatting(self):
         self.assertEqual(format_line(0.0, "A", "B"), "Pick'em")
         self.assertEqual(format_line(2.5, "A", "B"), f"A {MINUS}2.5")

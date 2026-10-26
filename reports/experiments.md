@@ -348,3 +348,11 @@ Each test is a single change to **raw Elo, the deliverable**, judged with `compa
 - **Primary (decides keep):** vs. **H4** (single-change rule), `compare_predictions(target="home_win")`, walk-forward 2019–2025, same decided games. **Keep rule:** paired log-loss CI upper bound < 0, **and** better in ≥ 5/7 seasons, **and** higher AUC.
 - **Also reported:** vs. raw Elo, `REST_PTS` by fold, accuracy on games with a gap of 3+ days, calibration-in-the-large.
 - **If kept:** live from the 2026 Week 8 Thursday lock (Oct 29), as `p_elo_adj` (QB + rest), the new headline. Raw Elo and QB-only stay recorded.
+- **Result (run once, 2026-10-26):** 401 test games (21.5%) have a gap of 3+ days.
+  - **Primary, vs. H4:** log loss **+0.0004 [−0.0008, +0.0016]**, better in **3/7** seasons (2019 +0.0040, 2020 −0.0007, 2021 −0.0006, 2022 +0.0005, 2023 −0.0028, 2024 +0.0014, 2025 +0.0012). AUC 0.698 → 0.696. Accuracy +0.1 pts.
+  - **vs. raw Elo:** −0.0037 [−0.0075, +0.0001], 5/7. The gain over raw Elo is H4's QB adjustment, not rest.
+  - **`REST_PTS` by fold:** 6.0, 1.5, 3.5, 4.0, 3.5, 6.0, 5.0 Elo points per day. Small (a 7-day bye edge ≈ 25–40 Elo ≈ 1–1.5 pts) and unstable.
+  - **On games with a 3+ day gap:** H4 64.1% vs. H5 64.1%. Calibration-in-the-large +2.92 pts.
+- **Decision: REJECTED by the keep rule** (CI includes 0, 3/7 seasons, AUC lower). The model stays H4. The site shows rest as display-only info (the "rest gauge"), with no effect on the numbers.
+- **Lesson:** the training fit finds a small positive rest effect, but it doesn't hold out of sample on top of Elo and the QB adjustment.
+- **Win-model experiment count: 8.**

@@ -34,6 +34,7 @@
     backfill: "Weeks 1–5 were predicted after they were played (same rules, no peeking at results), so they don't count in the record.",
     gap: "We and Vegas differ by 15+ points. That usually means Vegas knows something our ratings don't, often a quarterback injury.",
     closing: "Vegas's final line right before kickoff.",
+    gameday: "Each team's Elo going into the game, plus 48 for playing at home, and minus about 90 if its usual starting QB is out. The bigger the gap, the likelier the win.",
     rest: "Days since each team's last game. Shown when one team is much more rested (like coming off a bye). We tested adding it to our numbers; it didn't help, so it's info only.",
     proj: "Average final record when we play out the rest of the season 10,000 times with our win chances.",
     playoff: "How often the team made the playoffs in those 10,000 simulated seasons. Tap a number for division and #1-seed chances.",
@@ -144,6 +145,22 @@
     }
     const legendLeft = final ? `We said ${g.favorite} ${pct(favP)}` : `${team(g.favorite).name} favored`;
 
+    // Face-off: the two game-day ratings that produce the % (Elo + home bonus − QB-out penalty). Matches why.edge.
+    const fw = g.why, qbT = fw.qb_teams || [];
+    const homeGd = fw.home_rating + fw.home_field - (qbT.includes(home) ? fw.qb_pts : 0);
+    const awayGd = fw.away_rating - (qbT.includes(away) ? fw.qb_pts : 0);
+    const parts = [
+      qbT.includes(away) ? `${away} ${fw.away_rating} − ${fw.qb_pts} QB out` : null,
+      fw.home_field || qbT.includes(home)
+        ? `${home} ${fw.home_rating}` + (fw.home_field ? ` + ${fw.home_field} home` : "") + (qbT.includes(home) ? ` − ${fw.qb_pts} QB out` : "")
+        : null].filter(Boolean);
+    const faceoff = el("div", { class: "faceoff" },
+      el("div", {}, term("Game-day rating", TIPS.gameday), ": ",
+        el("span", { class: awayGd > homeGd ? "hi" : "" }, `${away} ${awayGd}`), " vs ",
+        el("span", { class: homeGd > awayGd ? "hi" : "" }, `${homeGd} ${home}`),
+        g.neutral ? " · neutral site, no home bonus" : ""),
+      parts.length ? el("div", { class: "fo-sub" }, `(${parts.join(" · ")})`) : null);
+
     // ---- "More": the secondary details ----
     const tags = el("p", { class: "more-tags" }, g.confidence,
       g.big_gap ? [" · ", el("span", { class: "term", "data-tip": TIPS.gap, tabindex: "0" }, "Big gap with Vegas")] : null);
@@ -178,7 +195,7 @@
         : `Neutral site, so no home-field bonus: ${home} ${w.home_rating} vs ${away} ${w.away_rating}.`),
       ...(w.qb_teams || []).map((t) => el("li", {},
         `${t}'s usual starting QB is out, so we take ${w.qb_pts} off ${t} (about ${Math.round(w.qb_pts / 25)} points on the scoreboard).`)),
-      el("li", {}, `That's a ${Math.abs(w.edge)}-point edge for ${w.edge >= 0 ? home : away}, which works out to about ${pct(favP)} to win.`),
+      el("li", {}, `That's a ${Math.abs(homeGd - awayGd)}-point edge for ${homeGd - awayGd >= 0 ? home : away}, which works out to about ${pct(favP)} to win.`),
       vegasFav
         ? el("li", {}, g.big_gap
           ? `Vegas has ${vegasFav} at ${vegasPct}. A gap this big usually means news our ratings can't see, like ${g.qb_adjusted ? "other injuries" : "an injury"}.`
@@ -208,7 +225,7 @@
           side(homeSide, "home", home, pHome, final ? r.home_score : null)),
         el("div", { class: "bar-wrap" }, outer,
           el("div", { class: "bar-legend" }, el("span", {}, legendLeft), legendRight)),
-        more));
+        faceoff, more));
   }
 
   function renderWeek(root) {

@@ -10,9 +10,10 @@
 **Site live:** https://josh-silverman.github.io/nfl-ats-predictor/ (repo github.com/josh-silverman/nfl-ats-predictor, public). "Josh's NFL Elo" in `site/` (This Week, Record, Rankings, How It Works). Light redesign (one game per screen), plain language, Chart.js. `scripts/build_site.py`, Pages workflow. 72 tests.
 **Weekly routine:** Thursday before kickoff: `predict_week.py --week N` → `build_site.py` → commit → push. Saturday (from Week 8, before the first Sunday kickoff): `predict_week.py --week N --qb` → `build_site.py` → commit → push. After Monday night: `score_ledger.py` → `build_site.py` → commit → push. Next: score Week 7 after MNF (Mon 2026-10-26); lock Week 8 before Thu 2026-10-29 kickoff. If `conda run` errors, call `~/opt/anaconda3/envs/nfl-ats/bin/python` directly.
 **H4 kept (decision #21, 2026-10-22):** the QB-adjusted Elo (usual starter out via injury report or injured reserve, 90 Elo ≈ 3.6 pts) is the deliverable from Week 8. −0.0041 [−0.0076, −0.0004] vs. raw Elo, 6/7 seasons. Win-model experiment count: 7. The site shows a QB heads-up note on cards; from Week 8 the headline % is QB-adjusted. New **Saturday step**: `predict_week.py --week N --qb` → `build_site.py` → commit → push. 84 tests.
+**Week 7 scored 2026-10-27:** Elo 8/14 (Vegas 9/14). Live total after 2 weeks: Elo 16/28 (57%), Vegas 18/28 (64%); home teams over-predicted by +18 pts (wide CI). Market moves: 5 toward / 4 away / 14 no move. Week 8 lock due Thu 2026-10-29 before 20:15 ET, QB lock Sat 10/31.
 **Easy wins queue (Josh, 2026-10-23):** 1) market-move tracker ✅ done (decision #22: Record tab + `reports/live_2026.md`; first read 3 toward / 2 away / 8 no move), 2) playoff odds ✅ done (decision #23: Rankings tab, Brier 0.136 at Week 8 in 2019–2025), 3) rest/bye-week ✅ tested and rejected (H5, decision #24: +0.0004 vs. H4, 3/7; experiment count 8). Shipped a display-only rest gauge on cards with a 3+ day gap, 4) disagreement watch. 88 tests.
 **Remaining:** S4 needs ≥ 8 locked weeks (week 13, about Dec 3), then the final README numbers and the final skeptic review (M5).
-**Last updated:** 2026-10-22
+**Last updated:** 2026-10-27
 
 ## Done
 - Planning docs, project rules, learning files, skeptic review checklist.

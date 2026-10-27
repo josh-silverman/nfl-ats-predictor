@@ -82,16 +82,24 @@
   window.addEventListener("hashchange", () => openTab(location.hash.slice(1)));
 
   // ---------- This week: one game per screen ----------
-  // One side of the head-to-head: name, chance to win, and what we knew about the team at lock.
-  function teamSide(s, cls, chance, isFav) {
-    const metaBits = [s.record, `Elo ${s.elo}`].filter(Boolean).join(" · ");
-    return el("section", { class: `side ${cls}` + (isFav ? " fav" : ""), "aria-label": team(s.team).name },
+  // Primary view: who we pick and how sure (or the final score), each team's record + Elo, Vegas's %, and a QB chip.
+  // Everything else (spreads, last game, rest, labels, reasoning) sits behind one "More" toggle.
+  const QB_REASON = { "injured reserve": "is out (injured reserve)", "reserve list": "is out (reserve list)",
+                      out: "is ruled out", doubtful: "is listed as doubtful" };
+
+  function qbChip(q) {
+    return el("span", { class: "chip-qb", tabindex: "0",
+      "data-tip": `Usual starting QB${q.player ? " " + q.player : ""} ${QB_REASON[q.reason] || "is out"}.` },
+      q.reason === "doubtful" ? "QB doubtful" : "QB out");
+  }
+
+  // One side of the head-to-head. big = win % before the game, the team's score after it.
+  function teamSide(s, cls, big, bigLabel, opts) {
+    return el("section", { class: `side ${cls}` + (opts.emph ? " fav" : "") + (opts.final ? " final" : ""), "aria-label": team(s.team).name },
       el("div", { class: "team-head" },
-        el("div", { class: "team-name" }, sq(s.team), team(s.team).name),
-        el("div", { class: "chance", "aria-label": `${pct(chance)} chance to win` }, pct(chance))),
-      el("div", { class: "meta" }, metaBits),
-      el("div", { class: "meta last" }, s.last ? `Last: ${s.last}` : "First game of the season"),
-      s.rest ? restGauge(s.team, s.rest, s.rested) : null);
+        el("div", { class: "team-name" }, sq(s.team), team(s.team).name, opts.qb ? qbChip(opts.qb) : null),
+        el("div", { class: "chance", "aria-label": bigLabel }, big, opts.mark || null)),
+      el("div", { class: "meta" }, [s.record, `Elo ${s.elo}`].filter(Boolean).join(" · ")));
   }
 
   // Rest gauge: one tick per day since the team's last game (max 14). Only on cards with a 3+ day gap; display only.
@@ -109,31 +117,51 @@
     const pHome = g.p_home, pAway = 1 - pHome;
     const favP = Math.max(pHome, pAway);
     const home = g.home, away = g.away;
-    const rest = g.rest;
-    const awaySide = { ...g.away_side, elo: g.why.away_rating, rest: rest && rest.away, rested: rest && rest.away > rest.home },
-          homeSide = { ...g.home_side, elo: g.why.home_rating, rest: rest && rest.home, rested: rest && rest.home > rest.away };
+    const r = g.result, final = !!r;
+    const qbFor = (t) => (g.qb_out || []).find((q) => q.team === t);
+    const awaySide = { ...g.away_side, elo: g.why.away_rating }, homeSide = { ...g.home_side, elo: g.why.home_rating };
 
-    // Win-chance bar in team colors (underdog faded); the dark tick marks Vegas's view.
+    // Big numbers: win % before the game; after it, the score, with ✓/✗ by the winner (did we pick them?).
+    const mark = (t) => final && r.winner === t
+      ? el("span", { class: "mark " + (r.we_were_right ? "right" : "wrong"), title: r.we_were_right ? "We picked the winner" : "We missed this one" },
+          r.we_were_right ? "✓" : "✗") : null;
+    const side = (s, cls, t, p, score) => teamSide(s, cls,
+      final ? String(score) : pct(p), final ? `${team(t).name} scored ${score}` : `${pct(p)} chance to win`,
+      { emph: final ? r.winner === t : g.favorite === t, final, qb: qbFor(t), mark: mark(t) });
+
+    // Win-chance bar in team colors (underdog faded); the dark tick marks Vegas's view. Stays after the game.
     const bar = el("div", { class: "bar", role: "img",
       "aria-label": `${away} ${pct(pAway)}, ${home} ${pct(pHome)}` + (g.p_vegas_home !== null ? `. Vegas: ${home} ${pct(g.p_vegas_home)}` : "") },
       el("div", { class: "seg" + (g.favorite === away ? "" : " dim"), style: { width: (pAway * 100) + "%", background: team(away).color } }),
       el("div", { class: "seg" + (g.favorite === home ? "" : " dim"), style: { width: (pHome * 100) + "%", background: team(home).color } }));
     const outer = el("div", { class: "bar-outer" }, bar);
     let legendRight = el("span", {}, "");
-    if (g.p_vegas_home !== null) {
+    const vegasFav = g.p_vegas_home === null ? null : (g.p_vegas_home >= 0.5 ? home : away);
+    const vegasPct = g.p_vegas_home === null ? null : pct(Math.max(g.p_vegas_home, 1 - g.p_vegas_home));
+    if (vegasFav) {
       outer.append(el("div", { class: "vegas-tick", style: { left: `calc(${(1 - g.p_vegas_home) * 100}% - 1.5px)` } }));
-      const vFav = g.p_vegas_home >= 0.5 ? home : away;
-      legendRight = el("span", {}, "▎ ", term("Vegas", TIPS.vegas), `: ${vFav} ${pct(Math.max(g.p_vegas_home, 1 - g.p_vegas_home))}`);
+      legendRight = el("span", {}, "▎ ", term("Vegas", TIPS.vegas), `: ${vegasFav} ${vegasPct}`);
     }
+    const legendLeft = final ? `We said ${g.favorite} ${pct(favP)}` : `${team(g.favorite).name} favored`;
+
+    // ---- "More": the secondary details ----
+    const tags = el("p", { class: "more-tags" }, g.confidence,
+      g.big_gap ? [" · ", el("span", { class: "term", "data-tip": TIPS.gap, tabindex: "0" }, "Big gap with Vegas")] : null);
 
     const lines = el("div", { class: "lines" },
       el("span", {}, term("Our line", TIPS.line), " ", el("b", {}, g.our_line || "—")),
       g.vegas_line_at_lock ? el("span", {}, "Vegas ", el("b", {}, g.vegas_line_at_lock), el("span", { class: "at" }, " at lock")) : null,
       g.closing_line ? el("span", {}, term("Closed", TIPS.closing), " ", el("b", {}, g.closing_line)) : null);
 
+    const rest = g.rest;
+    const teamDetail = (s, t, days, rested) => el("div", { class: "more-team" },
+      el("b", {}, team(t).name), el("span", {}, s.last ? `Last: ${s.last}` : "First game of the season"),
+      days ? restGauge(t, days, rested) : null);
+    const teamsRow = el("div", { class: "more-teams" },
+      teamDetail(g.away_side, away, rest && rest.away, rest && rest.away > rest.home),
+      teamDetail(g.home_side, home, rest && rest.home, rest && rest.home > rest.away));
+
     // QB news. From Week 8 the pick accounts for it (in_pick); before that, or if the news came after the lock, it doesn't.
-    const QB_REASON = { "injured reserve": "is out (injured reserve)", "reserve list": "is out (reserve list)",
-                        out: "is ruled out", doubtful: "is listed as doubtful" };
     const qbAfter = (q) => !g.qb_adjusted ? "" : q.in_pick
       ? `Our pick accounts for this (about ${Math.round(g.why.qb_pts / 25)} points). `
       : "This came after our lock, so our pick doesn't account for it. ";
@@ -144,9 +172,7 @@
 
     const w = g.why;
     const homeTotal = w.home_rating + w.home_field;
-    const vegasFav = g.p_vegas_home === null ? null : (g.p_vegas_home >= 0.5 ? home : away);
-    const vegasPct = g.p_vegas_home === null ? null : pct(Math.max(g.p_vegas_home, 1 - g.p_vegas_home));
-    const why = el("details", { class: "why" }, el("summary", {}, "Why this pick"), el("ul", {},
+    const why = el("div", { class: "why" }, el("h4", {}, "Why this pick"), el("ul", {},
       el("li", {}, w.home_field
         ? `${home} is rated ${w.home_rating}, plus ${w.home_field} for playing at home = ${homeTotal}. ${away} is rated ${w.away_rating}.`
         : `Neutral site, so no home-field bonus: ${home} ${w.home_rating} vs ${away} ${w.away_rating}.`),
@@ -159,35 +185,30 @@
           : `Vegas sees it similarly: ${vegasFav} at ${vegasPct}.`)
         : null));
 
-    // Result: we grade the winner only. The margin line shows how close our expected margin was (not graded).
-    let result = null;
-    if (g.result) {
-      const r = g.result;
+    // After the game: how close our expected margin was (not graded; we grade the winner only).
+    let margin = null;
+    if (final && r.winner !== null) {
       const by = Math.abs(r.home_score - r.away_score);
       const exp = g.expected_margin === null ? null : Math.round(g.expected_margin);
       const expText = exp === null ? "" : exp < 1 ? " (we expected a toss-up)"
         : r.we_were_right ? ` (we expected ~${exp})` : ` (we expected ${g.favorite} by ~${exp})`;
-      result = el("div", { class: "result" },
-        el("span", {}, `Final: ${away} ${r.away_score}, ${home} ${r.home_score}`),
-        r.winner === null ? el("span", {}, "Tie")
-          : r.we_were_right ? el("span", { class: "right" }, "✓ Picked the winner") : el("span", { class: "wrong" }, "✗ Missed the winner"),
-        r.winner === null ? null
-          : el("span", { class: "margin" }, (r.we_were_right ? `Won by ${by}` : `${r.winner} won by ${by}`) + expText));
+      margin = el("p", { class: "more-margin" }, `${r.winner} won by ${by}` + expText);
     }
 
-    return el("article", { class: "game", "aria-label": `${team(away).name} at ${team(home).name}` },
+    const more = el("details", { class: "more-box" }, el("summary", {}, "More"),
+      el("div", { class: "more-body" }, tags, margin, lines, teamsRow, qbNote, why));
+
+    return el("article", { class: "game" + (final ? " is-final" : ""), "aria-label": `${team(away).name} at ${team(home).name}` },
       el("div", { class: "game-card" },
         el("div", { class: "game-top" },
-          el("div", {}, el("span", { class: "slot" }, g.day_group), " · ", g.kickoff, g.neutral ? " · Neutral site" : ""),
-          el("div", { class: "tags" },
-            g.big_gap ? el("span", { class: "pill gap", "data-tip": TIPS.gap, tabindex: "0" }, "Big gap with Vegas") : null,
-            el("span", { class: "pill" + (g.confidence === "Toss-up" ? " toss" : "") }, g.confidence))),
+          el("div", {}, el("span", { class: "slot" }, final ? "Final" : g.day_group), " · ", g.kickoff, g.neutral ? " · Neutral site" : ""),
+          final && r.winner === null ? el("span", { class: "pill" }, "Tie") : null),
         el("div", { class: "h2h" },
-          teamSide(awaySide, "away", pAway, g.favorite === away),
-          teamSide(homeSide, "home", pHome, g.favorite === home)),
+          side(awaySide, "away", away, pAway, final ? r.away_score : null),
+          side(homeSide, "home", home, pHome, final ? r.home_score : null)),
         el("div", { class: "bar-wrap" }, outer,
-          el("div", { class: "bar-legend" }, el("span", {}, `${team(g.favorite).name} favored`), legendRight)),
-        lines, qbNote, why, result));
+          el("div", { class: "bar-legend" }, el("span", {}, legendLeft), legendRight)),
+        more));
   }
 
   function renderWeek(root) {
@@ -398,7 +419,9 @@
       el("a", { href: D.meta.repo + "#readme", target: "_blank", rel: "noopener" }, "The full story is on GitHub.")));
     root.append(el("h3", { class: "section" }, "Glossary"), el("dl", { class: "surface glossary" },
       ...[["Elo rating", TIPS.elo], ["Chance to win", "How often we expect a team to win a game like this, out of 100."],
-          ["Our line", TIPS.line], ["Vegas %", TIPS.vegas], ["Locked", TIPS.locked], ["Backfill", TIPS.backfill]]
+          ["Our line", TIPS.line], ["Vegas %", TIPS.vegas], ["QB out", "A team's usual starting quarterback won't play. Tap the tag for who."],
+          ["More", "Tap More on any game for the point spreads, each team's last game, rest, and why we picked who we did."],
+          ["Locked", TIPS.locked], ["Backfill", TIPS.backfill]]
         .flatMap(([k, v]) => [el("dt", {}, k), el("dd", {}, v)])));
   }
 

@@ -104,7 +104,7 @@ main.wrap { padding-top: 4px; padding-bottom: 8px; }
 .team-name { display: flex; align-items: center; gap: 9px; font-size: 20px; font-weight: 650; letter-spacing: -0.015em; line-height: 1.2; }
 .side.home .team-name { flex-direction: row-reverse; text-align: right; }
 .sq { flex: none; width: 12px; height: 12px; border-radius: 3px; box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.12); }
-.chance { font-size: 34px; font-weight: 700; letter-spacing: -0.03em; line-height: 1; color: var(--muted); }
+.chance { display: inline-flex; align-items: center; font-size: 34px; font-weight: 700; letter-spacing: -0.03em; line-height: 1; color: var(--muted); }
 .side.fav .chance { color: var(--ink); }
 .meta { margin-top: 8px; font-size: 13px; color: var(--ink-2); }
 .meta .last { color: var(--muted); }
@@ -135,13 +135,39 @@ main.wrap { padding-top: 4px; padding-bottom: 8px; }
            background: var(--warn-soft); color: var(--warn-ink); font-size: 14px; line-height: 1.45; text-wrap: pretty; }
 .qb-note b { font-weight: 600; }
 
-.why { margin-top: 16px; border-top: 1px solid var(--line); padding-top: 10px; }
-.why summary { cursor: pointer; list-style: none; font-size: 14px; font-weight: 600; color: var(--ink-2); min-height: 32px; display: inline-flex; align-items: center; gap: 8px; }
-.why summary::-webkit-details-marker { display: none; }
-.why summary::before { content: ""; width: 7px; height: 7px; border-right: 2px solid var(--accent); border-bottom: 2px solid var(--accent); transform: rotate(-45deg); transition: transform 0.2s; }
-.why[open] summary::before { transform: rotate(45deg); }
-.why ul { margin: 6px 0 2px; padding-left: 20px; color: var(--ink-2); font-size: 14px; max-width: 70ch; }
+/* "More": one toggle for everything secondary */
+.more-box { margin-top: 14px; border-top: 1px solid var(--line); padding-top: 6px; }
+.more-box summary { cursor: pointer; list-style: none; font-size: 13.5px; font-weight: 600; color: var(--ink-2); min-height: 36px;
+  display: inline-flex; align-items: center; gap: 8px; }
+.more-box summary::-webkit-details-marker { display: none; }
+.more-box summary::after { content: ""; width: 6px; height: 6px; border-right: 2px solid var(--accent); border-bottom: 2px solid var(--accent);
+  transform: rotate(45deg) translateY(-2px); transition: transform 0.2s; }
+.more-box[open] summary::after { transform: rotate(-135deg) translateY(-1px); }
+.more-box summary:hover { color: var(--ink); }
+.more-body { padding: 4px 0 4px; }
+.more-body > * + * { margin-top: 14px; }
+.more-tags, .more-margin { margin: 0; font-size: 13px; color: var(--muted); }
+.more-body .lines { margin-top: 14px; }
+.more-teams { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; font-size: 13px; color: var(--ink-2); }
+.more-team { display: flex; flex-direction: column; gap: 3px; }
+.more-team b { font-weight: 600; color: var(--ink); }
+.more-team .rest { margin-top: 6px; }
+.more-teams .more-team:last-child { text-align: right; align-items: flex-end; }
+.more-teams .more-team:last-child .rest { flex-direction: row-reverse; }
+.more-teams .more-team:last-child .ticks { flex-direction: row-reverse; }
+.why h4 { margin: 0 0 4px; font-size: 13px; font-weight: 600; color: var(--ink-2); }
+.why ul { margin: 0; padding-left: 20px; color: var(--ink-2); font-size: 14px; max-width: 70ch; }
 .why li { margin: 3px 0; }
+/* QB chip and the final-score state */
+.chip-qb { display: inline-flex; align-items: center; margin-left: 2px; padding: 2px 7px; border-radius: 5px; font-size: 11px; font-weight: 600;
+  letter-spacing: 0.02em; background: var(--warn-soft); color: var(--warn-ink); border: 1px solid var(--warn-line); cursor: help; white-space: nowrap; }
+.side.final .chance { color: var(--muted); }
+.side.final.fav .chance { color: var(--ink); }
+.mark { display: inline-grid; place-items: center; width: 22px; height: 22px; margin: 0 6px; border-radius: 50%; font-size: 13px; font-weight: 700;
+  letter-spacing: 0; }
+.mark.right { background: #e3f3ea; color: var(--good); }
+.mark.wrong { background: #fdecea; color: var(--bad); }
+.side.home .mark { order: -1; }
 .result { margin-top: 12px; padding: 10px 14px; background: var(--card-2); border: 1px solid var(--line); border-radius: var(--r-md); font-size: 14px; display: flex; flex-wrap: wrap; gap: 4px 14px; align-items: center; }
 .result .margin { color: var(--ink-2); }
 .right { color: var(--good); font-weight: 600; }

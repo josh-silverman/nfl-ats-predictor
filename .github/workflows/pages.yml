@@ -1,6 +1,6 @@
-# Publish site/ to GitHub Pages on every push to main.
-# It only uploads files that are already committed: the model never runs here,
-# so Josh's local commit stays the proof that each week was locked before kickoff.
+# Publish site/ to GitHub Pages on every push to main (and when the weekly routine asks).
+# It only uploads files that are already committed: the model runs in weekly.yml or locally,
+# and each ledger file's commit (plus that run's GitHub log) is the proof of when it was locked.
 name: Deploy site to GitHub Pages
 
 on:

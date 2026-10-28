@@ -169,13 +169,41 @@ def attach_qb(ledger: pd.DataFrame, season: int = 2026, ledger_dir: Path = LEDGE
     return base.merge(load_qb_ledger(season, ledger_dir), on="game_id", how="left", validate="one_to_one")
 
 
+class InjuryReportNotReady(ValueError):
+    """The Friday injury report (game statuses) isn't in the nflverse data yet."""
+
+
 def check_final_injury_report(injuries: pd.DataFrame, season: int, week: int, teams: list[str]) -> None:
     """Saturday lock guard: refuse if most teams still lack game statuses for `week` (nflverse not updated yet)."""
     wk = injuries[(injuries["season"] == season) & (injuries["week"] == week) & injuries["report_status"].notna()]
     have = set(wk["team"]) & set(teams)
     if len(have) < len(teams) / 2:
-        raise ValueError(f"Only {len(have)} of {len(teams)} teams have final injury statuses for week {week}. "
+        raise InjuryReportNotReady(f"Only {len(have)} of {len(teams)} teams have final injury statuses for week {week}. "
                          "The Friday report isn't in the data yet; try again later.")
+
+
+def run_week(schedules: pd.DataFrame, season: int, week: int, mode: str, now: datetime | None = None,
+             write: bool = True) -> tuple[pd.DataFrame, Path | None, int | None]:
+    """One weekly run (the body of scripts/predict_week.py): predict, and write the ledger file unless write=False.
+
+    mode "live" (Thursday lock), "qb" (Saturday re-lock; refuses until the Friday injury report is in), or "backfill".
+    Returns (predictions, path written or None, QB_PTS or None).
+    """
+    from nfl_ats.data import load_injuries
+    week_games = schedules[(schedules["season"] == season) & (schedules["week"] == week) & (schedules["game_type"] == "REG")]
+    if mode == "backfill":
+        now = kickoff_times(week_games).min() - pd.Timedelta(minutes=1)
+    now = now or datetime.now(EASTERN)
+    qb = None
+    if mode != "backfill":
+        qb = qb_for_week(schedules, season, week)
+        if mode == "qb":
+            upcoming = week_games[kickoff_times(week_games) > now]
+            check_final_injury_report(load_injuries([season], refresh=True), season, week,
+                                      upcoming["home_team"].tolist() + upcoming["away_team"].tolist())
+    preds = predict_week(schedules, season, week, now, mode, qb=qb)
+    path = write_ledger(preds, ledger_path(season, week, mode, now)) if write else None
+    return preds, path, None if qb is None else qb[1]
 
 
 def score_ledger(ledger: pd.DataFrame, schedules: pd.DataFrame) -> pd.DataFrame:

@@ -66,7 +66,7 @@ Five improvements were each pre-registered (committed to git *before* running), 
 | Rest / bye-week edge on top of the QB model | +0.0004 [−0.0008, +0.0016] vs. the QB model | Rejected: 3/7 seasons; the rest effect doesn't hold out of sample |
 
 ### 4. The live test (2026)
-Every week, `scripts/predict_week.py` predicts each upcoming game using only earlier results. It refuses to overwrite a file, skips games that have already kicked off, and refuses to run on stale data. The file is committed to git before Thursday's kickoff, so the timestamps prove the lock. Weeks 1–5 were backfilled after the fact and are reported separately. **Results: [`reports/live_2026.md`](reports/live_2026.md).**
+Every week, `scripts/predict_week.py` predicts each upcoming game using only earlier results. It refuses to overwrite a file, skips games that have already kicked off, and refuses to run on stale data. The file is committed to git before Thursday's kickoff, so the timestamps prove the lock. Weeks 1–5 were backfilled after the fact and are reported separately. Since Week 8 the routine runs itself: a scheduled GitHub Actions workflow locks, scores and publishes each week, so GitHub's own run logs timestamp every lock. **Results: [`reports/live_2026.md`](reports/live_2026.md).**
 
 The live report also tracks **whether the betting line moves toward our number** after we lock: a closing-line-value check, the standard test of whether a model knows something the market doesn't. About 50% means no edge. It was pre-registered before any of it was computed.
 
@@ -93,7 +93,8 @@ The live report also tracks **whether the betting line moves toward our number**
 conda create -n nfl-ats python=3.12 -y && conda activate nfl-ats
 python -m pip install -r requirements.txt && python -m pip install -e .
 python -m unittest discover tests                    # 84 tests
-python scripts/predict_week.py --week 8              # lock this week's predictions (before Thursday kickoff)
+python scripts/auto_week.py --task lock --dry-run   # what the scheduled GitHub run would do right now
+python scripts/predict_week.py --week 8              # lock this week's predictions by hand (before Thursday kickoff)
 python scripts/predict_week.py --week 8 --qb         # Saturday: re-lock weekend games with final QB injury news
 python scripts/score_ledger.py                       # update reports/live_2026.md
 python scripts/build_site.py                         # rebuild the site's data (then open site/index.html)
@@ -107,7 +108,7 @@ Python ≥ 3.10 is required (nflreadpy). Use the dedicated `nfl-ats` env, not a 
 | `src/nfl_ats/` | Library: `data`, `target`, `features`, `model`, `evaluate`, `feature_eval`, `diagnostics`, `elo`, `win_model`, `qb`, `ledger`, `site` |
 | `tests/` | 84 unit tests (stdlib `unittest`), including leakage and as-of tests |
 | `notebooks/` | `03-eda`, `07-backtest`, `08-diagnostics`, `10-win-model` |
-| `scripts/` | `predict_week.py`, `score_ledger.py`, `build_site.py`, `run_notebook.py` |
+| `scripts/` | `auto_week.py` (scheduled), `predict_week.py`, `score_ledger.py`, `build_site.py`, `run_notebook.py` |
 | `site/` | The static site ("Josh's NFL Elo"), deployed to GitHub Pages by `.github/workflows/pages.yml` |
 | `ledger/` | Locked weekly predictions (`backfill/` is pseudo-live) |
 | `reports/` | `experiments.md` (every result), `live_2026.md`, figures |

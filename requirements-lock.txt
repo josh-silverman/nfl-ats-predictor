@@ -1,0 +1,8 @@
+# Exact versions from the working nfl-ats env, used by GitHub Actions (weekly.yml, tests.yml) for reproducible runs.
+nflreadpy==0.1.5
+polars==1.44.2
+pandas==3.0.6
+numpy==2.5.3
+scikit-learn==1.9.1
+scipy==1.18.1
+pyarrow==25.0.1

@@ -65,7 +65,7 @@ The ATS evaluation rules (52.4% breakeven, edge only if the CI lower bound clear
 - Weeks already played when the ledger starts are a **"pseudo-live" backfill** in `ledger/backfill/`, labeled separately and never mixed into the live record.
 - The market may have later information than our lock time. Say so when comparing.
 - **QB lock (from Week 8, decision #21):** the Thursday file also carries `p_elo_qb` with Thursday's injury news. On Saturday, `predict_week.py --week N --qb` writes `ledger/qb/` for games not yet started, once the Friday injury report is in the data (it refuses otherwise). Per game, the **latest QB lock made before kickoff** counts. This rule was fixed before any Week 8 result.
-- **Weekly routine:**
+- **Weekly routine (automated since 2026-10-27, decision #25):** `.github/workflows/weekly.yml` runs `scripts/auto_week.py` on a schedule and commits as `github-actions[bot]`. Locks happen daily at 14:00 UTC once a week's first kickoff is within 30 hours; the QB lock runs Saturday 13:00/16:00 UTC; scoring runs Tuesday 12:00 UTC. A failed run emails the repo owner. The manual steps below still work and are the backup:
   - Thursday before kickoff: `predict_week.py --week N` → `build_site.py` → commit → push.
   - Saturday before the 9:30 AM ET London game, or 1 PM ET otherwise: `predict_week.py --week N --qb` → `build_site.py` → commit → push.
   - After Monday night: `score_ledger.py` → `build_site.py` → commit → push.

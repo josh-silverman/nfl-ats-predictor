@@ -1,0 +1,91 @@
+# The weekly routine on auto-pilot (decision #25). Each run's GitHub log timestamps the lock it made.
+#   lock  : daily 14:00 UTC — locks the next week once its first kickoff is within 30 hours (normally Thursday).
+#   qb    : Saturday 13:00 UTC (soft: "injury report not in yet" is fine) and 16:00 UTC (fails loudly → email).
+#   score : Tuesday 12:00 UTC — scores the week and refreshes the site.
+# Pushes made with GITHUB_TOKEN don't trigger other workflows, so the Pages deploy is started explicitly.
+name: Weekly routine
+
+on:
+  schedule:
+    - cron: "0 14 * * *"
+    - cron: "0 13 * * 6"
+    - cron: "0 16 * * 6"
+    - cron: "0 12 * * 2"
+  workflow_dispatch:
+    inputs:
+      task:
+        description: "Which step to run"
+        type: choice
+        options: [lock, qb, score]
+        default: score
+      dry_run:
+        description: "Show what would happen, write nothing"
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+  actions: write
+
+concurrency:
+  group: weekly-routine
+  cancel-in-progress: false
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # lock badges read each ledger file's first commit time
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: requirements-lock.txt
+
+      - name: Install
+        run: |
+          python -m pip install -r requirements-lock.txt
+          python -m pip install -e .
+
+      - uses: actions/cache@v4
+        with:
+          path: data/raw
+          key: nflverse-raw-${{ github.run_id }}
+          restore-keys: nflverse-raw-
+
+      - name: Pick the task
+        id: pick
+        run: |
+          case "${{ github.event.schedule }}" in
+            "0 14 * * *") echo "args=--task lock" >> "$GITHUB_OUTPUT" ;;
+            "0 13 * * 6") echo "args=--task qb --soft" >> "$GITHUB_OUTPUT" ;;
+            "0 16 * * 6") echo "args=--task qb" >> "$GITHUB_OUTPUT" ;;
+            "0 12 * * 2") echo "args=--task score" >> "$GITHUB_OUTPUT" ;;
+            *) echo "args=--task ${{ inputs.task }}${{ inputs.dry_run && ' --dry-run' || '' }}" >> "$GITHUB_OUTPUT" ;;
+          esac
+
+      - name: Run
+        id: run
+        run: python scripts/auto_week.py ${{ steps.pick.outputs.args }}
+
+      - name: Commit and push
+        if: steps.run.outputs.message != ''
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898283+github-actions[bot]@users.noreply.github.com"
+          git add ledger reports site/data
+          if git diff --cached --quiet; then echo "No changes to commit."; exit 0; fi
+          git commit -m "${{ steps.run.outputs.message }}"
+          git pull --rebase origin main
+          git push origin HEAD:main
+          echo "pushed=true" >> "$GITHUB_ENV"
+
+      - name: Deploy the site
+        if: env.pushed == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run pages.yml --ref main

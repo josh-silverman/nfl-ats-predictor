@@ -4,6 +4,7 @@
     python scripts/auto_week.py --task qb --soft       # Saturday: QB-aware re-lock; --soft = "not ready yet" isn't an error
     python scripts/auto_week.py --task score           # Tuesday: score the ledger and rebuild the site
     python scripts/auto_week.py --task lock --dry-run  # show what would happen, write nothing
+    python scripts/auto_week.py --task lock --dry-run --week 8   # test the full lock path early
 
 Every guard from predict_week still applies (write-once, skip started games, stale-data refusal). Committing and
 pushing is the workflow's job; this script writes `message=...` to $GITHUB_OUTPUT for the commit message.
@@ -44,6 +45,7 @@ def main() -> None:
     parser.add_argument("--task", choices=["lock", "qb", "score"], required=True)
     parser.add_argument("--soft", action="store_true", help="qb: exit quietly if the Friday injury report isn't in yet")
     parser.add_argument("--dry-run", action="store_true", help="predict and print, but write nothing")
+    parser.add_argument("--week", type=int, help="dry runs only: force this week (to test the full path early)")
     args = parser.parse_args()
 
     if args.task == "score":
@@ -60,6 +62,10 @@ def main() -> None:
         week, mode = next_lock_week(schedules, SEASON, locked, now), "live"
     else:
         week, mode = next_qb_week(schedules, SEASON, locked, qb_done, now), "qb"
+    if args.week:
+        if not args.dry_run:
+            parser.error("--week is only for dry runs; real locks always use the detected week")
+        week = args.week
     if week is None:
         return print(f"Nothing to do for '{args.task}' right now.")
 

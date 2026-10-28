@@ -22,6 +22,10 @@ on:
         description: "Show what would happen, write nothing"
         type: boolean
         default: false
+      week:
+        description: "Dry runs only: force this week"
+        type: string
+        default: ""
 
 permissions:
   contents: write
@@ -65,7 +69,7 @@ jobs:
             "0 13 * * 6") echo "args=--task qb --soft" >> "$GITHUB_OUTPUT" ;;
             "0 16 * * 6") echo "args=--task qb" >> "$GITHUB_OUTPUT" ;;
             "0 12 * * 2") echo "args=--task score" >> "$GITHUB_OUTPUT" ;;
-            *) echo "args=--task ${{ inputs.task }}${{ inputs.dry_run && ' --dry-run' || '' }}" >> "$GITHUB_OUTPUT" ;;
+            *) echo "args=--task ${{ inputs.task }}${{ inputs.dry_run && ' --dry-run' || '' }}${{ inputs.week != '' && format(' --week {0}', inputs.week) || '' }}" >> "$GITHUB_OUTPUT" ;;
           esac
 
       - name: Run

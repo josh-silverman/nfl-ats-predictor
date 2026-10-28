@@ -4,7 +4,7 @@ window.SITE_DATA = {
   "title": "Josh's NFL Elo",
   "season": 2026,
   "repo": "https://github.com/josh-silverman/nfl-ats-predictor",
-  "generated": "Oct 27, 2026 12:32 PM ET",
+  "generated": "Oct 27, 2026 10:09 PM ET",
   "current_week": 7
  },
  "teams": {

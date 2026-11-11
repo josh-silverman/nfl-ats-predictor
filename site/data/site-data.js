@@ -4,8 +4,8 @@ window.SITE_DATA = {
   "title": "Josh's NFL Elo",
   "season": 2026,
   "repo": "https://github.com/josh-silverman/nfl-ats-predictor",
-  "generated": "Nov 10, 2026 2:28 PM ET",
-  "current_week": 9
+  "generated": "Nov 11, 2026 4:05 PM ET",
+  "current_week": 10
  },
  "teams": {
   "ARI": {
@@ -6879,6 +6879,611 @@ window.SITE_DATA = {
      ]
     }
    ]
+  },
+  {
+   "week": 10,
+   "mode": "live",
+   "lock": {
+    "locked": false,
+    "text": "Not committed yet",
+    "url": null,
+    "before_kickoff": false
+   },
+   "qb_lock": null,
+   "games": [
+    {
+     "game_id": "2026_10_WAS_NYG",
+     "home": "NYG",
+     "away": "WAS",
+     "neutral": false,
+     "kickoff": "Thu Nov 12 \u00b7 8:15 PM ET",
+     "day_group": "Thursday night",
+     "p_home": 0.651,
+     "p_vegas_home": 0.564,
+     "favorite": "NYG",
+     "confidence": "Favored",
+     "our_line": "NYG \u22124.3",
+     "expected_margin": 4.3,
+     "vegas_line_at_lock": "NYG \u22122.5",
+     "closing_line": null,
+     "big_gap": false,
+     "home_side": {
+      "team": "NYG",
+      "rank": 17,
+      "record": "5-2-1",
+      "last": "W 19\u201311 @ PHI"
+     },
+     "away_side": {
+      "team": "WAS",
+      "rank": 23,
+      "record": "2-5-1",
+      "last": "L 13\u201320 vs LA"
+     },
+     "why": {
+      "home_rating": 1484,
+      "away_rating": 1424,
+      "home_field": 48,
+      "qb_pts": 0,
+      "qb_teams": [],
+      "edge": 108
+     },
+     "result": null,
+     "qb_adjusted": true,
+     "rest": null,
+     "qb_out": []
+    },
+    {
+     "game_id": "2026_10_NE_DET",
+     "home": "DET",
+     "away": "NE",
+     "neutral": true,
+     "kickoff": "Sun Nov 15 \u00b7 9:30 AM ET",
+     "day_group": "International",
+     "p_home": 0.565,
+     "p_vegas_home": 0.572,
+     "favorite": "DET",
+     "confidence": "Lean",
+     "our_line": "DET \u22121.8",
+     "expected_margin": 1.8,
+     "vegas_line_at_lock": "DET \u22122.5",
+     "closing_line": null,
+     "big_gap": false,
+     "home_side": {
+      "team": "DET",
+      "rank": 7,
+      "record": "6-2",
+      "last": "W 19\u20139 @ MIA"
+     },
+     "away_side": {
+      "team": "NE",
+      "rank": 14,
+      "record": "5-4",
+      "last": "L 27\u201345 vs GB"
+     },
+     "why": {
+      "home_rating": 1600,
+      "away_rating": 1554,
+      "home_field": 0,
+      "qb_pts": 0,
+      "qb_teams": [],
+      "edge": 46
+     },
+     "result": null,
+     "qb_adjusted": true,
+     "rest": null,
+     "qb_out": []
+    },
+    {
+     "game_id": "2026_10_BUF_NYJ",
+     "home": "NYJ",
+     "away": "BUF",
+     "neutral": false,
+     "kickoff": "Sun Nov 15 \u00b7 1:00 PM ET",
+     "day_group": "Sunday early",
+     "p_home": 0.143,
+     "p_vegas_home": 0.218,
+     "favorite": "BUF",
+     "confidence": "High confidence",
+     "our_line": "BUF \u221212.4",
+     "expected_margin": 12.4,
+     "vegas_line_at_lock": "BUF \u22128.5",
+     "closing_line": null,
+     "big_gap": false,
+     "home_side": {
+      "team": "NYJ",
+      "rank": 31,
+      "record": "2-7",
+      "last": "L 12\u201335 @ KC"
+     },
+     "away_side": {
+      "team": "BUF",
+      "rank": 1,
+      "record": "7-1",
+      "last": "W 23\u20136 @ MIN"
+     },
+     "why": {
+      "home_rating": 1336,
+      "away_rating": 1695,
+      "home_field": 48,
+      "qb_pts": 0,
+      "qb_teams": [],
+      "edge": -311
+     },
+     "result": null,
+     "qb_adjusted": true,
+     "rest": null,
+     "qb_out": []
+    },
+    {
+     "game_id": "2026_10_CAR_NO",
+     "home": "NO",
+     "away": "CAR",
+     "neutral": false,
+     "kickoff": "Sun Nov 15 \u00b7 1:00 PM ET",
+     "day_group": "Sunday early",
+     "p_home": 0.555,
+     "p_vegas_home": 0.551,
+     "favorite": "NO",
+     "confidence": "Lean",
+     "our_line": "NO \u22121.5",
+     "expected_margin": 1.5,
+     "vegas_line_at_lock": "NO \u22122.5",
+     "closing_line": null,
+     "big_gap": false,
+     "home_side": {
+      "team": "NO",
+      "rank": 24,
+      "record": "3-5",
+      "last": "W 23\u201322 vs CLE"
+     },
+     "away_side": {
+      "team": "CAR",
+      "rank": 22,
+      "record": "3-5",
+      "last": "L 21\u201326 vs DEN"
+     },
+     "why": {
+      "home_rating": 1421,
+      "away_rating": 1430,
+      "home_field": 48,
+      "qb_pts": 0,
+      "qb_teams": [],
+      "edge": 38
+     },
+     "result": null,
+     "qb_adjusted": true,
+     "rest": null,
+     "qb_out": []
+    },
+    {
+     "game_id": "2026_10_HOU_CLE",
+     "home": "CLE",
+     "away": "HOU",
+     "neutral": false,
+     "kickoff": "Sun Nov 15 \u00b7 1:00 PM ET",
+     "day_group": "Sunday early",
+     "p_home": 0.436,
+     "p_vegas_home": 0.331,
+     "favorite": "HOU",
+     "confidence": "Lean",
+     "our_line": "HOU \u22121.8",
+     "expected_margin": 1.8,
+     "vegas_line_at_lock": "HOU \u22124.5",
+     "closing_line": null,
+     "big_gap": false,
+     "home_side": {
+      "team": "CLE",
+      "rank": 20,
+      "record": "5-4",
+      "last": "L 22\u201323 @ NO"
+     },
+     "away_side": {
+      "team": "HOU",
+      "rank": 15,
+      "record": "3-5",
+      "last": "W 44\u201322 @ LAC"
+     },
+     "why": {
+      "home_rating": 1447,
+      "away_rating": 1540,
+      "home_field": 48,
+      "qb_pts": 0,
+      "qb_teams": [],
+      "edge": -45
+     },
+     "result": null,
+     "qb_adjusted": true,
+     "rest": null,
+     "qb_out": []
+    },
+    {
+     "game_id": "2026_10_JAX_TEN",
+     "home": "TEN",
+     "away": "JAX",
+     "neutral": false,
+     "kickoff": "Sun Nov 15 \u00b7 1:00 PM ET",
+     "day_group": "Sunday early",
+     "p_home": 0.157,
+     "p_vegas_home": 0.192,
+     "favorite": "JAX",
+     "confidence": "High confidence",
+     "our_line": "JAX \u221211.7",
+     "expected_margin": 11.7,
+     "vegas_line_at_lock": "JAX \u221210.5",
+     "closing_line": null,
+     "big_gap": false,
+     "home_side": {
+      "team": "TEN",
+      "rank": 32,
+      "record": "1-7",
+      "last": "L 36\u201343 @ CIN"
+     },
+     "away_side": {
+      "team": "JAX",
+      "rank": 3,
+      "record": "6-2",
+      "last": "W 33\u201310 @ BAL"
+     },
+     "why": {
+      "home_rating": 1309,
+      "away_rating": 1649,
+      "home_field": 48,
+      "qb_pts": 0,
+      "qb_teams": [],
+      "edge": -293
+     },
+     "result": null,
+     "qb_adjusted": true,
+     "rest": {
+      "home": 14,
+      "away": 10
+     },
+     "qb_out": []
+    },
+    {
+     "game_id": "2026_10_KC_ATL",
+     "home": "ATL",
+     "away": "KC",
+     "neutral": false,
+     "kickoff": "Sun Nov 15 \u00b7 1:00 PM ET",
+     "day_group": "Sunday early",
+     "p_home": 0.404,
+     "p_vegas_home": 0.378,
+     "favorite": "KC",
+     "confidence": "Lean",
+     "our_line": "KC \u22122.7",
+     "expected_margin": 2.7,
+     "vegas_line_at_lock": "KC \u22123.5",
+     "closing_line": null,
+     "big_gap": false,
+     "home_side": {
+      "team": "ATL",
+      "rank": 21,
+      "record": "3-6",
+      "last": "L 17\u201334 vs CIN"
+     },
+     "away_side": {
+      "team": "KC",
+      "rank": 13,
+      "record": "6-2",
+      "last": "W 35\u201312 vs NYJ"
+     },
+     "why": {
+      "home_rating": 1447,
+      "away_rating": 1562,
+      "home_field": 48,
+      "qb_pts": 0,
+      "qb_teams": [],
+      "edge": -68
+     },
+     "result": null,
+     "qb_adjusted": true,
+     "rest": null,
+     "qb_out": []
+    },
+    {
+     "game_id": "2026_10_MIA_IND",
+     "home": "IND",
+     "away": "MIA",
+     "neutral": false,
+     "kickoff": "Sun Nov 15 \u00b7 1:00 PM ET",
+     "day_group": "Sunday early",
+     "p_home": 0.6,
+     "p_vegas_home": 0.631,
+     "favorite": "IND",
+     "confidence": "Lean",
+     "our_line": "IND \u22122.8",
+     "expected_margin": 2.8,
+     "vegas_line_at_lock": "IND \u22123.5",
+     "closing_line": null,
+     "big_gap": false,
+     "home_side": {
+      "team": "IND",
+      "rank": 27,
+      "record": "2-7",
+      "last": "L 23\u201327 vs DAL"
+     },
+     "away_side": {
+      "team": "MIA",
+      "rank": 30,
+      "record": "1-7",
+      "last": "L 9\u201319 vs DET"
+     },
+     "why": {
+      "home_rating": 1390,
+      "away_rating": 1367,
+      "home_field": 48,
+      "qb_pts": 0,
+      "qb_teams": [],
+      "edge": 70
+     },
+     "result": null,
+     "qb_adjusted": true,
+     "rest": null,
+     "qb_out": []
+    },
+    {
+     "game_id": "2026_10_MIN_GB",
+     "home": "GB",
+     "away": "MIN",
+     "neutral": false,
+     "kickoff": "Sun Nov 15 \u00b7 1:00 PM ET",
+     "day_group": "Sunday early",
+     "p_home": 0.557,
+     "p_vegas_home": 0.572,
+     "favorite": "GB",
+     "confidence": "Lean",
+     "our_line": "GB \u22121.6",
+     "expected_margin": 1.6,
+     "vegas_line_at_lock": "GB \u22123.0",
+     "closing_line": null,
+     "big_gap": false,
+     "home_side": {
+      "team": "GB",
+      "rank": 12,
+      "record": "6-3",
+      "last": "W 45\u201327 @ NE"
+     },
+     "away_side": {
+      "team": "MIN",
+      "rank": 9,
+      "record": "6-2",
+      "last": "L 6\u201323 vs BUF"
+     },
+     "why": {
+      "home_rating": 1586,
+      "away_rating": 1594,
+      "home_field": 48,
+      "qb_pts": 0,
+      "qb_teams": [],
+      "edge": 40
+     },
+     "result": null,
+     "qb_adjusted": true,
+     "rest": null,
+     "qb_out": []
+    },
+    {
+     "game_id": "2026_10_LA_ARI",
+     "home": "ARI",
+     "away": "LA",
+     "neutral": false,
+     "kickoff": "Sun Nov 15 \u00b7 4:05 PM ET",
+     "day_group": "Sunday late",
+     "p_home": 0.282,
+     "p_vegas_home": 0.223,
+     "favorite": "LA",
+     "confidence": "Favored",
+     "our_line": "LA \u22126.5",
+     "expected_margin": 6.5,
+     "vegas_line_at_lock": "LA \u22129.5",
+     "closing_line": null,
+     "big_gap": false,
+     "home_side": {
+      "team": "ARI",
+      "rank": 28,
+      "record": "3-6",
+      "last": "L 3\u201317 @ SEA"
+     },
+     "away_side": {
+      "team": "LA",
+      "rank": 8,
+      "record": "5-4",
+      "last": "W 20\u201313 @ WAS"
+     },
+     "why": {
+      "home_rating": 1390,
+      "away_rating": 1600,
+      "home_field": 48,
+      "qb_pts": 0,
+      "qb_teams": [],
+      "edge": -162
+     },
+     "result": null,
+     "qb_adjusted": true,
+     "rest": null,
+     "qb_out": []
+    },
+    {
+     "game_id": "2026_10_SEA_LV",
+     "home": "LV",
+     "away": "SEA",
+     "neutral": false,
+     "kickoff": "Sun Nov 15 \u00b7 4:05 PM ET",
+     "day_group": "Sunday late",
+     "p_home": 0.287,
+     "p_vegas_home": 0.282,
+     "favorite": "SEA",
+     "confidence": "Favored",
+     "our_line": "SEA \u22126.3",
+     "expected_margin": 6.3,
+     "vegas_line_at_lock": "SEA \u22126.5",
+     "closing_line": null,
+     "big_gap": false,
+     "home_side": {
+      "team": "LV",
+      "rank": 25,
+      "record": "4-5",
+      "last": "L 17\u201338 @ SF"
+     },
+     "away_side": {
+      "team": "SEA",
+      "rank": 6,
+      "record": "5-4",
+      "last": "W 17\u20133 vs ARI"
+     },
+     "why": {
+      "home_rating": 1408,
+      "away_rating": 1615,
+      "home_field": 48,
+      "qb_pts": 0,
+      "qb_teams": [],
+      "edge": -158
+     },
+     "result": null,
+     "qb_adjusted": true,
+     "rest": null,
+     "qb_out": []
+    },
+    {
+     "game_id": "2026_10_SF_DAL",
+     "home": "DAL",
+     "away": "SF",
+     "neutral": false,
+     "kickoff": "Sun Nov 15 \u00b7 4:25 PM ET",
+     "day_group": "Sunday late",
+     "p_home": 0.338,
+     "p_vegas_home": 0.355,
+     "favorite": "SF",
+     "confidence": "Favored",
+     "our_line": "SF \u22124.7",
+     "expected_margin": 4.7,
+     "vegas_line_at_lock": "SF \u22124.5",
+     "closing_line": null,
+     "big_gap": false,
+     "home_side": {
+      "team": "DAL",
+      "rank": 19,
+      "record": "4-5",
+      "last": "W 27\u201323 @ IND"
+     },
+     "away_side": {
+      "team": "SF",
+      "rank": 4,
+      "record": "7-1",
+      "last": "W 38\u201317 vs LV"
+     },
+     "why": {
+      "home_rating": 1468,
+      "away_rating": 1633,
+      "home_field": 48,
+      "qb_pts": 0,
+      "qb_teams": [],
+      "edge": -117
+     },
+     "result": null,
+     "qb_adjusted": true,
+     "rest": null,
+     "qb_out": []
+    },
+    {
+     "game_id": "2026_10_PIT_CIN",
+     "home": "CIN",
+     "away": "PIT",
+     "neutral": false,
+     "kickoff": "Sun Nov 15 \u00b7 8:20 PM ET",
+     "day_group": "Sunday night",
+     "p_home": 0.577,
+     "p_vegas_home": 0.616,
+     "favorite": "CIN",
+     "confidence": "Lean",
+     "our_line": "CIN \u22122.2",
+     "expected_margin": 2.2,
+     "vegas_line_at_lock": "CIN \u22123.5",
+     "closing_line": null,
+     "big_gap": false,
+     "home_side": {
+      "team": "CIN",
+      "rank": 10,
+      "record": "6-2",
+      "last": "W 34\u201317 @ ATL"
+     },
+     "away_side": {
+      "team": "PIT",
+      "rank": 11,
+      "record": "6-2",
+      "last": "W 27\u20136 vs CLE"
+     },
+     "why": {
+      "home_rating": 1593,
+      "away_rating": 1587,
+      "home_field": 48,
+      "qb_pts": 0,
+      "qb_teams": [],
+      "edge": 54
+     },
+     "result": null,
+     "qb_adjusted": true,
+     "rest": {
+      "home": 7,
+      "away": 14
+     },
+     "qb_out": []
+    },
+    {
+     "game_id": "2026_10_LAC_BAL",
+     "home": "BAL",
+     "away": "LAC",
+     "neutral": false,
+     "kickoff": "Mon Nov 16 \u00b7 8:15 PM ET",
+     "day_group": "Monday night",
+     "p_home": 0.578,
+     "p_vegas_home": 0.657,
+     "favorite": "BAL",
+     "confidence": "Lean",
+     "our_line": "BAL \u22122.2",
+     "expected_margin": 2.2,
+     "vegas_line_at_lock": "BAL \u22124.5",
+     "closing_line": null,
+     "big_gap": false,
+     "home_side": {
+      "team": "BAL",
+      "rank": 18,
+      "record": "4-5",
+      "last": "L 10\u201333 vs JAX"
+     },
+     "away_side": {
+      "team": "LAC",
+      "rank": 29,
+      "record": "0-8",
+      "last": "L 22\u201344 vs HOU"
+     },
+     "why": {
+      "home_rating": 1478,
+      "away_rating": 1382,
+      "home_field": 48,
+      "qb_pts": 90,
+      "qb_teams": [
+       "BAL"
+      ],
+      "edge": 55
+     },
+     "result": null,
+     "qb_adjusted": true,
+     "rest": {
+      "home": 11,
+      "away": 8
+     },
+     "qb_out": [
+      {
+       "team": "BAL",
+       "player": "Tyler Huntley",
+       "reason": "injured reserve",
+       "in_pick": true
+      }
+     ]
+    }
+   ]
   }
  ],
  "record": {
@@ -6927,7 +7532,11 @@ window.SITE_DATA = {
    "rating": 1694.8,
    "rank_change": 0,
    "record": "7-1",
-   "next": null,
+   "next": {
+    "opp": "NYJ",
+    "home": false,
+    "p_win": 0.857
+   },
    "bye": false,
    "odds": {
     "wins": 13.6,
@@ -6944,13 +7553,13 @@ window.SITE_DATA = {
    "rank_change": 0,
    "record": "7-2",
    "next": null,
-   "bye": false,
+   "bye": true,
    "odds": {
     "wins": 12.7,
     "losses": 4.3,
     "playoff": 0.982,
     "division": 0.788,
-    "top_seed": 0.2
+    "top_seed": 0.199
    }
   },
   {
@@ -6959,7 +7568,11 @@ window.SITE_DATA = {
    "rating": 1649.3,
    "rank_change": 0,
    "record": "6-2",
-   "next": null,
+   "next": {
+    "opp": "TEN",
+    "home": false,
+    "p_win": 0.843
+   },
    "bye": false,
    "odds": {
     "wins": 12.4,
@@ -6975,14 +7588,18 @@ window.SITE_DATA = {
    "rating": 1632.6,
    "rank_change": 1,
    "record": "7-1",
-   "next": null,
+   "next": {
+    "opp": "DAL",
+    "home": false,
+    "p_win": 0.662
+   },
    "bye": false,
    "odds": {
     "wins": 12.9,
     "losses": 4.1,
     "playoff": 0.942,
-    "division": 0.809,
-    "top_seed": 0.451
+    "division": 0.807,
+    "top_seed": 0.449
    }
   },
   {
@@ -6992,13 +7609,13 @@ window.SITE_DATA = {
    "rank_change": 1,
    "record": "7-2",
    "next": null,
-   "bye": false,
+   "bye": true,
    "odds": {
     "wins": 11.6,
     "losses": 5.4,
     "playoff": 0.836,
     "division": 0.32,
-    "top_seed": 0.155
+    "top_seed": 0.156
    }
   },
   {
@@ -7007,13 +7624,17 @@ window.SITE_DATA = {
    "rating": 1614.6,
    "rank_change": 1,
    "record": "5-4",
-   "next": null,
+   "next": {
+    "opp": "LV",
+    "home": false,
+    "p_win": 0.713
+   },
    "bye": false,
    "odds": {
     "wins": 10.1,
     "losses": 6.9,
     "playoff": 0.534,
-    "division": 0.115,
+    "division": 0.116,
     "top_seed": 0.017
    }
   },
@@ -7023,13 +7644,17 @@ window.SITE_DATA = {
    "rating": 1599.5,
    "rank_change": 3,
    "record": "6-2",
-   "next": null,
+   "next": {
+    "opp": "NE",
+    "home": true,
+    "p_win": 0.565
+   },
    "bye": false,
    "odds": {
     "wins": 11.3,
     "losses": 5.7,
     "playoff": 0.781,
-    "division": 0.274,
+    "division": 0.273,
     "top_seed": 0.132
    }
   },
@@ -7039,13 +7664,17 @@ window.SITE_DATA = {
    "rating": 1599.5,
    "rank_change": 3,
    "record": "5-4",
-   "next": null,
+   "next": {
+    "opp": "ARI",
+    "home": false,
+    "p_win": 0.718
+   },
    "bye": false,
    "odds": {
     "wins": 9.6,
     "losses": 7.4,
     "playoff": 0.417,
-    "division": 0.075,
+    "division": 0.076,
     "top_seed": 0.01
    }
   },
@@ -7055,7 +7684,11 @@ window.SITE_DATA = {
    "rating": 1594.4,
    "rank_change": -5,
    "record": "6-2",
-   "next": null,
+   "next": {
+    "opp": "GB",
+    "home": false,
+    "p_win": 0.443
+   },
    "bye": false,
    "odds": {
     "wins": 11.5,
@@ -7071,14 +7704,18 @@ window.SITE_DATA = {
    "rating": 1592.6,
    "rank_change": 2,
    "record": "6-2",
-   "next": null,
+   "next": {
+    "opp": "PIT",
+    "home": true,
+    "p_win": 0.577
+   },
    "bye": false,
    "odds": {
     "wins": 12.1,
     "losses": 4.9,
-    "playoff": 0.926,
+    "playoff": 0.927,
     "division": 0.574,
-    "top_seed": 0.114
+    "top_seed": 0.115
    }
   },
   {
@@ -7087,13 +7724,17 @@ window.SITE_DATA = {
    "rating": 1586.7,
    "rank_change": -2,
    "record": "6-2",
-   "next": null,
-   "bye": true,
+   "next": {
+    "opp": "CIN",
+    "home": false,
+    "p_win": 0.423
+   },
+   "bye": false,
    "odds": {
     "wins": 11.4,
     "losses": 5.6,
-    "playoff": 0.878,
-    "division": 0.374,
+    "playoff": 0.882,
+    "division": 0.376,
     "top_seed": 0.069
    }
   },
@@ -7103,14 +7744,18 @@ window.SITE_DATA = {
    "rating": 1586.5,
    "rank_change": 2,
    "record": "6-3",
-   "next": null,
+   "next": {
+    "opp": "MIN",
+    "home": true,
+    "p_win": 0.557
+   },
    "bye": false,
    "odds": {
     "wins": 10.4,
     "losses": 6.6,
     "playoff": 0.61,
     "division": 0.11,
-    "top_seed": 0.042
+    "top_seed": 0.043
    }
   },
   {
@@ -7119,13 +7764,17 @@ window.SITE_DATA = {
    "rating": 1562.4,
    "rank_change": 0,
    "record": "6-2",
-   "next": null,
+   "next": {
+    "opp": "ATL",
+    "home": false,
+    "p_win": 0.596
+   },
    "bye": false,
    "odds": {
     "wins": 10.9,
     "losses": 6.1,
-    "playoff": 0.824,
-    "division": 0.205,
+    "playoff": 0.825,
+    "division": 0.204,
     "top_seed": 0.038
    }
   },
@@ -7135,12 +7784,16 @@ window.SITE_DATA = {
    "rating": 1553.8,
    "rank_change": -6,
    "record": "5-4",
-   "next": null,
+   "next": {
+    "opp": "DET",
+    "home": false,
+    "p_win": 0.435
+   },
    "bye": false,
    "odds": {
     "wins": 9.3,
     "losses": 7.7,
-    "playoff": 0.511,
+    "playoff": 0.513,
     "division": 0.044,
     "top_seed": 0.002
    }
@@ -7151,12 +7804,16 @@ window.SITE_DATA = {
    "rating": 1540.1,
    "rank_change": 0,
    "record": "3-5",
-   "next": null,
+   "next": {
+    "opp": "CLE",
+    "home": false,
+    "p_win": 0.564
+   },
    "bye": false,
    "odds": {
     "wins": 8.2,
     "losses": 8.8,
-    "playoff": 0.285,
+    "playoff": 0.289,
     "division": 0.055,
     "top_seed": 0.0
    }
@@ -7168,7 +7825,7 @@ window.SITE_DATA = {
    "rank_change": 0,
    "record": "3-6",
    "next": null,
-   "bye": false,
+   "bye": true,
    "odds": {
     "wins": 7.3,
     "losses": 9.7,
@@ -7183,7 +7840,11 @@ window.SITE_DATA = {
    "rating": 1484.5,
    "rank_change": 2,
    "record": "5-2-1",
-   "next": null,
+   "next": {
+    "opp": "WAS",
+    "home": true,
+    "p_win": 0.651
+   },
    "bye": false,
    "odds": {
     "wins": 9.7,
@@ -7199,13 +7860,17 @@ window.SITE_DATA = {
    "rating": 1478.5,
    "rank_change": -1,
    "record": "4-5",
-   "next": null,
+   "next": {
+    "opp": "LAC",
+    "home": true,
+    "p_win": 0.578
+   },
    "bye": false,
    "odds": {
-    "wins": 7.7,
-    "losses": 9.3,
-    "playoff": 0.176,
-    "division": 0.015,
+    "wins": 7.5,
+    "losses": 9.5,
+    "playoff": 0.159,
+    "division": 0.013,
     "top_seed": 0.0
    }
   },
@@ -7215,7 +7880,11 @@ window.SITE_DATA = {
    "rating": 1467.5,
    "rank_change": 2,
    "record": "4-5",
-   "next": null,
+   "next": {
+    "opp": "SF",
+    "home": true,
+    "p_win": 0.338
+   },
    "bye": false,
    "odds": {
     "wins": 7.6,
@@ -7231,12 +7900,16 @@ window.SITE_DATA = {
    "rating": 1447.4,
    "rank_change": 0,
    "record": "5-4",
-   "next": null,
+   "next": {
+    "opp": "HOU",
+    "home": true,
+    "p_win": 0.436
+   },
    "bye": false,
    "odds": {
     "wins": 8.7,
     "losses": 8.3,
-    "playoff": 0.349,
+    "playoff": 0.353,
     "division": 0.037,
     "top_seed": 0.001
    }
@@ -7247,13 +7920,17 @@ window.SITE_DATA = {
    "rating": 1446.6,
    "rank_change": -3,
    "record": "3-6",
-   "next": null,
+   "next": {
+    "opp": "KC",
+    "home": true,
+    "p_win": 0.404
+   },
    "bye": false,
    "odds": {
     "wins": 6.4,
     "losses": 10.6,
-    "playoff": 0.189,
-    "division": 0.188,
+    "playoff": 0.188,
+    "division": 0.187,
     "top_seed": 0.0
    }
   },
@@ -7263,13 +7940,17 @@ window.SITE_DATA = {
    "rating": 1430.5,
    "rank_change": 0,
    "record": "3-5",
-   "next": null,
+   "next": {
+    "opp": "NO",
+    "home": false,
+    "p_win": 0.445
+   },
    "bye": false,
    "odds": {
     "wins": 6.5,
     "losses": 10.5,
-    "playoff": 0.213,
-    "division": 0.212,
+    "playoff": 0.214,
+    "division": 0.213,
     "top_seed": 0.0
    }
   },
@@ -7279,7 +7960,11 @@ window.SITE_DATA = {
    "rating": 1424.2,
    "rank_change": 0,
    "record": "2-5-1",
-   "next": null,
+   "next": {
+    "opp": "NYG",
+    "home": false,
+    "p_win": 0.349
+   },
    "bye": false,
    "odds": {
     "wins": 6.1,
@@ -7295,7 +7980,11 @@ window.SITE_DATA = {
    "rating": 1420.6,
    "rank_change": 2,
    "record": "3-5",
-   "next": null,
+   "next": {
+    "opp": "CAR",
+    "home": true,
+    "p_win": 0.555
+   },
    "bye": false,
    "odds": {
     "wins": 6.6,
@@ -7311,12 +8000,16 @@ window.SITE_DATA = {
    "rating": 1408.3,
    "rank_change": 0,
    "record": "4-5",
-   "next": null,
+   "next": {
+    "opp": "SEA",
+    "home": true,
+    "p_win": 0.287
+   },
    "bye": false,
    "odds": {
     "wins": 7.1,
     "losses": 9.9,
-    "playoff": 0.085,
+    "playoff": 0.086,
     "division": 0.008,
     "top_seed": 0.0
    }
@@ -7328,7 +8021,7 @@ window.SITE_DATA = {
    "rank_change": -2,
    "record": "2-7",
    "next": null,
-   "bye": false,
+   "bye": true,
    "odds": {
     "wins": 4.8,
     "losses": 12.2,
@@ -7343,12 +8036,16 @@ window.SITE_DATA = {
    "rating": 1389.9,
    "rank_change": 1,
    "record": "2-7",
-   "next": null,
+   "next": {
+    "opp": "MIA",
+    "home": true,
+    "p_win": 0.6
+   },
    "bye": false,
    "odds": {
     "wins": 5.1,
     "losses": 11.9,
-    "playoff": 0.008,
+    "playoff": 0.009,
     "division": 0.002,
     "top_seed": 0.0
    }
@@ -7359,7 +8056,11 @@ window.SITE_DATA = {
    "rating": 1389.5,
    "rank_change": 1,
    "record": "3-6",
-   "next": null,
+   "next": {
+    "opp": "LA",
+    "home": true,
+    "p_win": 0.282
+   },
    "bye": false,
    "odds": {
     "wins": 6.4,
@@ -7375,11 +8076,15 @@ window.SITE_DATA = {
    "rating": 1381.8,
    "rank_change": -2,
    "record": "0-8",
-   "next": null,
+   "next": {
+    "opp": "BAL",
+    "home": false,
+    "p_win": 0.422
+   },
    "bye": false,
    "odds": {
-    "wins": 3.1,
-    "losses": 13.9,
+    "wins": 3.3,
+    "losses": 13.7,
     "playoff": 0.001,
     "division": 0.0,
     "top_seed": 0.0
@@ -7391,7 +8096,11 @@ window.SITE_DATA = {
    "rating": 1367.4,
    "rank_change": 0,
    "record": "1-7",
-   "next": null,
+   "next": {
+    "opp": "IND",
+    "home": false,
+    "p_win": 0.4
+   },
    "bye": false,
    "odds": {
     "wins": 3.6,
@@ -7407,7 +8116,11 @@ window.SITE_DATA = {
    "rating": 1335.7,
    "rank_change": 0,
    "record": "2-7",
-   "next": null,
+   "next": {
+    "opp": "BUF",
+    "home": true,
+    "p_win": 0.143
+   },
    "bye": false,
    "odds": {
     "wins": 4.1,
@@ -7423,8 +8136,12 @@ window.SITE_DATA = {
    "rating": 1308.7,
    "rank_change": 0,
    "record": "1-7",
-   "next": null,
-   "bye": true,
+   "next": {
+    "opp": "JAX",
+    "home": true,
+    "p_win": 0.157
+   },
+   "bye": false,
    "odds": {
     "wins": 3.2,
     "losses": 13.8,

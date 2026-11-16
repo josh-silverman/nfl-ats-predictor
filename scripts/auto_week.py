@@ -1,7 +1,9 @@
 """The weekly routine on auto-pilot (run by .github/workflows/weekly.yml; decision #25). Safe to run by hand.
 
-    python scripts/auto_week.py --task lock            # daily: lock the next week once its first kickoff is < 30 h away
-    python scripts/auto_week.py --task qb --soft       # Saturday: QB-aware re-lock; --soft = "not ready yet" isn't an error
+    python scripts/auto_week.py --task lock            # twice daily: lock the next week once its first kickoff is < 30 h
+                                                       # away; if no week was locked, also run the QB step (soft)
+    python scripts/auto_week.py --task qb              # QB step only: final QB lock for each due game (decision #27)
+    python scripts/auto_week.py --task qb --soft       # ... and "report not in yet" isn't an error
     python scripts/auto_week.py --task score           # Tuesday: score the ledger (reports/live_2026.md)
     python scripts/auto_week.py --task site            # daily: just ask the workflow for a site rebuild
     python scripts/auto_week.py --task watch           # every run: fail if a game kicks off within 6 h unlocked
@@ -25,7 +27,7 @@ from pathlib import Path
 
 import pandas as pd
 
-from nfl_ats.auto import WATCH_MARGIN, locked_weeks, next_lock_week, next_qb_week, unlocked_soon
+from nfl_ats.auto import WATCH_MARGIN, locked_weeks, next_lock_week, qb_due_games, qb_locked_games, unlocked_soon
 from nfl_ats.data import PROJECT_ROOT
 from nfl_ats.ledger import EASTERN, InjuryReportNotReady, load_schedules_for_ledger, run_week
 
@@ -73,31 +75,49 @@ def main() -> None:
         script("score_ledger.py")
         return output(f"Score results ({today})")
 
+    if args.week and not args.dry_run:
+        parser.error("--week is only for dry runs; real locks always use the detected week")
     schedules = load_schedules_for_ledger(SEASON, refresh=True)
     now = pd.Timestamp.now(tz=EASTERN)
-    locked, qb_done = locked_weeks(SEASON)
+    messages = []
     if args.task == "lock":
-        week, mode = next_lock_week(schedules, SEASON, locked, now), "live"
-    else:
-        week, mode = next_qb_week(schedules, SEASON, locked, qb_done, now), "qb"
-    if args.week:
-        if not args.dry_run:
-            parser.error("--week is only for dry runs; real locks always use the detected week")
-        week = args.week
-    if week is None:
-        return print(f"Nothing to do for '{args.task}' right now.")
+        week = args.week or next_lock_week(schedules, SEASON, locked_weeks(SEASON)[0], now)
+        if week is None:
+            print("Lock: nothing to lock right now.")
+        else:
+            print(f"{'Dry run: ' if args.dry_run else ''}lock week {week}")
+            preds, path, qb_pts = run_week(schedules, SEASON, week, "live", now.to_pydatetime(), write=not args.dry_run)
+            report(preds, path, qb_pts)
+            messages.append(f"Lock week {week}")
+    if args.task == "qb" or not messages:  # a run that just locked a week skips the QB step (same news, same minute)
+        messages += qb_step(schedules, now, args.dry_run, args.week if args.task == "qb" else None,
+                            soft=args.soft or args.task == "lock")
+    if messages and not args.dry_run:
+        output("; ".join(messages))
 
-    print(f"{'Dry run: ' if args.dry_run else ''}{args.task} week {week}")
-    try:
-        preds, path, qb_pts = run_week(schedules, SEASON, week, mode, now.to_pydatetime(), write=not args.dry_run)
-    except InjuryReportNotReady as e:
-        if args.soft:
-            return print(f"Not yet: {e}")
-        raise
-    report(preds, path, qb_pts)
-    if args.dry_run:
-        return
-    output(f"Lock week {week}" if mode == "live" else f"QB lock week {week}")
+
+def qb_step(schedules: pd.DataFrame, now: pd.Timestamp, dry_run: bool, forced_week: int | None, soft: bool) -> list[str]:
+    """Final QB lock for every due game (auto.qb_due_games), one ledger/qb file per week. Returns commit-message parts."""
+    due = ({forced_week: None} if forced_week
+           else qb_due_games(schedules, SEASON, locked_weeks(SEASON)[0], qb_locked_games(SEASON), now))
+    if not due:
+        print("QB: no game is due for its final QB lock right now.")
+        return []
+    parts = []
+    for week, games in sorted(due.items()):
+        print(f"{'Dry run: ' if dry_run else ''}QB lock week {week}: due {sorted(games) if games else 'all unstarted'}")
+        try:
+            preds, path, qb_pts = run_week(schedules, SEASON, week, "qb", now.to_pydatetime(), write=not dry_run, games=games)
+        except InjuryReportNotReady as e:
+            if not soft:
+                raise
+            print(f"QB not yet: {e}")
+            continue
+        report(preds, path, qb_pts)
+        if games and len(preds) < len(games):
+            print(f"Waiting for reports: {sorted(games - set(preds['game_id']))}")
+        parts.append(f"QB lock week {week} ({len(preds)} game{'' if len(preds) == 1 else 's'})")
+    return parts
 
 
 if __name__ == "__main__":

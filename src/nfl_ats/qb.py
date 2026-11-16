@@ -95,6 +95,11 @@ def qb_unavailable(usual: pd.DataFrame, injuries: pd.DataFrame, rosters: pd.Data
     """qb_out = 1 if the No. 1 QB is Out/Doubtful on that week's injury report OR on the team's reserve list.
 
     Adds `reason` ("injured reserve", "reserve list", "out", "doubtful") and `player` (full name) for display.
+
+    Reserve list: the game week's roster, or, if nflverse hasn't published that team's roster for the week yet
+    (it lands Tue–Thu, so a Wednesday lock can miss it), the team's latest EARLIER roster week in the same season
+    (decision #27). `roster_week` records which week was used (NaN = no roster yet this season). Historical
+    weeks always have their own roster, so the backtest is unchanged.
     """
     inj = injuries.loc[(injuries["game_type"] == "REG") & injuries["report_status"].isin(OUT_STATUSES),
                        ["season", "week", "team", "gsis_id", "report_status"]].copy()
@@ -102,19 +107,32 @@ def qb_unavailable(usual: pd.DataFrame, injuries: pd.DataFrame, rosters: pd.Data
     res = rosters.loc[rosters["status"] == "RES", ["season", "week", "team", "gsis_id", "status_description_abbr"]].copy()
     res["reason_res"] = (res.pop("status_description_abbr") == "R01").map({True: "injured reserve", False: "reserve list"})
     names = rosters.drop_duplicates(["season", "gsis_id"])[["season", "gsis_id", "full_name"]]
-
-    out = usual.copy()
     for src in (inj, res):
         src["team"] = src["team"].replace(TEAM_MAP)
         src[["season", "week"]] = src[["season", "week"]].astype(int)
-        out = out.merge(src.drop_duplicates(["season", "week", "team", "gsis_id"]),
-                        left_on=["season", "week", "team", "usual_id"], right_on=["season", "week", "team", "gsis_id"],
-                        how="left", validate="many_to_one").drop(columns="gsis_id")
+
+    # Which roster week each game uses: the latest published week <= the game's week, per team-season.
+    published = rosters[["season", "week", "team"]].drop_duplicates().copy()
+    published["team"] = published["team"].replace(TEAM_MAP)
+    published = published.astype({"season": int, "week": int}).rename(columns={"week": "roster_week"})
+    out = usual.copy().astype({"season": int, "week": int})
+    out["_order"] = range(len(out))
+    out = pd.merge_asof(out.sort_values("week"), published.sort_values("roster_week"), left_on="week",
+                        right_on="roster_week", by=["season", "team"], direction="backward")
+    out = out.sort_values("_order").drop(columns="_order").reset_index(drop=True)
+
+    out = out.merge(inj.drop_duplicates(["season", "week", "team", "gsis_id"]),
+                    left_on=["season", "week", "team", "usual_id"], right_on=["season", "week", "team", "gsis_id"],
+                    how="left", validate="many_to_one").drop(columns="gsis_id")
+    out = out.merge(res.drop_duplicates(["season", "week", "team", "gsis_id"]).rename(columns={"week": "roster_week"}),
+                    left_on=["season", "roster_week", "team", "usual_id"],
+                    right_on=["season", "roster_week", "team", "gsis_id"],
+                    how="left", validate="many_to_one").drop(columns="gsis_id")
     out["reason"] = out["reason_res"].fillna(out["reason_inj"])
     out["qb_out"] = out["reason"].notna().astype(int)
     out = out.merge(names, left_on=["season", "usual_id"], right_on=["season", "gsis_id"], how="left").drop(columns="gsis_id")
     out = out.rename(columns={"full_name": "player"})
-    return out[["season", "week", "game_id", "team", "usual_id", "player", "qb_out", "reason"]]
+    return out[["season", "week", "game_id", "team", "usual_id", "player", "qb_out", "reason", "roster_week"]]
 
 
 def build_usual_flags(schedules: pd.DataFrame, seasons: list[int], refresh: bool = False) -> pd.DataFrame:

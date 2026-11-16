@@ -1,6 +1,7 @@
-# The weekly routine on auto-pilot (decisions #25, #26). Each run's GitHub log timestamps the lock it made.
+# The weekly routine on auto-pilot (decisions #25–#27). Each run's GitHub log timestamps the lock it made.
 #   lock  : twice daily, 13:23 and 19:23 UTC — locks the next week once its first kickoff is within 30 hours.
-#   qb    : Saturday 12:37 UTC (soft: "injury report not in yet" is fine) and 15:37 UTC (fails loudly → email).
+#           A run that locks nothing then does the QB step: each game kicking off within 36 hours whose two teams'
+#           final injury report and roster are out gets its final QB lock (Thursday, holiday and Saturday games too).
 #   score : Tuesday 11:47 UTC — scores the week.
 #   site  : daily 11:17 UTC — rebuilds the site so scores and closing lines show the morning after games.
 #   watch : the last step of EVERY run — fails (→ email) if a game kicks off within 6 hours with no lock.
@@ -15,8 +16,6 @@ on:
   schedule:
     - cron: "23 13 * * *"
     - cron: "23 19 * * *"
-    - cron: "37 12 * * 6"
-    - cron: "37 15 * * 6"
     - cron: "47 11 * * 2"
     - cron: "17 11 * * *"
   workflow_dispatch:
@@ -79,8 +78,6 @@ jobs:
         run: |
           case "$SCHEDULE" in
             "23 13 * * *" | "23 19 * * *") args="--task lock" ;;
-            "37 12 * * 6") args="--task qb --soft" ;;
-            "37 15 * * 6") args="--task qb" ;;
             "47 11 * * 2") args="--task score" ;;
             "17 11 * * *") args="--task site" ;;
             *)

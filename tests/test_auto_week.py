@@ -4,7 +4,7 @@ import unittest
 
 import pandas as pd
 
-from nfl_ats.auto import next_lock_week, next_qb_week, unlocked_soon
+from nfl_ats.auto import next_lock_week, qb_due_games, unlocked_soon
 
 ET = "America/New_York"
 
@@ -12,7 +12,8 @@ ET = "America/New_York"
 def _sched(games):
     """games: (week, gameday, gametime) tuples → a minimal nflverse-style schedule."""
     return pd.DataFrame([{"season": 2026, "game_type": "REG", "week": w, "gameday": d, "gametime": t,
-                          "home_team": "A", "away_team": "B"} for w, d, t in games])
+                          "game_id": f"2026_{w:02d}_{d[5:]}_{t}", "home_team": "A", "away_team": "B"}
+                         for w, d, t in games])
 
 
 WEEKS = _sched([(8, "2026-10-29", "20:15"), (8, "2026-11-01", "13:00"), (8, "2026-11-02", "20:15"),
@@ -42,11 +43,27 @@ class TestAutoWeek(unittest.TestCase):
         sun = pd.Timestamp("2026-11-01 09:00", tz=ET)                     # Thursday game already played
         self.assertEqual(next_lock_week(WEEKS, 2026, {7}, sun), 8)        # remaining games still get locked
 
-    def test_qb_week_needs_a_lock_and_no_qb_file(self):
+    def test_qb_games_need_a_lock_no_qb_row_and_a_near_kickoff(self):
         sat = pd.Timestamp("2026-10-31 08:00", tz=ET)
-        self.assertEqual(next_qb_week(WEEKS, 2026, {8}, set(), sat), 8)
-        self.assertIsNone(next_qb_week(WEEKS, 2026, {8}, {8}, sat))       # already re-locked
-        self.assertIsNone(next_qb_week(WEEKS, 2026, set(), set(), sat))   # never locked: nothing to re-lock
+        sun1, mon = "2026_08_11-01_13:00", "2026_08_11-02_20:15"
+        self.assertEqual(qb_due_games(WEEKS, 2026, {8}, set(), sat), {8: {sun1}})   # Monday's game is 60 h away
+        self.assertEqual(qb_due_games(WEEKS, 2026, {8}, {sun1}, sat), {})           # already has a QB row
+        self.assertEqual(qb_due_games(WEEKS, 2026, set(), set(), sat), {})          # never locked: nothing to re-lock
+        sun = pd.Timestamp("2026-11-01 14:00", tz=ET)
+        self.assertEqual(qb_due_games(WEEKS, 2026, {8}, {sun1}, sun), {8: {mon}})   # Monday's turn comes Sunday
+
+    def test_thanksgiving_week_gets_qb_locks_before_each_game(self):
+        """2026 week 12: Wed night, three Thursday games, a Friday game, then Sunday. Each is due a day-ish ahead."""
+        wk = _sched([(12, "2026-11-25", "20:00"), (12, "2026-11-26", "13:00"), (12, "2026-11-26", "16:30"),
+                     (12, "2026-11-26", "20:20"), (12, "2026-11-27", "15:00"), (12, "2026-11-29", "13:00")])
+        wed = pd.Timestamp("2026-11-25 08:23", tz=ET)                     # the 13:23 UTC run
+        due = qb_due_games(wk, 2026, {12}, set(), wed)[12]
+        self.assertEqual(len(due), 4)                                     # Wed + all three Thanksgiving games
+        thu = pd.Timestamp("2026-11-26 08:23", tz=ET)
+        self.assertIn("2026_12_11-27_15:00", qb_due_games(wk, 2026, {12}, due, thu)[12])  # Friday's game next
+        sunday = "2026_12_11-29_13:00"
+        self.assertNotIn(sunday, qb_due_games(wk, 2026, {12}, due, thu)[12])          # Sunday waits for Saturday
+        self.assertIn(sunday, qb_due_games(wk, 2026, {12}, due, pd.Timestamp("2026-11-28 08:23", tz=ET))[12])
 
     def test_watchdog_alarms_only_for_unlocked_weeks_close_to_kickoff(self):
         thu_noon = pd.Timestamp("2026-10-29 12:00", tz=ET)                # 8 h 15 m before TNF

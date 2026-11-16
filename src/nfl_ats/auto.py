@@ -2,7 +2,9 @@
 
 - lock: the earliest regular-season week with no live ledger file, once its next kickoff is within LOCK_WINDOW.
   A daily run then catches normal Thursdays, Thanksgiving (early kickoff, locked Wednesday) and odd holiday days.
-- qb: the earliest locked week that still has games to play and no Saturday QB file yet.
+- qb (decision #27): per GAME, not per week. A game is due for its final QB lock once it is in a locked week, hasn't
+  started, kicks off within QB_WINDOW, and has no row in ledger/qb yet. Whether its teams' final report and roster
+  are published is checked at run time (ledger.qb_ready_teams); not-ready games wait for the next run.
 """
 
 from pathlib import Path
@@ -36,12 +38,22 @@ def next_lock_week(schedules: pd.DataFrame, season: int, locked: set[int], now: 
     return week if up.loc[up["week"] == week, "kickoff"].min() - now <= window else None
 
 
-def next_qb_week(schedules: pd.DataFrame, season: int, locked: set[int], qb_done: set[int],
-                 now: pd.Timestamp) -> int | None:
-    """The week to re-lock with Saturday QB news, or None: earliest locked week with games left and no QB file."""
+QB_WINDOW = pd.Timedelta(hours=36)  # final statuses come out 1–2 days before kickoff (Friday for Sunday games)
+
+
+def qb_due_games(schedules: pd.DataFrame, season: int, locked: set[int], qb_done: set[str], now: pd.Timestamp,
+                 window: pd.Timedelta = QB_WINDOW) -> dict[int, set[str]]:
+    """{week: game_ids} due for their final QB lock: in a locked week, not started, kickoff within `window`,
+    and no ledger/qb row yet. May span two weeks (e.g. a Monday game and next Thursday's)."""
     up = _upcoming(schedules, season, now)
-    weeks = sorted(w for w in up["week"].unique() if w in locked and w not in qb_done)
-    return int(weeks[0]) if weeks else None
+    due = up[up["week"].isin(locked) & ~up["game_id"].isin(qb_done) & (up["kickoff"] - now <= window)]
+    return {int(w): set(g["game_id"]) for w, g in due.groupby("week")}
+
+
+def qb_locked_games(season: int, ledger_dir: Path = LEDGER_DIR) -> set[str]:
+    """game_ids that already have a row in a ledger/qb file."""
+    files = sorted((ledger_dir / "qb").glob(f"{season}_wk*.csv"))
+    return set(pd.concat([pd.read_csv(f, usecols=["game_id"]) for f in files])["game_id"]) if files else set()
 
 
 WATCH_MARGIN = pd.Timedelta(hours=6)

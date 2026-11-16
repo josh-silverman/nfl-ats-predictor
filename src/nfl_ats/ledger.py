@@ -4,9 +4,12 @@
   masked before Elo runs, so the same code serves the live weekly run and the pseudo-live backfill.
 - A game is never predicted after its kickoff. Games that have already started are skipped and counted.
 - Ledger files are never overwritten.
-- From 2026 Week 8 the deliverable is the QB-adjusted Elo (H4, decision #21). Thursday's live file carries it with
-  Thursday's injury news; a Saturday `ledger/qb/` file re-locks it for unstarted games once final statuses are out.
-  Per game, the LATEST QB lock made before kickoff counts (fixed before any Week 8 result). Raw Elo stays recorded.
+- From 2026 Week 8 the deliverable is the QB-adjusted Elo (H4, decision #21). The week's live lock carries it with
+  that day's injury news; `ledger/qb/` files re-lock it with final statuses. Per game, the LATEST QB lock made before
+  kickoff counts (fixed before any Week 8 result). Raw Elo stays recorded.
+- From Week 11 (decision #27) QB locks roll per game: each game is re-locked once BOTH teams' final injury report and
+  weekly roster for that week are published and kickoff is near (auto.QB_WINDOW), so Thursday, holiday and Saturday
+  games get final QB news too, not only the weekend.
 """
 
 from datetime import datetime
@@ -52,11 +55,12 @@ def check_prior_weeks_final(schedules: pd.DataFrame, season: int, week: int) -> 
 
 
 def predict_week(schedules: pd.DataFrame, season: int, week: int, now: datetime, mode: str = "live",
-                 qb: tuple[pd.DataFrame, int] | None = None) -> pd.DataFrame:
+                 qb: tuple[pd.DataFrame, int] | None = None, only: set[str] | None = None) -> pd.DataFrame:
     """Predictions for every not-yet-started game in `week`, using only results from earlier weeks.
 
     mode="live": `now` is the real clock. mode="backfill": `now` is that week's first kickoff (pseudo-live).
     qb: (this week's qb.build_usual_flags rows, QB_PTS fit on earlier seasons) adds the QB-adjusted columns.
+    only: restrict to these game_ids (the rolling QB lock). Started games are still skipped and counted.
     """
     check_prior_weeks_final(schedules, season, week)
     known = as_of(schedules[schedules["season"].between(FIRST_SEASON, season)], season, week)
@@ -64,6 +68,8 @@ def predict_week(schedules: pd.DataFrame, season: int, week: int, now: datetime,
     model = fit_fold(table, WIN_FEATURES, test_season=season)  # trained on 2016 .. season-1 only
 
     games = table[(table["season"] == season) & (table["week"] == week)].copy()
+    if only is not None:
+        games = games[games["game_id"].isin(only)]
     reg_week = schedules[(schedules["season"] == season) & (schedules["week"] == week) & (schedules["game_type"] == "REG")]
     games = games.merge(reg_week[["game_id", "gametime"]], on="game_id", how="left", validate="one_to_one")
     games["kickoff_et"] = kickoff_times(games)
@@ -91,13 +97,20 @@ def predict_week(schedules: pd.DataFrame, season: int, week: int, now: datetime,
 
 
 def add_qb_columns(out: pd.DataFrame, games: pd.DataFrame, flags: pd.DataFrame, qb_pts: int) -> pd.DataFrame:
-    """H4 columns: each side's No. 1 QB (name), whether he's out, QB_PTS, and the adjusted spread and probability."""
+    """H4 columns: each side's No. 1 QB (name), whether he's out, QB_PTS, and the adjusted spread and probability.
+
+    Audit columns: each side's reason (injured reserve / reserve list / out / doubtful) and the roster week used
+    (it differs from `week` when that week's roster wasn't published yet; decision #27).
+    """
     out = out.copy()
+    flags = flags.assign(**{c: flags[c] if c in flags else np.nan for c in ["reason", "roster_week"]})
     for side in ["home", "away"]:
-        f = flags[["game_id", "team", "player", "qb_out"]].rename(
-            columns={"team": f"{side}_team", "player": f"{side}_qb", "qb_out": f"{side}_qb_out"})
+        f = flags[["game_id", "team", "player", "qb_out", "reason", "roster_week"]].rename(
+            columns={"team": f"{side}_team", "player": f"{side}_qb", "qb_out": f"{side}_qb_out",
+                     "reason": f"{side}_qb_reason", "roster_week": f"{side}_roster_week"})
         out = out.merge(f, on=["game_id", f"{side}_team"], how="left", validate="one_to_one")
         out[f"{side}_qb_out"] = out[f"{side}_qb_out"].fillna(0).astype(int)
+        out[f"{side}_roster_week"] = out[f"{side}_roster_week"].astype("Int64")
     adj = games[["game_id", "elo_diff"]].merge(out[["game_id", "home_qb_out", "away_qb_out"]], on="game_id")
     adj_diff = adj["elo_diff"] - qb_pts * adj["home_qb_out"] + qb_pts * adj["away_qb_out"]
     out["qb_pts"] = qb_pts
@@ -170,38 +183,48 @@ def attach_qb(ledger: pd.DataFrame, season: int = 2026, ledger_dir: Path = LEDGE
 
 
 class InjuryReportNotReady(ValueError):
-    """The Friday injury report (game statuses) isn't in the nflverse data yet."""
+    """No waiting game has both teams' final injury report and weekly roster in the nflverse data yet."""
 
 
-def check_final_injury_report(injuries: pd.DataFrame, season: int, week: int, teams: list[str]) -> None:
-    """Saturday lock guard: refuse if most teams still lack game statuses for `week` (nflverse not updated yet)."""
-    wk = injuries[(injuries["season"] == season) & (injuries["week"] == week) & injuries["report_status"].notna()]
-    have = set(wk["team"]) & set(teams)
-    if len(have) < len(teams) / 2:
-        raise InjuryReportNotReady(f"Only {len(have)} of {len(teams)} teams have final injury statuses for week {week}. "
-                         "The Friday report isn't in the data yet; try again later.")
+def qb_ready_teams(injuries: pd.DataFrame, rosters: pd.DataFrame, season: int, week: int) -> set[str]:
+    """Teams whose final game statuses AND weekly roster for `week` are published: the QB lock's guard (decision #27).
+
+    Game statuses (Out/Doubtful/Questionable) only appear on the final report, 1–2 days before kickoff. A team with
+    no players listed at all never qualifies; its game keeps its earlier lock.
+    """
+    from nfl_ats.data import TEAM_MAP
+    inj = injuries[(injuries["season"] == season) & (injuries["week"] == week) & injuries["report_status"].notna()]
+    ros = rosters[(rosters["season"] == season) & (rosters["week"] == week)]
+    return set(inj["team"].replace(TEAM_MAP)) & set(ros["team"].replace(TEAM_MAP))
 
 
 def run_week(schedules: pd.DataFrame, season: int, week: int, mode: str, now: datetime | None = None,
-             write: bool = True) -> tuple[pd.DataFrame, Path | None, int | None]:
+             write: bool = True, games: set[str] | None = None) -> tuple[pd.DataFrame, Path | None, int | None]:
     """One weekly run (the body of scripts/predict_week.py): predict, and write the ledger file unless write=False.
 
-    mode "live" (Thursday lock), "qb" (Saturday re-lock; refuses until the Friday injury report is in), or "backfill".
+    mode "live" (the week's lock), "qb" (QB re-lock), or "backfill". For "qb", only unstarted games (of `games`, if
+    given) whose two teams pass qb_ready_teams are written; raises InjuryReportNotReady if none do yet.
     Returns (predictions, path written or None, QB_PTS or None).
     """
-    from nfl_ats.data import load_injuries
+    from nfl_ats.data import load_injuries, load_rosters_weekly
     week_games = schedules[(schedules["season"] == season) & (schedules["week"] == week) & (schedules["game_type"] == "REG")]
     if mode == "backfill":
         now = kickoff_times(week_games).min() - pd.Timedelta(minutes=1)
     now = now or datetime.now(EASTERN)
-    qb = None
+    qb, only = None, None
     if mode != "backfill":
-        qb = qb_for_week(schedules, season, week)
+        qb = qb_for_week(schedules, season, week)  # refreshes this season's injuries and rosters
         if mode == "qb":
-            upcoming = week_games[kickoff_times(week_games) > now]
-            check_final_injury_report(load_injuries([season], refresh=True), season, week,
-                                      upcoming["home_team"].tolist() + upcoming["away_team"].tolist())
-    preds = predict_week(schedules, season, week, now, mode, qb=qb)
+            waiting = week_games if games is None else week_games[week_games["game_id"].isin(games)]
+            waiting = waiting[kickoff_times(waiting) > now]
+            ready = qb_ready_teams(load_injuries([season]), load_rosters_weekly([season]), season, week)
+            ok = waiting["home_team"].isin(ready) & waiting["away_team"].isin(ready)
+            if not ok.any():
+                raise InjuryReportNotReady(
+                    f"Week {week}: none of {waiting['game_id'].tolist()} has both teams' final injury report and roster "
+                    "in the data yet; try again later.")
+            only = set(waiting.loc[ok, "game_id"])
+    preds = predict_week(schedules, season, week, now, mode, qb=qb, only=only)
     path = write_ledger(preds, ledger_path(season, week, mode, now)) if write else None
     return preds, path, None if qb is None else qb[1]
 

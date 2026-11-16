@@ -81,13 +81,26 @@ class TestUsualStarter(unittest.TestCase):
                               "usual_id": "a1"})
         inj = pd.DataFrame({"season": [2020.0, 2020.0], "week": [6.0, 8.0], "team": ["A", "A"], "gsis_id": ["a1", "a1"],
                             "game_type": ["REG", "REG"], "report_status": ["Questionable", "Doubtful"]})
-        rost = pd.DataFrame({"season": 2020, "week": [6, 7], "team": "A", "gsis_id": "a1", "full_name": "Al One",
-                             "status": ["ACT", "RES"], "status_description_abbr": ["A01", "R01"]})
+        rost = pd.DataFrame({"season": 2020, "week": [6, 7, 8], "team": "A", "gsis_id": "a1", "full_name": "Al One",
+                             "status": ["ACT", "RES", "ACT"], "status_description_abbr": ["A01", "R01", "A01"]})
         f = qb_unavailable(usual, inj, rost).set_index("week")
         self.assertEqual(f.loc[6, "qb_out"], 0)
         self.assertEqual((f.loc[7, "qb_out"], f.loc[7, "reason"]), (1, "injured reserve"))
         self.assertEqual((f.loc[8, "qb_out"], f.loc[8, "reason"]), (1, "doubtful"))
         self.assertEqual(f.loc[7, "player"], "Al One")
+        self.assertEqual(f["roster_week"].tolist(), [6, 7, 8])         # each game used its own week's roster
+
+    def test_unpublished_roster_falls_back_to_the_latest_earlier_week(self):
+        """Week 9's roster isn't out yet (a Wednesday lock): the week-8 reserve listing still flags the QB."""
+        usual = pd.DataFrame({"season": 2026, "week": [8, 9], "game_id": ["g8", "g9"], "team": "PHI", "usual_id": "h1"})
+        inj = pd.DataFrame(columns=["season", "week", "team", "gsis_id", "game_type", "report_status"])
+        rost = pd.DataFrame({"season": [2025, 2026], "week": [17, 8], "team": "PHI", "gsis_id": "h1",
+                             "full_name": "Jay Hurt", "status": ["ACT", "RES"], "status_description_abbr": ["A01", "R01"]})
+        f = qb_unavailable(usual, inj, rost).set_index("week")
+        self.assertEqual((f.loc[9, "qb_out"], f.loc[9, "reason"], f.loc[9, "roster_week"]), (1, "injured reserve", 8))
+        week1 = qb_unavailable(usual.assign(week=1), inj, rost)            # no 2026 roster yet: never borrows 2025's
+        self.assertTrue(week1["roster_week"].isna().all())
+        self.assertEqual(week1["qb_out"].sum(), 0)
 
 
 if __name__ == "__main__":

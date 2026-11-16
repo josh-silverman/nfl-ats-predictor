@@ -9,9 +9,8 @@ import pandas as pd
 
 import numpy as np
 
-from nfl_ats.ledger import (EASTERN, MODEL_COLUMNS, as_of, attach_qb, check_final_injury_report, live_report, load_qb_ledger,
-                            market_move_summary, market_moves,
-                            predict_week, score_ledger, write_ledger)
+from nfl_ats.ledger import (EASTERN, MODEL_COLUMNS, as_of, attach_qb, live_report, load_qb_ledger, market_move_summary,
+                            market_moves, predict_week, qb_ready_teams, score_ledger, write_ledger)
 from tests.test_win_model import _schedules
 
 
@@ -127,11 +126,36 @@ class TestQbLedger(unittest.TestCase):
             merged = attach_qb(live, 2026, d)
             self.assertEqual((merged.loc[0, "p_elo"], merged.loc[0, "p_elo_qb"]), (0.6, 0.49))
 
-    def test_saturday_lock_refuses_without_final_statuses(self):
-        inj = pd.DataFrame({"season": 2026, "week": 8, "team": ["A", "B", "C"], "report_status": [None, None, "Out"]})
-        with self.assertRaises(ValueError):
-            check_final_injury_report(inj, 2026, 8, ["A", "B", "C", "D"])
-        check_final_injury_report(inj.assign(report_status="Out"), 2026, 8, ["A", "B", "C", "D"])
+    def test_qb_lock_needs_final_statuses_and_the_weeks_roster(self):
+        inj = pd.DataFrame({"season": 2026, "week": [8, 8, 8, 7], "team": ["A", "B", "C", "D"],
+                            "report_status": [None, "Out", "Questionable", "Out"]})
+        rost = pd.DataFrame({"season": 2026, "week": [8, 8, 7, 8], "team": ["A", "B", "C", "D"]})
+        # A: practice report only. C: roster not out for week 8. D: statuses only for last week.
+        self.assertEqual(qb_ready_teams(inj, rost, 2026, 8), {"B"})
+
+    def test_only_restricts_to_the_chosen_games(self):
+        s = _with_2019_live()
+        week3 = predict_week(s, 2019, 3, NOW)
+        pick = {week3.loc[0, "game_id"]}
+        out = predict_week(s, 2019, 3, NOW, only=pick)
+        self.assertEqual(set(out["game_id"]), pick)
+        self.assertEqual(out.loc[0, "p_elo"], week3.loc[0, "p_elo"])  # same numbers, just fewer games
+
+    def test_rolling_qb_files_resolve_per_game(self):
+        """Thursday's game is re-locked Thursday, Sunday's on Saturday: each keeps its own latest QB lock."""
+        with tempfile.TemporaryDirectory() as d:
+            d = Path(d)
+            (d / "qb").mkdir()
+            base = {"home_qb": "A", "away_qb": "B", "home_qb_out": 0, "away_qb_out": 0, "qb_pts": 90,
+                    "elo_spread_qb": 1.0, "p_elo": 0.55}
+            pd.DataFrame([{**base, "game_id": g, "p_elo_qb": 0.55, "pulled_at_et": "2026-11-18 15:00:00"} for g in ["thu", "sun"]]
+                         ).to_csv(d / "2026_wk11_20261118T150000.csv", index=False)
+            pd.DataFrame([{**base, "game_id": "thu", "p_elo_qb": 0.40, "pulled_at_et": "2026-11-19 10:00:00"}]
+                         ).to_csv(d / "qb" / "2026_wk11_qb_20261119T100000.csv", index=False)
+            pd.DataFrame([{**base, "game_id": "sun", "p_elo_qb": 0.62, "pulled_at_et": "2026-11-21 09:00:00"}]
+                         ).to_csv(d / "qb" / "2026_wk11_qb_20261121T090000.csv", index=False)
+            q = load_qb_ledger(2026, d).set_index("game_id")
+            self.assertEqual((q.loc["thu", "p_elo_qb"], q.loc["sun", "p_elo_qb"]), (0.40, 0.62))
 
 
 

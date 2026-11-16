@@ -369,3 +369,33 @@ Each test is a single change to **raw Elo, the deliverable**, judged with `compa
 
 - **Week 18 changes over 20 pts (7 team-seasons):** 2022 GB 45 → 67% (missed), 2022 PIT 39 → 16% (missed), 2023 NO 59 → 25% (missed), 2024 DEN 70 → 47% (made), 2025 BAL 25 → 50% (missed), 2025 CAR 61 → 88% (made), 2025 PIT 75 → 50% (made). In each "win and in" case the new number is close to Elo's chance of winning that one game, which is the right structure; whether it scores better then depends on that game's result.
 - **Reading:** no detectable accuracy change on this sample. Kept for correctness (decision #28), not for a metric. Week 18 reliability (new): <10% predicted 0.2% → 1.8% made (111 teams); 10–40%: 21% → 8% (13); 40–75%: 56% → 62% (13); 75–99.9%: 82% → 71% (7); locked in: 100% → 100% (80).
+
+### Older test bed · data audit (2026-11-16) · go/no-go for testing on never-viewed seasons
+- **Why:** 2019–2025 has been viewed for 8 win-model experiments, so its CIs overstate how sure we can be. Seasons before 2016 have never been scored for the win model (2015 was only Elo warm-up and the ATS prior).
+- **Schedules (1999–2015):** scores and spreads 100% every season. Moneylines: none 1999–2005, 72–100% in 2006–2009, **100% from 2010**.
+- **Injury reports:** start in **2009**. QB Out/Doubtful rows 28–53 per season. `date_modified` is missing for all of 2009; **2010–2015: 100% modified before kickoff** (median 54.5 h). ✅ for 2010–2015.
+- **Weekly rosters:** start in 2002, but **fail the pre-game check before 2016**:
+  - Starters listed RES (reserve) in the same week they played: 2008 7, 2009 26, 2010 39, 2011 25, 2012 15, 2013 7, 2014 8, 2015 13. From 2016 on: **0**.
+  - Coverage: every season 2008–2015 has rosters for 432 of 512 team-weeks with a game; 2016 has 512/512.
+  - `status_description_abbr` is empty before 2016, so injured reserve can't be told apart from other reserve lists.
+  - Built anyway, H4 flags on 2009–2015 include **102 "unavailable" QBs who threw 10+ passes that week** (0 in the 2016–2025 audit).
+- **Verdict:**
+  - **NO-GO: replicating H4 (injury report + reserve list) before 2016.** The roster source is not a pre-game snapshot there.
+  - **GO: a score-only test bed, 2003–2015** (Elo warm-up 1999–2002; 13 seasons, about 3,300 games, never viewed for the win model). Valid for changes that need only final scores and the schedule: home-field (H6) and Elo mechanics. The market benchmark exists only from 2010, so it's reported on 2010–2015 only.
+  - **Partial: injury-report-only QB flags, 2010–2015** (timing clean, about 130 flags). Usable as a secondary check for a QB-quality idea (H7), not as a replication of H4.
+- Not a model experiment (no outcomes scored). Win-model experiment count stays **8**.
+
+### H6 · PRE-REGISTERED 2026-11-16, approved by Josh before running · Long-memory home field on the never-viewed 2003–2015 test bed
+- **Why:** both models over-predict home wins (+3.0 pts in 2019–2025, +12 live in 2026). H1 (trailing **3**-season home field) was rejected: it chased year-to-year noise. A long window should average the noise out while still tracking slow trends.
+- **Nothing about 2003–2015 outcomes has been computed.** Only data coverage was checked (audit above). Prior knowledge, stated up front: home-field advantage is commonly cited as about 2.5–3 points before 2020 and lower since; Elo's fixed 48 ≈ 1.9 points.
+- **The change (single change from raw Elo):** home field for season *s* = mean home margin in regular-season, non-neutral games over seasons *s−10 … s−1* (fewer if the data starts later; 1999 is the first season loaded) × 25 Elo per point. Computed by the existing `elo.trailing_home_field(games, window=10)`. Used both for the pregame probability and in Elo's updates, as in H1. Nothing is fit; the window of **10** is fixed here and never tuned.
+- **Baseline:** raw Elo (fixed 48). The live deliverable is H4 (QB-adjusted), but QB flags can't be built before 2016 (audit). The QB adjustment is added to the same Elo gap, so the two changes stack and can be combined later.
+- **Data:** Elo runs from 1999 (warm-up 1999–2002). **Test seasons 2003–2015**, all decided regular-season games; ties excluded and counted.
+- **Keep rule (all four needed; fixed here):**
+  1. Paired log loss H6 − raw Elo, 95% CI upper bound **< 0**.
+  2. Log loss better in **≥ 9 of 13** seasons.
+  3. Pooled |calibration-in-the-large| (mean p − home-win rate) **smaller** than raw Elo's.
+  4. **AUC not worse by more than 0.002.** This replaces "higher AUC": a league-wide home-field shift barely changes how games are ranked, so it can't raise AUC (H1's own note); the guard still stops a change that damages ranking.
+- **Also reported, not judged:** home field by season (Elo points), calibration-in-the-large by season, Brier, accuracy, and both models vs. the schedule moneyline on 2010–2015 (moneylines start then). Secondary, viewed seasons: the same comparison on 2019–2025 (+ H4 on top), and 2026 live so far, labeled as viewed.
+- **If kept:** Josh decides whether it goes live mid-2026 (as a new locked column from the next week, raw Elo and H4 still recorded) or from 2027. **If rejected:** nothing changes; logged with the lesson.
+- **Count:** win-model experiment #9 (first on this test bed).

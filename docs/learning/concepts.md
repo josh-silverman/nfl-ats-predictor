@@ -125,3 +125,11 @@ At the end of each phase, 3–6 bullets are added with the points worth remember
 - **Rare-but-real signals need coverage, not cleverness.** The QB idea would need more flagged games (e.g. starters moved to injured reserve, who vanish from the weekly report) before it could prove itself.
 - **Interview line:** "I tried three pre-registered improvements on a simple Elo model: an adaptive home field, QB availability, and EPA. Each had a plausible story, and two pointed the right way, but none beat Elo out of sample with confidence. So I kept the simpler model and documented the near-misses as future work."
 
+
+## Step 7: Offseason experiments and the limits of a reused test set
+- **Fresh data beats another test on old data.** 2019–2025 now carries 11 experiments, so its 95% CIs overstate certainty. The audit found a never-viewed, score-only test bed (2003–2015), and it gave the cleanest answer of the sprint (H6).
+- **Audit a data source's timing before trusting it.** Pre-2016 weekly rosters list starters on the reserve list in the same week they played, every season. Built anyway, they'd have "flagged" 102 QBs who threw 10+ passes. One leak query decided go/no-go.
+- **Compare a bias with sampling noise before trying to fix it.** Season-level home-team bias (SD ≈ 2.4 pts) is about as big as a 255-game season's chance wobble (≈ 3.1 pts), so no rule based on past seasons can track it (H1, H6).
+- **Let the fit tell you a feature is empty.** H7's per-fold fit chose a QB-quality weight of 0 in 6 of 7 folds: *who* is missing matters; *how good he was* adds nothing Elo doesn't already know.
+- **Verify the motivating anecdote in raw data.** The "Huntley bug" that motivated H8 wasn't a bug: Jackson was also on the reserve list. One roster query would have caught it (mistake #13).
+- **Interview line:** "After the model shipped, I tested four more ideas. Each was pre-registered and run once, and three used a fresh or narrower dataset when the old test set was worn out. All four were rejected by rules fixed in advance. The useful output was knowing *why*: home-field swings are noise, QB availability matters but QB quality adds nothing, and one premise was wrong because I hadn't checked the raw data."

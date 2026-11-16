@@ -4,7 +4,7 @@ window.SITE_DATA = {
   "title": "Josh's NFL Elo",
   "season": 2026,
   "repo": "https://github.com/josh-silverman/nfl-ats-predictor",
-  "generated": "Nov 16, 2026 10:28 AM ET",
+  "generated": "Nov 16, 2026 11:03 AM ET",
   "current_week": 10
  },
  "teams": {
@@ -7640,7 +7640,8 @@ window.SITE_DATA = {
    "Honest range for our hit rate so far: 56% to 77% (small samples swing a lot).",
    "When we gave a team 60%+ to win, we expected about 71% of them to win. 69% did (35 of 51).",
    "Full details: reports/live_2026.md on GitHub."
-  ]
+  ],
+  "calibration": null
  },
  "rankings": [
   {

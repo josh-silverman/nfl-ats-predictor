@@ -399,3 +399,30 @@ Each test is a single change to **raw Elo, the deliverable**, judged with `compa
 - **Also reported, not judged:** home field by season (Elo points), calibration-in-the-large by season, Brier, accuracy, and both models vs. the schedule moneyline on 2010–2015 (moneylines start then). Secondary, viewed seasons: the same comparison on 2019–2025 (+ H4 on top), and 2026 live so far, labeled as viewed.
 - **If kept:** Josh decides whether it goes live mid-2026 (as a new locked column from the next week, raw Elo and H4 still recorded) or from 2027. **If rejected:** nothing changes; logged with the lesson.
 - **Count:** win-model experiment #9 (first on this test bed).
+- **Result (run once, 2026-11-16, after commit bdcb7ea):** 3,324 decided test games 2003–2015, 4 ties excluded. Elo runs from 1999.
+  - **Home field used (Elo pts):** 63–71 in 2003–2015 (fixed Elo uses 48); for the viewed seasons 2019 62, 2020 56, 2021 52, 2022 47, 2023 46, 2024 45, 2025 43.
+  - **Primary, H6 − raw Elo:** log loss **+0.0003 [−0.0015, +0.0020]**, better in **7/13** seasons, AUC 0.6912 → 0.6907, Brier +0.0001, accuracy −0.1 pts [−0.9, +0.6].
+  - **Calibration-in-the-large (pooled):** raw Elo **−1.19 pts** (under-predicts home teams in this era), H6 **+1.10 pts** (over-corrects).
+  - **Keep checks:** 1 CI < 0 ✗ · 2 ≥ 9/13 ✗ · 3 smaller |bias| ✓ · 4 AUC within 0.002 ✓ → **FAILS the keep rule.**
+
+  | Season | HF (Elo) | Log-loss diff | Bias Elo | Bias H6 | Home-win rate |
+  |---|---|---|---|---|---|
+  | 2003 | 63 | −0.0038 | −5.4 | −3.3 | 0.613 |
+  | 2004 | 69 | +0.0016 | −0.7 | +2.1 | 0.566 |
+  | 2005 | 68 | −0.0021 | −3.7 | −1.0 | 0.590 |
+  | 2006 | 71 | +0.0070 | +3.6 | +6.6 | 0.531 |
+  | 2007 | 65 | −0.0008 | −1.6 | +0.6 | 0.574 |
+  | 2008 | 66 | +0.0001 | −1.4 | +0.9 | 0.573 |
+  | 2009 | 66 | −0.0004 | −1.3 | +0.9 | 0.570 |
+  | 2010 | 64 | +0.0014 | −0.1 | +2.0 | 0.559 |
+  | 2011 | 62 | +0.0005 | −0.2 | +1.6 | 0.566 |
+  | 2012 | 65 | −0.0003 | −1.5 | +0.7 | 0.573 |
+  | 2013 | 66 | −0.0030 | −4.2 | −1.9 | 0.600 |
+  | 2014 | 65 | −0.0003 | −0.9 | +1.2 | 0.569 |
+  | 2015 | 65 | +0.0038 | +1.7 | +3.8 | 0.539 |
+
+  - **vs. the market, 2010–2015 (1,533 games):** raw Elo +0.0145 [+0.0045, +0.0244], H6 +0.0149 [+0.0044, +0.0245]. The market's bias is +0.58 pts. Elo's gap to the market here is about half its 2019–2025 gap (+0.030).
+  - **Secondary, viewed 2019–2025:** H6 − Elo +0.0010 [+0.0001, +0.0019], 3/7 seasons, bias +2.96 → +3.24 pts. H4+H6 − H4: +0.0010 [+0.0001, +0.0019], 3/7, bias +2.95 → +3.22 (QB_PTS by fold unchanged in spirit: 60–95).
+- **Lesson:** season-level home-team bias looks like sampling noise. Raw Elo's per-season bias on 2003–2015 has an SD of about 2.4 pts; a 255-game season's home-win rate has a binomial SD of about 3.1 pts from chance alone. So no as-of home-field rule can track it: H1 (3 seasons) chased noise, and H6 (10 seasons) just moved the long-run level from −1.2 to +1.1. The era-level shift (≈ 65 Elo before 2016, ≈ 45 since) is real but slow, and the fixed 48 sits between the eras. The 2026 live +12 pts on 70 games is about 2 sampling SDs (±6 pts) and should be read the same way.
+- **Decision (Josh, 2026-11-16): REJECTED** by the pre-registered keep rule (decision #29). Elo's fixed home field of 48 stays.
+- **Win-model experiment count: 9** (the first on the 2003–2015 test bed).

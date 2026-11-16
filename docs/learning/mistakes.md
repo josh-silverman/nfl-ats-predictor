@@ -56,3 +56,8 @@ What broke, and what it taught me.
 - **What happened:** the weekly workflow ran `predict_week` → `build_site.py` → commit. The lock badge reads each ledger file's *first commit*, which didn't exist yet, so every freshly locked week went live as "Not committed yet" (Week 10, Nov 11–14). The manual routine had the same order. The site also only rebuilt on lock, QB lock and Tuesday scoring, so Sunday scores didn't show until Tuesday.
 - **Lesson:** when a step reads evidence that a later step creates, the order is part of the correctness. Check the published output after automating, not just the run's green tick.
 - **Fix:** the workflow commits and pushes the ledger first, then builds the site from it, and a daily run rebuilds the site. `build_site.py` writes nothing when only the timestamp would change, so the daily run makes no empty commits.
+
+## 12. Treated a noisy season-level bias as a fixable signal (H1, H6)
+- **What happened:** after M2 showed home teams over-predicted by about 3 pts, I proposed two as-of home-field rules (H1: last 3 seasons; H6: last 10). Both failed. On the clean 2003–2015 seasons, raw Elo's bias was −1.2 and H6 just flipped it to +1.1.
+- **Lesson:** before trying to correct a bias, compare its season-to-season spread with pure sampling noise. Raw Elo's per-season bias had an SD of about 2.4 pts, while a 255-game season's home-win rate wobbles about 3.1 pts from chance alone. A bias the size of noise can't be predicted from past seasons. One sanity check would have saved two experiments.
+- **Fix:** home field stays fixed at 48 (decision #29). Read the 2026 live +12 pts (70 games, sampling SD about 6 pts) the same way.

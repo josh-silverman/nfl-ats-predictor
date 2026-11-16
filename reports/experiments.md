@@ -356,3 +356,16 @@ Each test is a single change to **raw Elo, the deliverable**, judged with `compa
 - **Decision: REJECTED by the keep rule** (CI includes 0, 3/7 seasons, AUC lower). The model stays H4. The site shows rest as display-only info (the "rest gauge"), with no effect on the numbers.
 - **Lesson:** the training fit finds a small positive rest effect, but it doesn't hold out of sample on top of Elo and the QB adjustment.
 - **Win-model experiment count: 8.**
+
+### Playoff tiebreakers · check (2026-11-16) · reported, not a model experiment
+- **What:** `playoffs.py` replaces coin-flip standings ties with head-to-head → division record (division titles) → conference record → coin flip (decision #28). `playoffs.odds_check` now makes the check reproducible.
+- **Check:** odds as of Weeks 8, 15 and 18 for 2019–2025 (224 team-seasons, 96 made it), old vs new, 10,000 sims each, run once.
+
+  | As of | Brier old → new | Log loss old → new | Mean change per team |
+  |---|---|---|---|
+  | Week 8 | 0.1355 → 0.1355 | 0.4178 → 0.4169 | 0.9 pts |
+  | Week 15 | 0.0835 → 0.0838 | 0.2538 → 0.2514 | 1.6 pts |
+  | Week 18 | 0.0323 → 0.0338 | 0.1015 → 0.1053 | 2.3 pts (max 34) |
+
+- **Week 18 changes over 20 pts (7 team-seasons):** 2022 GB 45 → 67% (missed), 2022 PIT 39 → 16% (missed), 2023 NO 59 → 25% (missed), 2024 DEN 70 → 47% (made), 2025 BAL 25 → 50% (missed), 2025 CAR 61 → 88% (made), 2025 PIT 75 → 50% (made). In each "win and in" case the new number is close to Elo's chance of winning that one game, which is the right structure; whether it scores better then depends on that game's result.
+- **Reading:** no detectable accuracy change on this sample. Kept for correctness (decision #28), not for a metric. Week 18 reliability (new): <10% predicted 0.2% → 1.8% made (111 teams); 10–40%: 21% → 8% (13); 40–75%: 56% → 62% (13); 75–99.9%: 82% → 71% (7); locked in: 100% → 100% (80).

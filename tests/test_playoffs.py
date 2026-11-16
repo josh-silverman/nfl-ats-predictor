@@ -60,6 +60,33 @@ class TestPlayoffs(unittest.TestCase):
         no_pick = simulate_season(league, 2026, None, n_sims=300, seed=1, mov=2.0)
         self.assertGreater(a["wins"][:, home].mean(), no_pick["wins"][:, home].mean() - 1e-9)
 
+    def _two_team_tie(self, games):
+        """A finished 2-game-per-team season that leaves BUF and MIA tied at 1-1. games: (home, away, home_score, away_score)."""
+        rows = [{"season": s, "week": w, "gameday": f"{s}-09-{w:02d}", "game_type": "REG", "location": "Home",
+                 "game_id": f"{s}_{w:02d}_{a}_{h}", "home_team": h, "away_team": a, "home_score": hs, "away_score": as_}
+                for s in (2025, 2026) for w, (h, a, hs, as_) in enumerate(games, start=1)]
+        return playoff_odds(simulate_season(pd.DataFrame(rows), 2026, n_sims=400, mov=2.0)).set_index("team")
+
+    def test_head_to_head_breaks_a_division_tie(self):
+        # BUF beat MIA; both 1-1 (each also played a non-division team). Coin flips would give ~50/50.
+        o = self._two_team_tie([("BUF", "MIA", 20, 10), ("KC", "BUF", 30, 0), ("MIA", "DEN", 30, 0)])
+        self.assertEqual(o.loc["BUF", "division"], 1.0)
+        self.assertEqual(o.loc["MIA", "division"], 0.0)
+
+    def test_division_record_breaks_a_tie_when_head_to_head_cant(self):
+        # BUF and MIA never met: BUF beat NE (division), MIA beat KC (not division). Both lost one other game.
+        o = self._two_team_tie([("BUF", "NE", 20, 10), ("MIA", "KC", 20, 10), ("DEN", "BUF", 30, 0), ("DEN", "MIA", 30, 0)])
+        self.assertEqual(o.loc["BUF", "division"], 1.0)
+
+    def test_conference_record_breaks_a_wild_card_tie(self):
+        # NE and NYJ (BUF wins the division) both 1-1, never met. NE's win is vs an AFC team, NYJ's vs NFC.
+        # Two 2-0 runners-up (North, South) take the first two wild cards, so NE and NYJ fight for the last one.
+        o = self._two_team_tie([("BUF", "NE", 30, 0), ("BUF", "NYJ", 30, 0), ("NE", "KC", 20, 10), ("NYJ", "DAL", 20, 10),
+                                ("BAL", "CIN", 20, 10), ("BAL", "CLE", 20, 10), ("PIT", "CIN", 20, 10), ("PIT", "CLE", 20, 10),
+                                ("HOU", "JAX", 20, 10), ("HOU", "TEN", 20, 10), ("IND", "JAX", 20, 10), ("IND", "TEN", 20, 10)])
+        self.assertEqual((o.loc["NE", "playoff"], o.loc["NYJ", "playoff"]), (1.0, 0.0))
+        self.assertAlmostEqual(o.loc[["BAL", "PIT"], "playoff"].sum(), 2.0)   # winner + 2-0 wild card, every time
+
     def test_dominant_team_almost_always_makes_it(self):
         league = _league(played_weeks=5)
         t = TEAMS[5]

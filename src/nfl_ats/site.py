@@ -226,11 +226,34 @@ def move_line(moves: dict | None) -> str | None:
             f"of {moved} games where it moved ({moves['no_move']} didn't move). About half would mean no edge.")
 
 
+CALIBRATION_MIN_GAMES = 80  # below this, buckets of ~20 games swing too much to show
+CALIBRATION_BINS = [(0.5, 0.6, "50–60%"), (0.6, 0.7, "60–70%"), (0.7, 0.8, "70–80%"), (0.8, 1.01, "80%+")]
+
+
+def calibration_buckets(d: pd.DataFrame) -> list[dict] | None:
+    """How sure we were about the favorite vs how often it won, in four buckets (live decided games, headline pick).
+
+    `d` needs p_pick and home_win. None until CALIBRATION_MIN_GAMES. Empty buckets are left out.
+    """
+    if len(d) < CALIBRATION_MIN_GAMES:
+        return None
+    conf = np.maximum(d["p_pick"], 1 - d["p_pick"]).to_numpy()
+    fav_won = ((d["p_pick"] >= 0.5) == (d["home_win"] == 1)).to_numpy()
+    out = []
+    for lo, hi, label in CALIBRATION_BINS:
+        m = (conf >= lo) & (conf < hi)
+        if m.any():
+            out.append({"label": label, "games": int(m.sum()), "expected": round(float(conf[m].mean()), 3),
+                        "actual": round(float(fav_won[m].mean()), 3)})
+    return out
+
+
 def record_summary(scored_live: pd.DataFrame, moves: dict | None = None) -> dict:
-    """W-L for us and Vegas on live weeks only, week by week, plus up to four plain extra lines."""
+    """W-L for us and Vegas on live weeks only, week by week, plus up to four plain extra lines and, from
+    CALIBRATION_MIN_GAMES on, calibration buckets."""
     d = headline(scored_live[scored_live["home_win"].notna()])
     if d.empty:
-        return {"games": 0, "by_week": [], "extra": []}
+        return {"games": 0, "by_week": [], "extra": [], "calibration": None}
     d["ours"] = ((d["p_pick"] >= 0.5) == (d["home_win"] == 1)).astype(int)
     has_mkt = d["p_market_at_pull"].notna()
     d["vegas"] = ((d["p_market_at_pull"] >= 0.5) == (d["home_win"] == 1)).astype(float).where(has_mkt)
@@ -250,7 +273,7 @@ def record_summary(scored_live: pd.DataFrame, moves: dict | None = None) -> dict
             extra.append(f"When we gave a team 60%+ to win, we expected about {expected:.0%} of them to win. "
                          f"{actual:.0%} did ({int(d.loc[sure, 'ours'].sum())} of {int(sure.sum())}).")
     extra.append("Full details: reports/live_2026.md on GitHub.")
-    return {"games": int(len(d)), "by_week": by_week, "extra": extra[:4]}
+    return {"games": int(len(d)), "by_week": by_week, "extra": extra[:4], "calibration": calibration_buckets(d)}
 
 
 def rankings(history: pd.DataFrame, schedules: pd.DataFrame, current_cards: list[dict], season: int,
@@ -351,7 +374,7 @@ def build_site_data(schedules: pd.DataFrame, season: int = 2026, backtest: dict 
         "teams": {t: {"name": n, "color": c} for t, (n, c) in TEAMS.items()},
         "weeks": weeks,
         "record": record_summary(live, market_move_summary(market_moves(live, schedules)))
-                  if not live.empty else {"games": 0, "by_week": [], "extra": []},
+                  if not live.empty else {"games": 0, "by_week": [], "extra": [], "calibration": None},
         "rankings": rankings(history, reg.assign(game_type="REG"), current["games"] if current else [], season,
                              season_odds(schedules, season, {c["game_id"]: c["p_home"] for c in (current["games"] if current else [])
                                                              if c["result"] is None})),

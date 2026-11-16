@@ -74,9 +74,11 @@
       document.querySelector(`[data-tab="${t}"]`).setAttribute("aria-selected", String(t === name));
     }
     document.getElementById("week-bar").hidden = name !== "week";
-    document.documentElement.classList.toggle("snap", name === "week");  // one game per screen only on This week
     if (!rendered[name]) { RENDER[name](document.getElementById("tab-" + name)); rendered[name] = true; }
+    // Measure the header (its week bar is filled by the render) BEFORE turning on snapping. Snapping with the
+    // 120px default made phones (header ~225px) jump down and hide the week's heading under the header.
     setBarHeight();
+    document.documentElement.classList.toggle("snap", name === "week");  // one game per screen only on This week
   }
   document.querySelectorAll("[data-tab]").forEach((b) =>
     b.addEventListener("click", () => { location.hash = b.dataset.tab; window.scrollTo(0, 0); }));
@@ -215,7 +217,8 @@
     const more = el("details", { class: "more-box" }, el("summary", {}, "More"),
       el("div", { class: "more-body" }, tags, margin, lines, teamsRow, qbNote, why));
 
-    return el("article", { class: "game" + (final ? " is-final" : ""), "aria-label": `${team(away).name} at ${team(home).name}` },
+    return el("article", { class: "game" + (final ? " is-final" : ""), id: "g-" + g.game_id,
+                           "aria-label": `${team(away).name} at ${team(home).name}` },
       el("div", { class: "game-card" },
         el("div", { class: "game-top" },
           el("div", {}, el("span", { class: "slot" }, final ? "Final" : g.day_group), " · ", g.kickoff, g.neutral ? " · Neutral site" : ""),
@@ -226,6 +229,27 @@
         el("div", { class: "bar-wrap" }, outer,
           el("div", { class: "bar-legend" }, el("span", {}, legendLeft), legendRight)),
         faceoff, more));
+  }
+
+  // The whole week at a glance: one row per game (matchup, our pick, Vegas, result). Tap a row to jump to its card.
+  function overview(games) {
+    const row = (g) => {
+      const r = g.result, favP = Math.max(g.p_home, 1 - g.p_home);
+      const vFav = g.p_vegas_home === null ? null : (g.p_vegas_home >= 0.5 ? g.home : g.away);
+      const vP = g.p_vegas_home === null ? null : Math.max(g.p_vegas_home, 1 - g.p_vegas_home);
+      const outcome = !r ? null : r.winner === null ? el("span", { class: "ov-res" }, "Tie")
+        : el("span", { class: "ov-res " + (r.we_were_right ? "right" : "wrong") },
+            `${r.we_were_right ? "✓" : "✗"} ${r.away_score}–${r.home_score}`);  // away–home, same order as the matchup
+      return el("li", {}, el("button", { class: "ov-row" + (g.big_gap ? " gap" : ""), type: "button",
+          "aria-label": `${team(g.away).name} at ${team(g.home).name}: we pick ${team(g.favorite).name} ${pct(favP)}` +
+            (vFav ? `, Vegas ${team(vFav).name} ${pct(vP)}` : "") + (r ? ". Final." : "") + " Show this game.",
+          onclick: () => document.getElementById("g-" + g.game_id).scrollIntoView({ block: "start" }) },
+        el("span", { class: "ov-teams" }, sq(g.away), g.away, el("span", { class: "at" }, "@"), g.home, sq(g.home)),
+        el("span", { class: "ov-pick" }, el("b", {}, `${g.favorite} ${pct(favP)}`)),
+        el("span", { class: "ov-vegas" }, vFav ? `Vegas ${vFav} ${pct(vP)}` : ""),
+        outcome || (g.big_gap ? el("span", { class: "ov-tag", "data-tip": TIPS.gap }, "Big gap") : el("span", {}))));
+    };
+    return el("ol", { class: "overview surface", "aria-label": "Games this week" }, games.map(row));
   }
 
   function renderWeek(root) {
@@ -256,7 +280,7 @@
               rel: "noopener", "data-tip": TIPS.qbLock }, w.qb_lock.text)
           : "");
       const done = w.games.filter((g) => g.result && g.result.winner !== null);
-      let summary = `${w.games.length} games. Scroll for one game at a time.`;
+      let summary = `${w.games.length} games. Tap one to jump to it, or scroll for one game at a time.`;
       if (done.length) {
         const ours = done.filter((g) => g.result.we_were_right).length;
         const vDone = done.filter((g) => g.result.vegas_was_right !== null);
@@ -266,7 +290,8 @@
         el("h2", {}, `Week ${w.week}`),
         el("p", {}, "Each game shows who our ", term("Elo", TIPS.elo),
           " ratings favor and their chance to win, next to what Vegas thinks."),
-        el("p", { class: "hint" }, summary));
+        el("p", { class: "hint" }, summary),
+        overview(w.games));
       list.replaceChildren(...w.games.map(gameCard));
       setBarHeight();
     }
@@ -323,12 +348,65 @@
       }
       if (r.extra.length) root.append(el("details", { class: "surface more" }, el("summary", {}, "A bit more"),
         el("ul", {}, r.extra.map((line) => el("li", {}, line)))));
+      renderDisagreements(root);
+      if (r.calibration) renderCalibration(root, r.calibration);
     }
     const bf = D.weeks.filter((w) => w.mode === "backfill").flatMap((w) => w.games)
       .filter((g) => g.result && g.result.winner !== null);
     if (bf.length) root.append(el("p", { class: "note" },
       `For reference only: in the backfill weeks (predicted after the fact), we picked ${bf.filter((g) => g.result.we_were_right).length} of ${bf.length} right. `,
       term("Why it doesn't count", TIPS.backfill)));
+  }
+
+  // When we and Vegas disagreed by 15+ points (live weeks only): who was right?
+  function renderDisagreements(root) {
+    const big = D.weeks.filter((w) => w.mode === "live").flatMap((w) => w.games)
+      .filter((g) => g.big_gap && g.result && g.result.winner !== null && g.result.vegas_was_right !== null);
+    root.append(el("h3", { class: "section" }, "When we disagreed with Vegas"));
+    if (!big.length) {
+      root.append(el("p", { class: "sub" }, "No finished game yet where we and Vegas were 15+ points apart."));
+      return;
+    }
+    const ours = big.filter((g) => g.result.we_were_right).length, vegas = big.filter((g) => g.result.vegas_was_right).length;
+    root.append(el("p", { class: "sub" },
+      `In the ${big.length} finished games where our chance and Vegas's were 15+ points apart, we picked the winner in ${ours} and Vegas in ${vegas}. ` +
+      (big.length < 20 ? "That's a small number of games, so it can swing a lot." : "")),
+      el("details", { class: "surface more" }, el("summary", {}, "Those games"),
+        el("ul", {}, big.map((g) => {
+          const vFav = g.p_vegas_home >= 0.5 ? g.home : g.away;
+          return el("li", {}, `${g.away} @ ${g.home}: we said ${g.favorite} ${pct(Math.max(g.p_home, 1 - g.p_home))}, ` +
+            `Vegas ${vFav} ${pct(Math.max(g.p_vegas_home, 1 - g.p_vegas_home))}. ${g.result.winner} won ` +
+            `${Math.max(g.result.home_score, g.result.away_score)}–${Math.min(g.result.home_score, g.result.away_score)}.`);
+        }))));
+  }
+
+  // "When we said 70%, did 70% win?" Bars = how often our favorite actually won; dark tick = how often we expected.
+  function renderCalibration(root, buckets) {
+    root.append(el("h3", { class: "section" }, "Do our percentages mean what they say?"),
+      el("p", { class: "sub" }, "We group games by how sure we were about the favorite. If the numbers are honest, " +
+        "each bar should land near its tick: of the teams we gave about 70%, about 70 of every 100 should win."));
+    if (window.Chart) {
+      const canvas = el("canvas", { role: "img", "aria-label": "How often our favorite won, by how sure we were. Numbers in the table below." });
+      root.append(el("div", { class: "surface chart-box short" }, canvas));
+      new Chart(canvas, {
+        data: { labels: buckets.map((b) => [b.label, `${b.games} games`]), datasets: [
+          { type: "bar", label: "Actually won", data: buckets.map((b) => b.actual), backgroundColor: COLORS.ours,
+            borderRadius: 4, borderSkipped: "bottom", maxBarThickness: 44, order: 1 },
+          { type: "line", label: "We expected", data: buckets.map((b) => b.expected), showLine: false,
+            pointStyle: "line", pointRadius: 18, pointHoverRadius: 18, pointBorderWidth: 3,
+            borderColor: COLORS.text, backgroundColor: COLORS.text, order: 0 }] },
+        options: { maintainAspectRatio: false, interaction: { mode: "index", intersect: false },
+          plugins: { legend: { labels: { color: COLORS.text, boxWidth: 14, boxHeight: 3 } },
+            tooltip: { callbacks: { label: (c) => `${c.dataset.label}: ${pct(c.parsed.y)}` } } },
+          scales: { y: axis({ min: 0.4, max: 1, ticks: { color: COLORS.text, callback: (v) => pct(v) } }),
+                    x: axis({ grid: { display: false }, ticks: { color: COLORS.text, maxRotation: 0, autoSkip: false } }) } } });
+    }
+    root.append(el("div", { class: "surface table-wrap" }, el("table", { class: "static" },
+      el("thead", {}, el("tr", {}, ["How sure", "Games", "Expected", "Won"].map((h, i) =>
+        el("th", { class: i ? "num" : "", scope: "col" }, h)))),
+      el("tbody", {}, buckets.map((b) => el("tr", {},
+        el("td", {}, b.label), el("td", { class: "num" }, b.games),
+        el("td", { class: "num" }, pct(b.expected)), el("td", { class: "num" }, pct(b.actual))))))));
   }
 
   // ---------- Rankings ----------

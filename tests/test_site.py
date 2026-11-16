@@ -8,12 +8,25 @@ import numpy as np
 import pandas as pd
 
 from nfl_ats.elo import rating_history, run_elo
-from nfl_ats.site import (MINUS, TEAMS, changed_beyond_timestamp, confidence, day_group, format_line, game_cards,
-                          lock_status, move_line, qb_notes, read_site_data, record_summary, site_data_js, team_context)
+from nfl_ats.site import (CALIBRATION_MIN_GAMES, MINUS, TEAMS, calibration_buckets, changed_beyond_timestamp, confidence,
+                          day_group, format_line, game_cards, lock_status, move_line, qb_notes, read_site_data,
+                          record_summary, site_data_js, team_context)
 from tests.test_win_model import _schedules
 
 
 class TestSiteData(unittest.TestCase):
+
+    def test_calibration_buckets_use_the_favorite_and_wait_for_enough_games(self):
+        # away favorites count by their own chance: p_pick 0.25 means the away team at 75%
+        d = pd.DataFrame({"p_pick": [0.55, 0.45, 0.65, 0.25, 0.25, 0.85] * 20,
+                          "home_win": [1.0, 1.0, 1.0, 0.0, 1.0, 1.0] * 20})
+        b = {x["label"]: x for x in calibration_buckets(d)}
+        self.assertEqual(b["50–60%"]["games"], 40)
+        self.assertAlmostEqual(b["50–60%"]["actual"], 0.5)      # home fav won, away fav (p 0.45) lost
+        self.assertAlmostEqual(b["70–80%"]["expected"], 0.75)
+        self.assertAlmostEqual(b["70–80%"]["actual"], 0.5)      # away fav won once, lost once
+        self.assertEqual(b["80%+"]["actual"], 1.0)
+        self.assertIsNone(calibration_buckets(d.head(CALIBRATION_MIN_GAMES - 1)))
 
     def test_rebuild_skips_a_timestamp_only_change(self):
         data = {"meta": {"generated": "Nov 11, 2026 4:05 PM ET", "current_week": 10},

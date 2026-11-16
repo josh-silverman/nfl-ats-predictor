@@ -46,6 +46,18 @@ def _cached_pull(name: str, seasons: list[int], loader, refresh: bool) -> pd.Dat
     return df
 
 
+def prune_raw_cache(keep: int = 1, folder: Path = RAW_DIR) -> list[Path]:
+    """Delete all but the newest `keep` dated pulls of each dataset. For the CI cache only (it grows every run);
+    locally the dated history is worth keeping. Returns the deleted paths."""
+    by_stem: dict[str, list[Path]] = {}
+    for f in sorted(folder.glob("*.parquet")):  # names end in YYYYMMDD, so each stem's files sort oldest first
+        by_stem.setdefault(f.stem.rsplit("_", 1)[0], []).append(f)
+    gone = [f for files in by_stem.values() for f in files[:-keep]]
+    for f in gone:
+        f.unlink()
+    return gone
+
+
 def load_schedules(seasons: list[int] = HISTORY_SEASONS, refresh: bool = False) -> pd.DataFrame:
     """One row per game: scores, spread_line, rest days, game IDs, kickoff dates."""
     return _cached_pull("schedules", seasons, nfl.load_schedules, refresh)

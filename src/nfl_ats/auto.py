@@ -44,6 +44,20 @@ def next_qb_week(schedules: pd.DataFrame, season: int, locked: set[int], qb_done
     return int(weeks[0]) if weeks else None
 
 
+WATCH_MARGIN = pd.Timedelta(hours=6)
+
+
+def unlocked_soon(schedules: pd.DataFrame, season: int, locked: set[int], now: pd.Timestamp,
+                  margin: pd.Timedelta = WATCH_MARGIN) -> list[int]:
+    """The watchdog: weeks with a game kicking off within `margin` that have no live lock file.
+
+    Deliberately independent of next_lock_week, so a bug there (or dropped scheduled runs) still raises the alarm.
+    """
+    up = _upcoming(schedules, season, now)
+    soon = up[(up["kickoff"] - now <= margin) & ~up["week"].isin(locked)]
+    return sorted(int(w) for w in soon["week"].unique())
+
+
 def locked_weeks(season: int, ledger_dir: Path = LEDGER_DIR) -> tuple[set[int], set[int]]:
     """(live-locked weeks, weeks with a Saturday QB file)."""
     return ledger_weeks(season, ledger_dir), ledger_weeks(season, ledger_dir / "qb")

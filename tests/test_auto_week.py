@@ -4,7 +4,7 @@ import unittest
 
 import pandas as pd
 
-from nfl_ats.auto import next_lock_week, next_qb_week
+from nfl_ats.auto import next_lock_week, next_qb_week, unlocked_soon
 
 ET = "America/New_York"
 
@@ -47,6 +47,32 @@ class TestAutoWeek(unittest.TestCase):
         self.assertEqual(next_qb_week(WEEKS, 2026, {8}, set(), sat), 8)
         self.assertIsNone(next_qb_week(WEEKS, 2026, {8}, {8}, sat))       # already re-locked
         self.assertIsNone(next_qb_week(WEEKS, 2026, set(), set(), sat))   # never locked: nothing to re-lock
+
+    def test_watchdog_alarms_only_for_unlocked_weeks_close_to_kickoff(self):
+        thu_noon = pd.Timestamp("2026-10-29 12:00", tz=ET)                # 8 h 15 m before TNF
+        thu_eve = pd.Timestamp("2026-10-29 15:00", tz=ET)                 # 5 h 15 m before TNF
+        self.assertEqual(unlocked_soon(WEEKS, 2026, {7}, thu_noon), [])   # inside the lock window, not yet an alarm
+        self.assertEqual(unlocked_soon(WEEKS, 2026, {7}, thu_eve), [8])   # unlocked and close: alarm
+        self.assertEqual(unlocked_soon(WEEKS, 2026, {7, 8}, thu_eve), [])  # locked: quiet
+        sun = pd.Timestamp("2026-11-01 09:00", tz=ET)                     # TNF played, Sunday games 4 h away
+        self.assertEqual(unlocked_soon(WEEKS, 2026, {7}, sun), [8])       # a missed lock still alarms
+
+
+class TestPruneRawCache(unittest.TestCase):
+
+    def test_keeps_newest_pull_per_dataset(self):
+        import tempfile
+        from pathlib import Path
+
+        from nfl_ats.data import prune_raw_cache
+        with tempfile.TemporaryDirectory() as d:
+            names = ["schedules_2015_2026_20261026.parquet", "schedules_2015_2026_20261027.parquet",
+                     "pbp_2026_2026_20261022.parquet", "pbp_2026_2026_20261027.parquet", "pbp_2025_2025_20261013.parquet"]
+            for n in names:
+                (Path(d) / n).touch()
+            gone = {p.name for p in prune_raw_cache(folder=Path(d))}
+            self.assertEqual(gone, {"schedules_2015_2026_20261026.parquet", "pbp_2026_2026_20261022.parquet"})
+            self.assertEqual(len(list(Path(d).glob("*.parquet"))), 3)
 
 
 if __name__ == "__main__":

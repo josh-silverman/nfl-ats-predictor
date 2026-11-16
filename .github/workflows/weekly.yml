@@ -1,8 +1,11 @@
-# The weekly routine on auto-pilot (decision #25). Each run's GitHub log timestamps the lock it made.
-#   lock  : daily 14:00 UTC — locks the next week once its first kickoff is within 30 hours (normally Thursday).
-#   qb    : Saturday 13:00 UTC (soft: "injury report not in yet" is fine) and 16:00 UTC (fails loudly → email).
-#   score : Tuesday 12:00 UTC — scores the week.
+# The weekly routine on auto-pilot (decisions #25, #26). Each run's GitHub log timestamps the lock it made.
+#   lock  : twice daily, 13:23 and 19:23 UTC — locks the next week once its first kickoff is within 30 hours.
+#   qb    : Saturday 12:37 UTC (soft: "injury report not in yet" is fine) and 15:37 UTC (fails loudly → email).
+#   score : Tuesday 11:47 UTC — scores the week.
 #   site  : daily 11:17 UTC — rebuilds the site so scores and closing lines show the morning after games.
+#   watch : the last step of EVERY run — fails (→ email) if a game kicks off within 6 hours with no lock.
+# Times avoid the top of the hour: GitHub delayed our on-the-hour runs by 5–7 hours. Locking is idempotent, so a
+# second slot costs nothing. Scheduled runs can still be late or dropped; the watchdog is the backstop.
 # Order matters: the ledger/report commit is pushed FIRST, then the site is built from it, because the lock badge
 # reads each ledger file's first commit. Building first made the site say "Not committed yet" (mistake #11).
 # Pushes made with GITHUB_TOKEN don't trigger other workflows, so the Pages deploy is started explicitly.
@@ -10,17 +13,18 @@ name: Weekly routine
 
 on:
   schedule:
-    - cron: "0 14 * * *"
-    - cron: "0 13 * * 6"
-    - cron: "0 16 * * 6"
-    - cron: "0 12 * * 2"
+    - cron: "23 13 * * *"
+    - cron: "23 19 * * *"
+    - cron: "37 12 * * 6"
+    - cron: "37 15 * * 6"
+    - cron: "47 11 * * 2"
     - cron: "17 11 * * *"
   workflow_dispatch:
     inputs:
       task:
         description: "Which step to run"
         type: choice
-        options: [lock, qb, score, site]
+        options: [lock, qb, score, site, watch]
         default: score
       dry_run:
         description: "Show what would happen, write nothing"
@@ -74,10 +78,10 @@ jobs:
           WEEK: ${{ inputs.week }}
         run: |
           case "$SCHEDULE" in
-            "0 14 * * *") args="--task lock" ;;
-            "0 13 * * 6") args="--task qb --soft" ;;
-            "0 16 * * 6") args="--task qb" ;;
-            "0 12 * * 2") args="--task score" ;;
+            "23 13 * * *" | "23 19 * * *") args="--task lock" ;;
+            "37 12 * * 6") args="--task qb --soft" ;;
+            "37 15 * * 6") args="--task qb" ;;
+            "47 11 * * 2") args="--task score" ;;
             "17 11 * * *") args="--task site" ;;
             *)
               args="--task $TASK"
@@ -127,3 +131,11 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: gh workflow run pages.yml --ref main
+
+      - name: Watchdog (fails, so GitHub emails, if a game kicks off within 6 hours with no lock)
+        if: always()
+        run: python scripts/auto_week.py --task watch
+
+      - name: Prune old data pulls (keeps the saved cache from growing every run)
+        if: always()
+        run: python -c "from nfl_ats.data import prune_raw_cache; print(len(prune_raw_cache()), 'old pulls removed')"

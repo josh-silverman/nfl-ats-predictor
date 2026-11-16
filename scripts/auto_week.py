@@ -4,6 +4,7 @@
     python scripts/auto_week.py --task qb --soft       # Saturday: QB-aware re-lock; --soft = "not ready yet" isn't an error
     python scripts/auto_week.py --task score           # Tuesday: score the ledger (reports/live_2026.md)
     python scripts/auto_week.py --task site            # daily: just ask the workflow for a site rebuild
+    python scripts/auto_week.py --task watch           # every run: fail if a game kicks off within 6 h unlocked
     python scripts/auto_week.py --task lock --dry-run  # show what would happen, write nothing
     python scripts/auto_week.py --task lock --dry-run --week 8   # test the full lock path early
 
@@ -24,7 +25,7 @@ from pathlib import Path
 
 import pandas as pd
 
-from nfl_ats.auto import locked_weeks, next_lock_week, next_qb_week
+from nfl_ats.auto import WATCH_MARGIN, locked_weeks, next_lock_week, next_qb_week, unlocked_soon
 from nfl_ats.data import PROJECT_ROOT
 from nfl_ats.ledger import EASTERN, InjuryReportNotReady, load_schedules_for_ledger, run_week
 
@@ -47,12 +48,20 @@ def script(name: str) -> None:
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument("--task", choices=["lock", "qb", "score", "site"], required=True)
+    parser.add_argument("--task", choices=["lock", "qb", "score", "site", "watch"], required=True)
     parser.add_argument("--soft", action="store_true", help="qb: exit quietly if the Friday injury report isn't in yet")
     parser.add_argument("--dry-run", action="store_true", help="predict and print, but write nothing")
     parser.add_argument("--week", type=int, help="dry runs only: force this week (to test the full path early)")
     args = parser.parse_args()
 
+    if args.task == "watch":
+        hours = f"{WATCH_MARGIN.total_seconds() / 3600:g} hours"
+        late = unlocked_soon(load_schedules_for_ledger(SEASON, refresh=True), SEASON, locked_weeks(SEASON)[0],
+                             pd.Timestamp.now(tz=EASTERN))
+        if late:
+            sys.exit(f"ALARM: week {late[0]} has a kickoff within {hours} and no lock. Lock it now: "
+                     f"run the workflow with task=lock, or `python scripts/predict_week.py --week {late[0]}` and commit.")
+        return print(f"Watchdog OK: every game kicking off in the next {hours} is locked.")
     today = f"{datetime.now(EASTERN):%b %-d}"
     if args.task == "site":
         if args.dry_run:

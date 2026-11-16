@@ -103,5 +103,46 @@ class TestUsualStarter(unittest.TestCase):
         self.assertEqual(week1["qb_out"].sum(), 0)
 
 
+class TestQbValue(unittest.TestCase):
+    """H7: a QB's value uses only his EARLIER games, shrunk, over a fixed window."""
+
+    @staticmethod
+    def _db(n_games=25, epa=10.0, dropbacks=40):
+        return pd.DataFrame({"season": 2020, "week": range(1, n_games + 1), "game_id": [f"g{w}" for w in range(1, n_games + 1)],
+                             "qb_id": "q1", "epa": epa, "dropbacks": dropbacks})
+
+    def test_value_uses_only_earlier_games_and_shrinks(self):
+        from nfl_ats.qb import qb_values
+        db = self._db(n_games=2)
+        t = pd.DataFrame({"season": 2020, "week": [1, 2, 3], "qb_id": "q1"})
+        v = qb_values(db, t)
+        self.assertEqual(v.iloc[0], 0.0)                             # week 1: no earlier game
+        self.assertAlmostEqual(v.iloc[1], 10 / (40 + 200))           # week 2: only week 1 counts
+        self.assertAlmostEqual(v.iloc[2], 20 / (80 + 200))           # week 3: weeks 1-2
+        wrecked = db.copy()
+        wrecked.loc[wrecked["week"] == 2, "epa"] = 999.0              # the week-2 game's own plays
+        self.assertAlmostEqual(qb_values(wrecked, t).iloc[1], v.iloc[1])
+
+    def test_window_keeps_the_last_20_games(self):
+        from nfl_ats.qb import qb_values
+        db = self._db(n_games=25)
+        db.loc[db["week"] <= 5, "epa"] = -100.0                     # old bad games fall out of the window
+        v = qb_values(db, pd.DataFrame({"season": [2020], "week": [26], "qb_id": ["q1"]}))
+        self.assertAlmostEqual(v.iloc[0], 20 * 10 / (20 * 40 + 200))
+
+    def test_unknown_or_missing_qb_is_zero(self):
+        from nfl_ats.qb import qb_values
+        t = pd.DataFrame({"season": 2020, "week": [5, 5], "qb_id": ["nobody", None]})
+        self.assertEqual(qb_values(self._db(), t).tolist(), [0.0, 0.0])
+
+    def test_scrambles_credit_the_rusher(self):
+        from nfl_ats.qb import dropback_games
+        pbp = pd.DataFrame({"season": 2020, "week": 1, "game_id": "g1", "season_type": "REG", "qb_dropback": [1, 1, 0],
+                            "passer_player_id": ["q1", None, None], "rusher_player_id": [None, "q1", "rb"],
+                            "qb_epa": [0.5, 1.0, 3.0]})
+        d = dropback_games(pbp)
+        self.assertEqual((d.loc[0, "qb_id"], d.loc[0, "dropbacks"], d.loc[0, "epa"]), ("q1", 2, 1.5))
+
+
 if __name__ == "__main__":
     unittest.main()

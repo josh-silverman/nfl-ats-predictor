@@ -442,3 +442,13 @@ Each test is a single change to **raw Elo, the deliverable**, judged with `compa
 - **Viewed-data caveat:** 2019–2025 has been used for 9 win-model experiments, and this is the third QB idea tested there. The 2026 live ledger is the clean test.
 - **If kept:** Josh decides on going live (a new locked column from the next week, with H4 and raw Elo still recorded). **If rejected:** H4 stays.
 - **Count:** win-model experiment #10.
+- **Result (run once, 2026-11-16, after commit cafd33c).** A first attempt crashed on a dtype mismatch in `merge_asof` before printing any result; fixed (int64 keys) and run once.
+  - **Sanity:** H4 − raw Elo reproduces the published −0.0041 [−0.0076, −0.0004], 6/7, AUC 0.6918 → 0.6977.
+  - **Primary, H7 − H4 (2019–2025):** log loss **−0.0001 [−0.0004, +0.0002]**, better in **4/7** seasons (2019 −0.0001, 2020 0.0000, 2021 +0.0008, 2022 −0.0005, 2023 −0.0000, 2024 0.0000, 2025 −0.0009), AUC 0.6977 → 0.6978, accuracy −0.05 pts. **Fails the keep rule** (CI includes 0; 4/7).
+  - **Fitted (QB_BASE, QB_SCALE) by fold:** (60, 0), (60, 0), (60, 0), (90, 0), (80, 0), (80, 0), (80, 100). H4's QB_PTS: 65, 60, 65, 95, 75, 80, 85. **The training data picks a scale of 0 in 6 of 7 folds:** the missing QB's own recent EPA per dropback doesn't predict how much his team drops.
+  - **Flagged games only (274):** log loss raw Elo 0.6389, H4 0.6111, H7 0.6104; accuracy 63.5%, 68.2%, 67.9%. Missing-QB values: mean +0.042 EPA/dropback, SD 0.088.
+  - **2026 cases under the 2016–2025 fit (base 80, scale 200):** penalties 83–107 Elo, e.g. Lamar Jackson 105–107, Caleb Williams 101, Jalen Hurts 89, **Tyler Huntley 84** (H4: 85–90). H7 does **not** fix the Huntley case: that's a usual-starter definition problem, not a penalty-size problem. The pre-registration's claim that he "should cost little" was wrong under the fitted model.
+  - **Secondary, injury-only flags, test 2012–2015 (78 flagged test games, trained from 2010):** H7 − constant QB_PTS +0.0016 [−0.0034, +0.0072], 1/4 seasons, AUC 0.6983 → 0.6967. That fit chose large scales (1100–1500) on 2010–2011 and did worse out of sample.
+- **Lesson:** "who is missing" (availability) carries the signal; "how good he was" adds nothing detectable on top of Elo, which already prices the team's quality with him. If QB quality matters, it's more likely through *who replaces him* (backup quality), which this design doesn't measure. The Huntley-type miss needs a different fix: the usual-starter rule should not crown a backup who started only because the starter was out.
+- **Decision (Josh, 2026-11-16): REJECTED** by the pre-registered keep rule (decision #30). H4 stays the deliverable.
+- **Win-model experiment count: 10.**

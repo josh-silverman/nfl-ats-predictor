@@ -135,6 +135,54 @@ def qb_unavailable(usual: pd.DataFrame, injuries: pd.DataFrame, rosters: pd.Data
     return out[["season", "week", "game_id", "team", "usual_id", "player", "qb_out", "reason", "roster_week"]]
 
 
+# ---------- H7: how good is the missing QB? EPA per dropback over his recent games, as of each game ----------
+
+VALUE_WINDOW = 20   # his previous 20 regular-season games with a dropback (crossing seasons)
+VALUE_SHRINK = 200  # dropbacks of shrinkage toward 0, so short histories count for little
+
+
+def dropback_games(pbp: pd.DataFrame) -> pd.DataFrame:
+    """One row per QB per regular-season game: summed qb_epa and dropbacks. The QB is the passer, else the
+    rusher (scrambles)."""
+    d = pbp.loc[(pbp["season_type"] == "REG") & (pbp["qb_dropback"] == 1) & pbp["qb_epa"].notna(),
+                ["season", "week", "game_id", "passer_player_id", "rusher_player_id", "qb_epa"]]
+    d = d.assign(qb_id=d["passer_player_id"].fillna(d["rusher_player_id"])).dropna(subset=["qb_id"])
+    return (d.groupby(["season", "week", "game_id", "qb_id"])["qb_epa"].agg(epa="sum", dropbacks="size")
+            .reset_index())
+
+
+def qb_values(db_games: pd.DataFrame, targets: pd.DataFrame, window: int = VALUE_WINDOW,
+              shrink: int = VALUE_SHRINK) -> pd.Series:
+    """Each target's QB value from games STRICTLY before it: sum(epa) / (dropbacks + shrink) over his last
+    `window` games. targets: season, week, qb_id (qb_id may be missing). No history → 0. Index-aligned to targets."""
+    g = db_games.sort_values(["qb_id", "season", "week"]).copy()
+    roll = g.groupby("qb_id")[["epa", "dropbacks"]].rolling(window, min_periods=1).sum().reset_index(level=0, drop=True)
+    g[["epa_w", "db_w"]] = roll.loc[g.index].to_numpy()          # through this game, used only for LATER games
+    g["key"] = (g["season"] * 100 + g["week"]).astype("int64")  # pbp ints are int32; schedules are int64
+    t = targets[["season", "week", "qb_id"]].copy()
+    t["key"] = (t["season"] * 100 + t["week"]).astype("int64")
+    t["_row"] = range(len(t))
+    has = t["qb_id"].notna()
+    m = pd.merge_asof(t[has].sort_values("key"), g[["qb_id", "key", "epa_w", "db_w"]].sort_values("key"),
+                      on="key", by="qb_id", allow_exact_matches=False, direction="backward")
+    v = pd.Series(0.0, index=range(len(t)))
+    v.loc[m["_row"].to_numpy()] = (m["epa_w"] / (m["db_w"] + shrink)).fillna(0).to_numpy()
+    return pd.Series(v.to_numpy(), index=targets.index)
+
+
+def add_qb_value(table: pd.DataFrame, flags: pd.DataFrame, db_games: pd.DataFrame) -> pd.DataFrame:
+    """Add home_qb_value / away_qb_value: the value of each side's USUAL starter (from usual-starter flags) as of
+    the game. Needs add_qb_feature's columns too. Games without a flag row get 0."""
+    f = flags[["season", "week", "game_id", "team", "usual_id"]].rename(columns={"usual_id": "qb_id"})
+    f = f.assign(qb_value=qb_values(db_games, f))
+    out = table.copy()
+    for side in ["home", "away"]:
+        out = out.merge(f[["game_id", "team", "qb_value"]].rename(columns={"team": f"{side}_team", "qb_value": f"{side}_qb_value"}),
+                        on=["game_id", f"{side}_team"], how="left", validate="one_to_one")
+        out[f"{side}_qb_value"] = out[f"{side}_qb_value"].fillna(0.0)
+    return out
+
+
 def build_usual_flags(schedules: pd.DataFrame, seasons: list[int], refresh: bool = False) -> pd.DataFrame:
     """End to end for `seasons`: pbp starters (plus the season before, for the window) → No. 1 QB → unavailable flags."""
     from nfl_ats.data import load_rosters_weekly, regular_season

@@ -154,5 +154,34 @@ class TestRestAdjustedElo(unittest.TestCase):
         self.assertEqual(fit_rest_points(t, 2018, 60), fit_rest_points(wrecked, 2018, 60))
 
 
+class TestQbQualityElo(unittest.TestCase):
+    """H7: scale 0 is H4, the penalty never goes negative, a better QB costs more, and the fit ignores the test season."""
+
+    def _table(self):
+        t = TestQbAdjustedElo._table(self)
+        rng = np.random.default_rng(3)
+        t["home_qb_value"] = rng.normal(0.05, 0.08, len(t))
+        t["away_qb_value"] = rng.normal(0.05, 0.08, len(t))
+        return t
+
+    def test_zero_scale_is_h4(self):
+        from nfl_ats.win_model import qb7_adjusted_p
+        t = self._table()
+        np.testing.assert_allclose(qb7_adjusted_p(t, 80, 0), qb_adjusted_p(t, 80))
+
+    def test_penalty_is_never_negative_and_grows_with_value(self):
+        from nfl_ats.win_model import qb7_penalty
+        np.testing.assert_allclose(qb7_penalty([-0.5, 0.0, 0.2], 50, 400), [0.0, 50.0, 130.0])
+
+    def test_fit_ignores_the_test_season(self):
+        from nfl_ats.win_model import fit_qb7
+        t = self._table()
+        wrecked = t.copy()
+        test = wrecked["season"] == 2018
+        wrecked.loc[test, TARGET] = 1 - wrecked.loc[test, TARGET]
+        wrecked.loc[test, "home_qb_value"] = 5.0
+        self.assertEqual(fit_qb7(t, 2018), fit_qb7(wrecked, 2018))
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -5,6 +5,7 @@ pregame numbers never use the game's own result and nothing about it is fit on t
 thing fit is the logistic regression, and it is fit inside each walk-forward fold.
 """
 
+import numpy as np
 import pandas as pd
 
 from nfl_ats.data import regular_season
@@ -104,6 +105,45 @@ def qb_walk_forward(table: pd.DataFrame, test_seasons: list[int], first_train: i
         test = graded[graded["season"] == test_season]
         preds.append(test[["season", "game_id", TARGET]].assign(p=qb_adjusted_p(test, pts[test_season]).to_numpy()))
     return pd.concat(preds, ignore_index=True), pts
+
+
+QB7_BASE_GRID = range(0, 201, 10)    # H7: Elo points for a missing QB of value 0
+QB7_SCALE_GRID = range(0, 1501, 50)  # H7: extra Elo points per 1.0 EPA/dropback of the missing QB's value
+
+
+def qb7_penalty(value, base: float, scale: float):
+    """H7: Elo points taken off a side whose usual QB is out: max(0, base + scale · value)."""
+    return np.maximum(0.0, base + scale * np.asarray(value, dtype=float))
+
+
+def qb7_adjusted_p(table: pd.DataFrame, base: float, scale: float) -> pd.Series:
+    """H7: raw Elo's win probability with a value-sized penalty for each side whose usual QB is out
+    (needs add_qb_feature and qb.add_qb_value columns)."""
+    from nfl_ats.elo import win_prob
+    edge = (table["elo_diff"] - table["home_qb_out"] * qb7_penalty(table["home_qb_value"], base, scale)
+            + table["away_qb_out"] * qb7_penalty(table["away_qb_value"], base, scale))
+    return win_prob(edge)
+
+
+def fit_qb7(table: pd.DataFrame, test_season: int, first_train: int = 2016) -> tuple[int, int]:
+    """(QB_BASE, QB_SCALE) with the lowest log loss on decided games from first_train through test_season − 1."""
+    from nfl_ats.evaluate import log_loss
+    graded = table[table[TARGET].notna()]
+    train = graded[graded["season"].between(first_train, test_season - 1)]
+    y = train[TARGET].to_numpy()
+    return min(((b, s) for b in QB7_BASE_GRID for s in QB7_SCALE_GRID),
+               key=lambda bs: log_loss(y, qb7_adjusted_p(train, *bs).to_numpy()))
+
+
+def qb7_walk_forward(table: pd.DataFrame, test_seasons: list[int], first_train: int = 2016) -> tuple[pd.DataFrame, dict]:
+    """H7 out-of-sample: each test season uses (QB_BASE, QB_SCALE) fit on earlier seasons."""
+    graded = table[table[TARGET].notna()]
+    preds, params = [], {}
+    for test_season in test_seasons:
+        params[test_season] = fit_qb7(table, test_season, first_train)
+        test = graded[graded["season"] == test_season]
+        preds.append(test[["season", "game_id", TARGET]].assign(p=qb7_adjusted_p(test, *params[test_season]).to_numpy()))
+    return pd.concat(preds, ignore_index=True), params
 
 
 REST_GRID = [x / 2 for x in range(0, 21)]  # H5: Elo points per extra day of rest, 0–10 in steps of 0.5

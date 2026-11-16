@@ -2,12 +2,17 @@
 
     python scripts/auto_week.py --task lock            # daily: lock the next week once its first kickoff is < 30 h away
     python scripts/auto_week.py --task qb --soft       # Saturday: QB-aware re-lock; --soft = "not ready yet" isn't an error
-    python scripts/auto_week.py --task score           # Tuesday: score the ledger and rebuild the site
+    python scripts/auto_week.py --task score           # Tuesday: score the ledger (reports/live_2026.md)
+    python scripts/auto_week.py --task site            # daily: just ask the workflow for a site rebuild
     python scripts/auto_week.py --task lock --dry-run  # show what would happen, write nothing
     python scripts/auto_week.py --task lock --dry-run --week 8   # test the full lock path early
 
 Every guard from predict_week still applies (write-once, skip started games, stale-data refusal). Committing and
 pushing is the workflow's job; this script writes `message=...` to $GITHUB_OUTPUT for the commit message.
+
+This script never builds the site. The workflow commits the new ledger file FIRST and only then runs build_site.py,
+because the site's lock badge reads each ledger file's first commit (built earlier, it said "Not committed yet").
+By hand: run this, commit, then `python scripts/build_site.py`.
 """
 
 import argparse
@@ -42,18 +47,22 @@ def script(name: str) -> None:
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument("--task", choices=["lock", "qb", "score"], required=True)
+    parser.add_argument("--task", choices=["lock", "qb", "score", "site"], required=True)
     parser.add_argument("--soft", action="store_true", help="qb: exit quietly if the Friday injury report isn't in yet")
     parser.add_argument("--dry-run", action="store_true", help="predict and print, but write nothing")
     parser.add_argument("--week", type=int, help="dry runs only: force this week (to test the full path early)")
     args = parser.parse_args()
 
+    today = f"{datetime.now(EASTERN):%b %-d}"
+    if args.task == "site":
+        if args.dry_run:
+            return print("Dry run: the workflow would rebuild the site.")
+        return output(f"Refresh the site ({today})")
     if args.task == "score":
         if args.dry_run:
-            return print("Dry run: would run score_ledger.py and build_site.py.")
+            return print("Dry run: would run score_ledger.py (the workflow then rebuilds the site).")
         script("score_ledger.py")
-        script("build_site.py")
-        return output(f"Score results and refresh the site ({datetime.now(EASTERN):%b %-d})")
+        return output(f"Score results ({today})")
 
     schedules = load_schedules_for_ledger(SEASON, refresh=True)
     now = pd.Timestamp.now(tz=EASTERN)
@@ -79,7 +88,6 @@ def main() -> None:
     report(preds, path, qb_pts)
     if args.dry_run:
         return
-    script("build_site.py")
     output(f"Lock week {week}" if mode == "live" else f"QB lock week {week}")
 
 

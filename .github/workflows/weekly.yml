@@ -1,7 +1,10 @@
 # The weekly routine on auto-pilot (decision #25). Each run's GitHub log timestamps the lock it made.
 #   lock  : daily 14:00 UTC — locks the next week once its first kickoff is within 30 hours (normally Thursday).
 #   qb    : Saturday 13:00 UTC (soft: "injury report not in yet" is fine) and 16:00 UTC (fails loudly → email).
-#   score : Tuesday 12:00 UTC — scores the week and refreshes the site.
+#   score : Tuesday 12:00 UTC — scores the week.
+#   site  : daily 11:17 UTC — rebuilds the site so scores and closing lines show the morning after games.
+# Order matters: the ledger/report commit is pushed FIRST, then the site is built from it, because the lock badge
+# reads each ledger file's first commit. Building first made the site say "Not committed yet" (mistake #11).
 # Pushes made with GITHUB_TOKEN don't trigger other workflows, so the Pages deploy is started explicitly.
 name: Weekly routine
 
@@ -11,12 +14,13 @@ on:
     - cron: "0 13 * * 6"
     - cron: "0 16 * * 6"
     - cron: "0 12 * * 2"
+    - cron: "17 11 * * *"
   workflow_dispatch:
     inputs:
       task:
         description: "Which step to run"
         type: choice
-        options: [lock, qb, score]
+        options: [lock, qb, score, site]
         default: score
       dry_run:
         description: "Show what would happen, write nothing"
@@ -63,27 +67,57 @@ jobs:
 
       - name: Pick the task
         id: pick
+        env:
+          SCHEDULE: ${{ github.event.schedule }}
+          TASK: ${{ inputs.task }}
+          DRY_RUN: ${{ inputs.dry_run }}
+          WEEK: ${{ inputs.week }}
         run: |
-          case "${{ github.event.schedule }}" in
-            "0 14 * * *") echo "args=--task lock" >> "$GITHUB_OUTPUT" ;;
-            "0 13 * * 6") echo "args=--task qb --soft" >> "$GITHUB_OUTPUT" ;;
-            "0 16 * * 6") echo "args=--task qb" >> "$GITHUB_OUTPUT" ;;
-            "0 12 * * 2") echo "args=--task score" >> "$GITHUB_OUTPUT" ;;
-            *) echo "args=--task ${{ inputs.task }}${{ inputs.dry_run && ' --dry-run' || '' }}${{ inputs.week != '' && format(' --week {0}', inputs.week) || '' }}" >> "$GITHUB_OUTPUT" ;;
+          case "$SCHEDULE" in
+            "0 14 * * *") args="--task lock" ;;
+            "0 13 * * 6") args="--task qb --soft" ;;
+            "0 16 * * 6") args="--task qb" ;;
+            "0 12 * * 2") args="--task score" ;;
+            "17 11 * * *") args="--task site" ;;
+            *)
+              args="--task $TASK"
+              if [ "$DRY_RUN" = "true" ]; then args="$args --dry-run"; fi
+              if [ -n "$WEEK" ]; then
+                case "$WEEK" in *[!0-9]*) echo "week must be a number"; exit 1 ;; esac
+                args="$args --week $WEEK"
+              fi ;;
           esac
+          echo "args=$args" >> "$GITHUB_OUTPUT"
 
       - name: Run
         id: run
-        run: python scripts/auto_week.py ${{ steps.pick.outputs.args }}
+        env:
+          ARGS: ${{ steps.pick.outputs.args }}
+        run: python scripts/auto_week.py $ARGS
 
-      - name: Commit and push
+      - name: Commit the lock or scores first (its commit time is the proof)
         if: steps.run.outputs.message != ''
+        env:
+          MESSAGE: ${{ steps.run.outputs.message }}
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898283+github-actions[bot]@users.noreply.github.com"
-          git add ledger reports site/data
-          if git diff --cached --quiet; then echo "No changes to commit."; exit 0; fi
-          git commit -m "${{ steps.run.outputs.message }}"
+          git add ledger reports
+          if git diff --cached --quiet; then echo "No ledger or report changes."; exit 0; fi
+          git commit -m "$MESSAGE"
+          git pull --rebase origin main
+          git push origin HEAD:main
+
+      - name: Rebuild the site from the committed ledger
+        if: steps.run.outputs.message != ''
+        env:
+          MESSAGE: ${{ steps.run.outputs.message }}
+        run: |
+          python scripts/build_site.py
+          git add site/data
+          if git diff --cached --quiet; then echo "Site unchanged."; exit 0; fi
+          case "$MESSAGE" in "Refresh the site"*) msg="$MESSAGE" ;; *) msg="Refresh the site ($MESSAGE)" ;; esac
+          git commit -m "$msg"
           git pull --rebase origin main
           git push origin HEAD:main
           echo "pushed=true" >> "$GITHUB_ENV"

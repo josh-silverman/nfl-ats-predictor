@@ -8,12 +8,24 @@ import numpy as np
 import pandas as pd
 
 from nfl_ats.elo import rating_history, run_elo
-from nfl_ats.site import (MINUS, TEAMS, confidence, day_group, format_line, game_cards, lock_status, move_line, qb_notes,
-                          record_summary, team_context)
+from nfl_ats.site import (MINUS, TEAMS, changed_beyond_timestamp, confidence, day_group, format_line, game_cards,
+                          lock_status, move_line, qb_notes, read_site_data, record_summary, site_data_js, team_context)
 from tests.test_win_model import _schedules
 
 
 class TestSiteData(unittest.TestCase):
+
+    def test_rebuild_skips_a_timestamp_only_change(self):
+        data = {"meta": {"generated": "Nov 11, 2026 4:05 PM ET", "current_week": 10},
+                "weeks": [{"week": 10, "lock": {"text": "Not committed yet"}, "p": (0.5, 0.25)}]}
+        text = site_data_js(data)
+        self.assertEqual(read_site_data(text)["weeks"][0]["p"], [0.5, 0.25])
+        later = {**data, "meta": {**data["meta"], "generated": "Nov 12, 2026 6:17 AM ET"}}
+        self.assertFalse(changed_beyond_timestamp(text, later))       # only the time moved: don't write
+        locked = {**later, "weeks": [{**data["weeks"][0], "lock": {"text": "Locked Wed Nov 11"}}]}
+        self.assertTrue(changed_beyond_timestamp(text, locked))       # the badge changed: write
+        self.assertTrue(changed_beyond_timestamp(None, data))         # no file yet
+        self.assertTrue(changed_beyond_timestamp("garbage", data))
 
     def test_all_32_teams_have_a_color(self):
         self.assertEqual(len(TEAMS), 32)

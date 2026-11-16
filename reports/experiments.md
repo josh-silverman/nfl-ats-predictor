@@ -426,3 +426,19 @@ Each test is a single change to **raw Elo, the deliverable**, judged with `compa
 - **Lesson:** season-level home-team bias looks like sampling noise. Raw Elo's per-season bias on 2003–2015 has an SD of about 2.4 pts; a 255-game season's home-win rate has a binomial SD of about 3.1 pts from chance alone. So no as-of home-field rule can track it: H1 (3 seasons) chased noise, and H6 (10 seasons) just moved the long-run level from −1.2 to +1.1. The era-level shift (≈ 65 Elo before 2016, ≈ 45 since) is real but slow, and the fixed 48 sits between the eras. The 2026 live +12 pts on 70 games is about 2 sampling SDs (±6 pts) and should be read the same way.
 - **Decision (Josh, 2026-11-16): REJECTED** by the pre-registered keep rule (decision #29). Elo's fixed home field of 48 stays.
 - **Win-model experiment count: 9** (the first on the 2003–2015 test bed).
+
+### H7 · PRE-REGISTERED 2026-11-16, approved by Josh before running · QB quality: size the QB-out penalty by how good the missing QB is
+- **Why:** H4 takes the same QB_PTS (60–95 Elo) off any team whose usual starter is out. Missing an elite QB should cost more than missing a weak one, and a backup who became the "usual starter" (2026 Week 10: Tyler Huntley, BAL) should cost little. FiveThirtyEight's Elo sized QB adjustments by QB value.
+- **Nothing has been computed with outcomes.** Only column availability in pbp was checked.
+- **QB value `v` (as-of):** for each QB and game, his EPA per dropback over his previous **20 regular-season games with a dropback** (crossing seasons; the game itself excluded via shift(1)), shrunk toward 0: `v = sum(qb_epa) / (dropbacks + 200)`. Dropbacks are plays with `qb_dropback == 1`, credited to `passer_player_id`, else `rusher_player_id` (scrambles). Window 20 and shrinkage 200 are fixed here, never tuned. A QB with no history gets v = 0.
+- **The change (single change from H4, the deliverable):** same flags as H4 (usual starter out via injury report or reserve list). The penalty for a flagged side becomes `max(0, QB_BASE + QB_SCALE · v)` Elo points instead of a constant QB_PTS. `p = win_prob(elo_diff − pen_home + pen_away)`. Ratings and updates are untouched.
+- **Fitting:** QB_BASE (grid 0–200, step 10) and QB_SCALE (grid 0–1500, step 50; about 875 would mean "1 EPA/dropback × 35 dropbacks × 25 Elo per point") are fit **inside each fold** on training seasons 2016 … test−1 by log loss, exactly as H4 fits QB_PTS.
+- **Primary (decides keep):** H7 vs **H4**, walk-forward 2019–2025, same decided games, `compare_predictions(target="home_win")` with the standard keep rule: paired log-loss CI upper bound < 0, **and** better in ≥ 5/7 seasons, **and** higher AUC (unequal penalties reorder games, so the AUC guard applies as usual).
+- **Secondary (reported, not judged):**
+  - Injury-report-only flags (no rosters; see the audit), 2012–2015 test folds trained from 2010, H7 vs the same flags with a constant QB_PTS. These seasons are new for QB tests, but the flag is narrower than H4's.
+  - Fitted QB_BASE and QB_SCALE by fold; penalties for the 2026 flagged cases so far (Hurts, Darnold, Huntley, …).
+  - Accuracy and log loss on flagged games only; calibration-in-the-large.
+- **Honest power note, before running:** only flagged games change (about 266 in 2019–2025). H4's whole gain over raw Elo was −0.0041 with a CI upper bound of −0.0004, so a refinement of H4's size is likely to be **undetectable** here even if real. A reject would mean "not shown", not "QB quality doesn't matter".
+- **Viewed-data caveat:** 2019–2025 has been used for 9 win-model experiments, and this is the third QB idea tested there. The 2026 live ledger is the clean test.
+- **If kept:** Josh decides on going live (a new locked column from the next week, with H4 and raw Elo still recorded). **If rejected:** H4 stays.
+- **Count:** win-model experiment #10.

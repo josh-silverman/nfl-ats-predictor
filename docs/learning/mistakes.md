@@ -61,3 +61,8 @@ What broke, and what it taught me.
 - **What happened:** after M2 showed home teams over-predicted by about 3 pts, I proposed two as-of home-field rules (H1: last 3 seasons; H6: last 10). Both failed. On the clean 2003–2015 seasons, raw Elo's bias was −1.2 and H6 just flipped it to +1.1.
 - **Lesson:** before trying to correct a bias, compare its season-to-season spread with pure sampling noise. Raw Elo's per-season bias had an SD of about 2.4 pts, while a 255-game season's home-win rate wobbles about 3.1 pts from chance alone. A bias the size of noise can't be predicted from past seasons. One sanity check would have saved two experiments.
 - **Fix:** home field stays fixed at 48 (decision #29). Read the 2026 live +12 pts (70 games, sampling SD about 6 pts) the same way.
+
+## 13. Designed an experiment around an anecdote I hadn't checked (H7, H8)
+- **What happened:** in the project review I called 2026 Week 10's BAL penalty a bug: "the backup Tyler Huntley is labeled the usual starter, so Baltimore lost 90 Elo although Lamar Jackson was available". That claim motivated H8 and was repeated in H7's write-up. H8's run showed H8 flagging Jackson himself; the weekly roster confirms **both Jackson and Huntley were on the reserve list in Weeks 9–10**. The penalty was right; only the label was off.
+- **Lesson:** before an anecdote motivates an experiment, check it in the raw data (here, one roster query). A vivid example that "obviously" shows a bug is exactly the kind to verify.
+- **Fix:** corrected in the H8 result, decision #30's note and progress.md. H8's result stands on its own numbers; its motivating case does not.

@@ -103,6 +103,55 @@ class TestUsualStarter(unittest.TestCase):
         self.assertEqual(week1["qb_out"].sum(), 0)
 
 
+class TestStickyUsualStarter(unittest.TestCase):
+    """H8: a fill-in doesn't inherit 'usual' while the starter is flagged out; sticky=False is exactly H4."""
+
+    @staticmethod
+    def _season(starts, out_weeks, ir_week=None):
+        """One team, weeks 1..n. starts: starter per week (None = not played yet). out_weeks: weeks 'a1' is Out.
+        ir_week: a week where the fill-in 'b2' is on injured reserve."""
+        from nfl_ats.qb import sequential_usual_flags  # noqa: F401
+        n = len(starts)
+        games = pd.DataFrame({"season": 2026, "week": range(1, n + 1), "game_id": [f"g{w}" for w in range(1, n + 1)], "team": "BAL"})
+        starters = pd.DataFrame([{"season": 2026, "week": w, "game_id": f"g{w}", "team": "BAL", "starter_id": s}
+                                 for w, s in enumerate(starts, start=1) if s])
+        inj = pd.DataFrame({"season": 2026.0, "week": [float(w) for w in out_weeks], "team": "BAL", "gsis_id": "a1",
+                            "game_type": "REG", "report_status": "Out"})
+        rost = pd.DataFrame([{"season": 2026, "week": w, "team": "BAL", "gsis_id": q, "full_name": q,
+                              "status": "RES" if (q == "b2" and w == ir_week) else "ACT", "status_description_abbr": "R01" if q == "b2" else "A01"}
+                             for w in range(1, n + 1) for q in ("a1", "b2")])
+        return starters, games, inj, rost  # sequential_usual_flags' argument order
+
+    def test_returning_starter_is_not_replaced_by_his_fill_in(self):
+        """The 2026 BAL case: a1 out weeks 5-7 and 9, b2 fills in, then b2 goes on IR in week 10 while a1 is back."""
+        from nfl_ats.qb import sequential_usual_flags
+        starts = ["a1"] * 4 + ["b2"] * 3 + ["a1"] + ["b2"] + [None]
+        args = self._season(starts, out_weeks=[5, 6, 7, 9], ir_week=10)
+        h8 = sequential_usual_flags(*args).set_index("week")
+        h4 = sequential_usual_flags(*args, sticky=False).set_index("week")
+        self.assertEqual((h8.loc[10, "usual_id"], h8.loc[10, "qb_out"]), ("a1", 0))              # a1 is back: no penalty
+        self.assertEqual((h4.loc[10, "usual_id"], h4.loc[10, "qb_out"]), ("b2", 1))              # H4's miss
+        self.assertEqual(h8.loc[5:7, "qb_out"].tolist(), [1, 1, 1])                               # a1's absence is flagged
+
+    def test_long_absence_stays_flagged(self):
+        from nfl_ats.qb import sequential_usual_flags
+        starts = ["a1"] * 3 + ["b2"] * 10
+        args = self._season(starts, out_weeks=range(4, 14))
+        h8 = sequential_usual_flags(*args).set_index("week")
+        h4 = sequential_usual_flags(*args, sticky=False).set_index("week")
+        self.assertTrue((h8.loc[4:13, "qb_out"] == 1).all())                                      # stated side effect
+        self.assertEqual(h4.loc[13, "usual_id"], "b2")                                            # H4 fades to the fill-in
+
+    def test_non_sticky_matches_h4_exactly(self):
+        from nfl_ats.qb import sequential_usual_flags
+        starts = ["a1"] * 4 + ["b2"] * 3 + ["a1"] + ["b2"] + [None]
+        starters, games, inj, rost = self._season(starts, out_weeks=[5, 6, 7, 9], ir_week=10)
+        h4 = qb_unavailable(usual_starters(starters, games), inj, rost)
+        seq = sequential_usual_flags(starters, games, inj, rost, sticky=False)
+        cols = ["week", "usual_id", "qb_out", "reason"]
+        pd.testing.assert_frame_equal(h4[cols].reset_index(drop=True), seq[cols].reset_index(drop=True), check_dtype=False)
+
+
 class TestQbValue(unittest.TestCase):
     """H7: a QB's value uses only his EARLIER games, shrunk, over a fixed window."""
 

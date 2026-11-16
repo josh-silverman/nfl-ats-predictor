@@ -7,6 +7,7 @@ As-of rules:
   (audit: 100% in 2016–2024, median ~51 h before). Never use the schedule's *_qb_id (who actually started).
 """
 
+import numpy as np
 import pandas as pd
 
 from nfl_ats.data import TEAM_MAP, load_injuries, load_pbp
@@ -133,6 +134,72 @@ def qb_unavailable(usual: pd.DataFrame, injuries: pd.DataFrame, rosters: pd.Data
     out = out.merge(names, left_on=["season", "usual_id"], right_on=["season", "gsis_id"], how="left").drop(columns="gsis_id")
     out = out.rename(columns={"full_name": "player"})
     return out[["season", "week", "game_id", "team", "usual_id", "player", "qb_out", "reason", "roster_week"]]
+
+
+# ---------- H8: the usual starter keeps his title while he's out ----------
+
+def _unavailable_lookup(games: pd.DataFrame, injuries: pd.DataFrame, rosters: pd.DataFrame):
+    """A function (season, week, team, qb_id) → reason or None, matching qb_unavailable exactly: reserve list on the
+    game week's roster (or the latest earlier roster week, decision #27) first, then Out/Doubtful on the injury report."""
+    inj = injuries.loc[(injuries["game_type"] == "REG") & injuries["report_status"].isin(OUT_STATUSES),
+                       ["season", "week", "team", "gsis_id", "report_status"]].copy()
+    inj["team"] = inj["team"].replace(TEAM_MAP)
+    inj_map = {(int(s), int(w), t, g): r.lower() for s, w, t, g, r in inj.drop_duplicates(["season", "week", "team", "gsis_id"]).itertuples(index=False)}
+    res = rosters.loc[rosters["status"] == "RES", ["season", "week", "team", "gsis_id", "status_description_abbr"]].copy()
+    res["team"] = res["team"].replace(TEAM_MAP)
+    res_map = {(int(s), int(w), t, g): ("injured reserve" if a == "R01" else "reserve list")
+               for s, w, t, g, a in res.drop_duplicates(["season", "week", "team", "gsis_id"]).itertuples(index=False)}
+    published = rosters[["season", "week", "team"]].drop_duplicates().copy()
+    published["team"] = published["team"].replace(TEAM_MAP)
+    published = published.astype({"season": int, "week": int}).rename(columns={"week": "roster_week"})
+    g = games[["season", "week", "team"]].drop_duplicates().astype({"season": int, "week": int})
+    g = pd.merge_asof(g.sort_values("week"), published.sort_values("roster_week"), left_on="week", right_on="roster_week",
+                      by=["season", "team"], direction="backward")
+    roster_week = {(s, w, t): rw for s, w, t, rw in g[["season", "week", "team", "roster_week"]].itertuples(index=False)}
+
+    def lookup(season, week, team, qb):
+        rw = roster_week.get((season, week, team))
+        hit = res_map.get((season, int(rw), team, qb)) if pd.notna(rw) else None
+        return hit or inj_map.get((season, week, team, qb)), rw
+    return lookup
+
+
+def sequential_usual_flags(starters: pd.DataFrame, games: pd.DataFrame, injuries: pd.DataFrame, rosters: pd.DataFrame,
+                           sticky: bool = True, window: int = USUAL_WINDOW, warmup_seasons: set[int] | None = None) -> pd.DataFrame:
+    """H8 flags, team by team in game order. The No. 1 QB = most starts among the team's previous `window` COUNTED
+    games (ties → most recent). sticky=True: a start counts only if the team was not flagged that game, so a fill-in
+    never inherits the title while the usual starter is out. sticky=False reproduces H4 (every start counts).
+
+    games: season, week, game_id, team for every game to walk through (include the warm-up season first).
+    warmup_seasons: seasons whose games just build history (every start counts, no flags returned).
+    Returns qb_unavailable's columns for the non-warm-up games.
+    """
+    warmup_seasons = warmup_seasons or set()
+    lookup = _unavailable_lookup(games, injuries, rosters)
+    starter_of = dict(zip(zip(starters["game_id"], starters["team"]), starters["starter_id"]))
+    rows = []
+    for team, tg in games.sort_values(["season", "week"]).groupby("team", sort=False):
+        history: list[str] = []
+        for g in tg.itertuples(index=False):
+            recent = history[-window:]
+            usual = None
+            if recent:
+                counts = pd.Series(recent).value_counts()
+                tied = set(counts[counts == counts.max()].index)
+                usual = next(q for q in reversed(recent) if q in tied)
+            reason, rw = lookup(int(g.season), int(g.week), team, usual) if usual is not None else (None, np.nan)
+            warm = g.season in warmup_seasons
+            if not warm:
+                rows.append({"season": g.season, "week": g.week, "game_id": g.game_id, "team": team, "usual_id": usual,
+                             "qb_out": int(reason is not None), "reason": reason, "roster_week": rw})
+            started = starter_of.get((g.game_id, team))
+            if started is not None and (warm or not sticky or reason is None):
+                history.append(started)
+    out = pd.DataFrame(rows)
+    names = rosters.drop_duplicates(["season", "gsis_id"])[["season", "gsis_id", "full_name"]]
+    out = out.merge(names, left_on=["season", "usual_id"], right_on=["season", "gsis_id"], how="left").drop(columns="gsis_id")
+    return out.rename(columns={"full_name": "player"})[
+        ["season", "week", "game_id", "team", "usual_id", "player", "qb_out", "reason", "roster_week"]]
 
 
 # ---------- H7: how good is the missing QB? EPA per dropback over his recent games, as of each game ----------

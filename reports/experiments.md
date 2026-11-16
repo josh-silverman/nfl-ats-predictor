@@ -463,3 +463,14 @@ Each test is a single change to **raw Elo, the deliverable**, judged with `compa
 - **Viewed-data caveat:** win-model experiment #11 on 2019–2025, and the fourth QB idea tested there. 2026 live is the clean test.
 - **If kept:** Josh decides on going live (from the next lock; H4 and raw Elo still recorded). **If rejected:** H4 stays.
 - **Count:** win-model experiment #11.
+- **Result (run once, 2026-11-16, after commit 12cb805).**
+  - **Guard:** with the sticky rule switched off, the new sequential code reproduces H4's 381 flags on 2016–2025 exactly.
+  - **Flags 2016–2025:** H4 381, H8 627. **Removed (fill-in no longer "usual"): 14. Added (long absences stay flagged): 260.** Unchanged: 367.
+  - **Primary, H8 − H4 (2019–2025):** log loss **−0.0015 [−0.0043, +0.0014]**, better in **6/7** seasons (2019 −0.0008, 2020 −0.0016, 2021 −0.0021, 2022 −0.0040, 2023 +0.0018, 2024 −0.0036, 2025 −0.0006), AUC 0.6977 → **0.7002**, accuracy −0.38 pts [−0.97, +0.21]. **Fails the keep rule on the CI** (near-miss: seasons and AUC pass).
+  - **QB_PTS by fold:** H4 65, 60, 65, 95, 75, 80, 85; H8 75, 70, 70, 90, 85, 80, 90. Calibration-in-the-large +2.95 → +2.88 pts.
+  - **Where the change came from:** (a) removed flags, 9 test games: log loss 0.6107 → 0.5987, accuracy 66.7% → 44.4%. (b) added flags, 177 test games: log loss 0.5694 → 0.5529, accuracy 73.4% → 70.6%. Nearly all of the effect is (b), the long-absence side effect, not the fill-in fix that motivated H8.
+- **Correction to H8's motivation (and to H7's and the 2026-11-16 review's "Huntley case"):** the BAL Week 10 premise was wrong. Weekly rosters show **both Lamar Jackson and Tyler Huntley on the reserve list in Weeks 9 and 10** (BAL's QBs were Joe Fagnano and the newly listed Jacoby Brissett). H4's 90-Elo penalty for BAL was right in substance; only the label (Huntley as "usual starter") was misleading. H8 flags Jackson instead, with the same penalty. The motivating case was never checked against the raw roster before the experiment was designed (mistake #13).
+- **2026 games where H8 differs from H4 (weeks ≤ 11, display only):** WAS week 4 (H8 flags Daniels out) and week 5 (H4 flagged Mariota; H8 sees Daniels back), NYG weeks 6–11 (H8 keeps Jaxson Dart, on IR, as usual starter and flags him; H4 had moved on to Jameis Winston), BAL weeks 10–11 (same flag, label Jackson instead of Huntley).
+- **Lesson:** a long-absent starter's team still loses log-loss value if the penalty fades, which hints that Elo doesn't fully absorb a QB loss within ~5 games. But that's a post-hoc reading of a near-miss on viewed data; it is not a finding.
+- **Decision (2026-11-16, delegated by Josh): REJECTED** by the pre-registered keep rule (decision #31). No shadow column: H8 differs from H4 on only ~9 team-games in 2026 through Week 11, far too few to detect an effect this size live.
+- **Win-model experiment count: 11.**

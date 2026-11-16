@@ -296,6 +296,50 @@ def live_report(scored: pd.DataFrame, n_sims: int = 1000, seed: int = 0) -> dict
     return {**info, "models": models, "paired_log_loss (diff, ci_low, ci_high)": paired}
 
 
+S4_WEEKS = 8  # pre-registered: ≥ 8 weeks of locked predictions scored (docs/project-rules.md)
+README_START, README_END = "<!-- live:start -->", "<!-- live:end -->"
+
+
+def headline_summary(scored: pd.DataFrame) -> dict:
+    """Plain numbers for the README's live block: live weeks fully scored, games, and pick-the-winner rates for the
+    headline pick (QB-adjusted where it was locked) and the market at our lock, plus paired log loss vs. the market."""
+    from nfl_ats.evaluate import paired_diff
+    d = scored[scored["home_win"].notna()].copy()
+    pick = d["p_elo_qb"].fillna(d["p_elo"]) if "p_elo_qb" in d else d["p_elo"]
+    y = d["home_win"].to_numpy()
+    done = scored.groupby("week")["home_score"].apply(lambda s: s.notna().all())
+    ok = d["p_market_at_pull"].notna().to_numpy()
+    ll = paired_diff(y[ok], d.loc[ok, "p_market_at_pull"], pick[ok]).loc["log_loss"] if ok.sum() >= 10 else None
+    return {"weeks_scored": sorted(int(w) for w in done[done].index), "games": int(len(d)),
+            "ours": float(((pick >= 0.5) == (y == 1)).mean()) if len(d) else None,
+            "vegas": float(((d["p_market_at_pull"][ok] >= 0.5) == (y[ok] == 1)).mean()) if ok.any() else None,
+            "ll_vs_market": None if ll is None else (float(ll["diff"]), float(ll["ci_low"]), float(ll["ci_high"]))}
+
+
+def readme_live_block(s: dict, generated: str) -> str:
+    """The README's auto-updated live paragraph (between README_START and README_END)."""
+    n = len(s["weeks_scored"])
+    if not s["games"]:
+        body = "No live games scored yet."
+    else:
+        weeks = f"Weeks {s['weeks_scored'][0]}–{s['weeks_scored'][-1]} complete" if n else "no complete week yet"
+        ll = s["ll_vs_market"]
+        body = (f"{s['games']} decided games so far ({weeks}): the headline pick (QB-adjusted Elo from Week 8) picked **{s['ours']:.1%}** of winners; "
+                f"the betting market at our lock time picked **{s['vegas']:.1%}**."
+                + (f" Log loss vs. that market: {ll[0]:+.4f} [{ll[1]:+.4f}, {ll[2]:+.4f}] (positive = the market was better)." if ll else ""))
+    s4 = (f"S4 (≥ {S4_WEEKS} locked weeks scored): ✅ met ({n} weeks)." if n >= S4_WEEKS
+          else f"S4 (≥ {S4_WEEKS} locked weeks scored): in progress, {n} of {S4_WEEKS}.")
+    return f"{README_START}\n> **Live 2026 (auto-updated {generated}):** {body} {s4} Details: [`reports/live_2026.md`](reports/live_2026.md).\n{README_END}"
+
+
+def replace_block(text: str, block: str) -> str:
+    """Swap the README's marked block for `block`. Refuses if the markers are missing (never rewrites the whole file)."""
+    start, end = text.find(README_START), text.find(README_END)
+    if start < 0 or end < start:
+        raise ValueError("README markers not found")
+    return text[:start] + block + text[end + len(README_END):]
+
+
 def market_moves(scored: pd.DataFrame, schedules: pd.DataFrame, use_qb: bool = True) -> pd.DataFrame:
     """Market-move check (pre-registered in docs/project-rules.md): did the line move from our lock toward our number?
 

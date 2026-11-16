@@ -8,11 +8,13 @@ from datetime import datetime
 import pandas as pd
 
 from nfl_ats.data import PROJECT_ROOT
-from nfl_ats.ledger import (EASTERN, MOVE_MIN_GAP, attach_qb, live_report, load_ledger, load_schedules_for_ledger,
-                            market_move_summary, market_moves, score_ledger)
+from nfl_ats.ledger import (EASTERN, MOVE_MIN_GAP, attach_qb, headline_summary, live_report, load_ledger,
+                            load_schedules_for_ledger, market_move_summary, market_moves, readme_live_block, replace_block,
+                            score_ledger)
 
 SEASON = 2026
 OUT = PROJECT_ROOT / "reports" / f"live_{SEASON}.md"
+README = PROJECT_ROOT / "README.md"
 
 
 def section(title: str, rep: dict) -> list[str]:
@@ -70,6 +72,9 @@ def main() -> None:
         lines += section(title, live_report(scored))
         if mode == "live":
             lines += move_section(scored, schedules)
+            block = readme_live_block(headline_summary(scored), datetime.now(EASTERN).strftime("%b %-d, %Y"))
+            README.write_text(replace_block(README.read_text(), block))
+            print(f"Updated the live block in {README.name}")
         if mode == "backfill":
             lines += ["*Backfill note: these weeks were predicted on 2026-10-15, after they were played. Their \"market at pull time\" "
                       "is the schedule moneyline as of that date (likely near-closing), not a pre-game snapshot. With about 80 games, "

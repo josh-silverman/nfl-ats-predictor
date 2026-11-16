@@ -159,6 +159,33 @@ class TestQbLedger(unittest.TestCase):
 
 
 
+class TestReadmeBlock(unittest.TestCase):
+    """The README's live paragraph: headline pick, complete weeks only, S4 progress, and a safe in-place swap."""
+
+    def test_summary_uses_the_headline_pick_and_counts_complete_weeks(self):
+        from nfl_ats.ledger import headline_summary
+        d = pd.DataFrame({"week": [7, 7, 8, 8], "home_score": [20, 10, 30, np.nan], "home_win": [1.0, 0.0, 1.0, np.nan],
+                          "p_elo": [0.6, 0.6, 0.6, 0.6], "p_elo_qb": [np.nan, np.nan, 0.4, 0.4],
+                          "p_market_at_pull": [0.7, 0.3, 0.7, 0.7]})
+        s = headline_summary(d)
+        self.assertEqual(s["weeks_scored"], [7])            # week 8 still has a game to play
+        self.assertAlmostEqual(s["ours"], 1 / 3)             # QB pick (0.4) is used in week 8, and it missed
+        self.assertAlmostEqual(s["vegas"], 1.0)
+
+    def test_block_reports_s4_and_swaps_in_place(self):
+        from nfl_ats.ledger import README_END, README_START, readme_live_block, replace_block
+        s = {"weeks_scored": list(range(6, 14)), "games": 112, "ours": 0.65, "vegas": 0.70, "ll_vs_market": (0.02, -0.01, 0.05)}
+        block = readme_live_block(s, "Dec 8, 2026")
+        self.assertIn("✅ met (8 weeks)", block)
+        self.assertIn("65.0%", block)
+        text = f"intro\n{README_START}\nold\n{README_END}\nrest\n"
+        out = replace_block(text, block)
+        self.assertTrue(out.startswith("intro\n") and out.endswith("\nrest\n") and "old" not in out)
+        with self.assertRaises(ValueError):
+            replace_block("no markers here", block)
+        self.assertIn("in progress, 4 of 8", readme_live_block({**s, "weeks_scored": [6, 7, 8, 9]}, "x"))
+
+
 class TestMarketMoves(unittest.TestCase):
     """Pre-registered market-move check: signs, the 1-point gap rule, no-move, the QB lock's own line."""
 

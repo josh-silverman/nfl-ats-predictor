@@ -1,0 +1,2 @@
+mode,season,week,game_id,kickoff_et,home_team,away_team,location,home_elo,away_elo,elo_spread,p_elo,p_v2,home_moneyline,away_moneyline,p_market_at_pull,spread_line_at_pull,pulled_at_et,games_skipped_already_started,home_qb,home_qb_out,home_qb_reason,home_roster_week,away_qb,away_qb_out,away_qb_reason,away_roster_week,qb_pts,elo_spread_qb,p_elo_qb
+qb,2026,11,2026_11_IND_HOU,2026-11-19 20:15,HOU,IND,Home,1524.2,1398.4,7.0,0.7311,0.7077,-690.0,498.0,0.8393,12.5,2026-11-19 16:42:06,0,C.J. Stroud,0,,11,Daniel Jones,0,,11,90,7.0,0.7311

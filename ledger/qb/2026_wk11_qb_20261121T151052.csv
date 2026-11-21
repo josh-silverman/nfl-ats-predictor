@@ -1,0 +1,11 @@
+mode,season,week,game_id,kickoff_et,home_team,away_team,location,home_elo,away_elo,elo_spread,p_elo,p_v2,home_moneyline,away_moneyline,p_market_at_pull,spread_line_at_pull,pulled_at_et,games_skipped_already_started,home_qb,home_qb_out,home_qb_reason,home_roster_week,away_qb,away_qb_out,away_qb_reason,away_roster_week,qb_pts,elo_spread_qb,p_elo_qb
+qb,2026,11,2026_11_MIA_BUF,2026-11-22 13:00,BUF,MIA,Home,1702.4,1358.9,15.7,0.9049,0.8867,-1540.0,890.0,0.9029,16.5,2026-11-21 15:10:52,0,Josh Allen,0,,11,Malik Willis,1,injured reserve,11,90,19.3,0.9411
+qb,2026,11,2026_11_BAL_CAR,2026-11-22 13:00,CAR,BAL,Home,1446.1,1457.8,1.5,0.5521,0.5359,-148.0,125.0,0.5731,3.0,2026-11-21 15:10:52,0,Bryce Young,0,,11,Tyler Huntley,1,injured reserve,11,90,5.1,0.6742
+qb,2026,11,2026_11_NO_CHI,2026-11-22 13:00,CHI,NO,Home,1627.5,1404.9,10.8,0.826,0.8031,-582.0,435.0,0.8203,11.5,2026-11-21 15:10:52,0,Caleb Williams,0,,11,Tyler Shough,0,,11,90,10.8,0.826
+qb,2026,11,2026_11_TEN_DAL,2026-11-22 13:00,DAL,TEN,Home,1455.1,1300.7,8.1,0.7622,0.7385,-358.0,286.0,0.7511,7.5,2026-11-21 15:10:52,0,Dak Prescott,0,,11,Cam Ward,0,,11,90,8.1,0.7622
+qb,2026,11,2026_11_TB_DET,2026-11-22 13:00,DET,TB,Home,1627.2,1496.5,7.2,0.7368,0.7133,-213.0,178.0,0.6542,4.5,2026-11-21 15:10:52,0,Jared Goff,0,,11,Baker Mayfield,0,,11,90,7.2,0.7368
+qb,2026,11,2026_11_ARI_KC,2026-11-22 13:00,KC,ARI,Home,1586.9,1371.8,10.5,0.8198,0.7967,-1480.0,870.0,0.9009,15.5,2026-11-21 15:10:52,0,Patrick Mahomes,0,,11,Jacoby Brissett,0,,11,90,10.5,0.8198
+qb,2026,11,2026_11_NYJ_LAC,2026-11-22 16:05,LAC,NYJ,Home,1402.5,1328.2,4.9,0.669,0.6472,-171.0,144.0,0.6062,3.0,2026-11-21 15:10:52,0,Justin Herbert,0,,11,Geno Smith,0,,11,90,4.9,0.669
+qb,2026,11,2026_11_LV_DEN,2026-11-22 16:25,DEN,LV,Home,1650.0,1396.6,12.1,0.8501,0.8281,-620.0,455.0,0.827,10.5,2026-11-21 15:10:52,0,Bo Nix,0,,11,Kirk Cousins,0,,11,90,12.1,0.8501
+qb,2026,11,2026_11_PIT_PHI,2026-11-22 16:25,PHI,PIT,Home,1398.0,1561.5,-4.6,0.3397,0.3376,160.0,-191.0,0.3695,-3.5,2026-11-21 15:10:52,0,Jalen Hurts,1,injured reserve,11,Aaron Rodgers,0,,11,90,-8.2,0.2345
+qb,2026,11,2026_11_MIN_SF,2026-11-22 20:20,SF,MIN,Neutral,1645.1,1629.0,0.6,0.5231,0.5086,-172.0,145.0,0.6077,3.0,2026-11-21 15:10:52,0,Brock Purdy,0,,11,Kyler Murray,1,out,11,90,4.2,0.6481

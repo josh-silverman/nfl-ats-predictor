@@ -4,7 +4,7 @@ window.SITE_DATA = {
   "title": "Josh's NFL Elo",
   "season": 2026,
   "repo": "https://github.com/josh-silverman/nfl-ats-predictor",
-  "generated": "Nov 20, 2026 2:07 PM ET",
+  "generated": "Nov 21, 2026 12:58 PM ET",
   "current_week": 11
  },
  "teams": {
@@ -8155,7 +8155,14 @@ window.SITE_DATA = {
      "result": null,
      "qb_adjusted": true,
      "rest": null,
-     "qb_out": []
+     "qb_out": [
+      {
+       "team": "MIN",
+       "player": "Kyler Murray",
+       "reason": "out",
+       "in_pick": false
+      }
+     ]
     },
     {
      "game_id": "2026_11_CIN_WAS",

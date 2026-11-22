@@ -4,7 +4,7 @@ window.SITE_DATA = {
   "title": "Josh's NFL Elo",
   "season": 2026,
   "repo": "https://github.com/josh-silverman/nfl-ats-predictor",
-  "generated": "Nov 22, 2026 1:30 PM ET",
+  "generated": "Nov 22, 2026 3:25 PM ET",
   "current_week": 11
  },
  "teams": {
@@ -7613,8 +7613,8 @@ window.SITE_DATA = {
    "qb_lock": {
     "locked": true,
     "before_kickoff": true,
-    "url": "https://github.com/josh-silverman/nfl-ats-predictor/commit/cb16227ee872354d431aa35a0e2e07e5f18fabcc",
-    "text": "QB update locked Sat Nov 21, 3:10 PM ET, before kickoff"
+    "url": "https://github.com/josh-silverman/nfl-ats-predictor/commit/70b2e1c7b359f1e9232a7722f23cf48c53be3bf4",
+    "text": "QB update locked Sun Nov 22, 3:25 PM ET, before kickoff"
    },
    "games": [
     {

@@ -4,7 +4,7 @@ window.SITE_DATA = {
   "title": "Josh's NFL Elo",
   "season": 2026,
   "repo": "https://github.com/josh-silverman/nfl-ats-predictor",
-  "generated": "Nov 21, 2026 3:11 PM ET",
+  "generated": "Nov 22, 2026 1:30 PM ET",
   "current_week": 11
  },
  "teams": {
@@ -7678,7 +7678,7 @@ window.SITE_DATA = {
      "our_line": "KC \u221210.5",
      "expected_margin": 10.5,
      "vegas_line_at_lock": "KC \u221215.5",
-     "closing_line": null,
+     "closing_line": "KC \u221215.5",
      "big_gap": false,
      "home_side": {
       "team": "KC",
@@ -7719,7 +7719,7 @@ window.SITE_DATA = {
      "our_line": "CAR \u22125.1",
      "expected_margin": 5.1,
      "vegas_line_at_lock": "CAR \u22122.5",
-     "closing_line": null,
+     "closing_line": "CAR \u22122.5",
      "big_gap": false,
      "home_side": {
       "team": "CAR",
@@ -7769,7 +7769,7 @@ window.SITE_DATA = {
      "our_line": "JAX \u22125.8",
      "expected_margin": 5.8,
      "vegas_line_at_lock": "JAX \u22126.0",
-     "closing_line": null,
+     "closing_line": "JAX \u22126.0",
      "big_gap": false,
      "home_side": {
       "team": "NYG",
@@ -7813,7 +7813,7 @@ window.SITE_DATA = {
      "our_line": "BUF \u221219.3",
      "expected_margin": 19.3,
      "vegas_line_at_lock": "BUF \u221216.5",
-     "closing_line": null,
+     "closing_line": "BUF \u221216.5",
      "big_gap": false,
      "home_side": {
       "team": "BUF",
@@ -7863,7 +7863,7 @@ window.SITE_DATA = {
      "our_line": "CHI \u221210.8",
      "expected_margin": 10.8,
      "vegas_line_at_lock": "CHI \u221211.5",
-     "closing_line": null,
+     "closing_line": "CHI \u221211.5",
      "big_gap": false,
      "home_side": {
       "team": "CHI",
@@ -7907,7 +7907,7 @@ window.SITE_DATA = {
      "our_line": "DET \u22127.2",
      "expected_margin": 7.2,
      "vegas_line_at_lock": "DET \u22127.0",
-     "closing_line": null,
+     "closing_line": "DET \u22123.5",
      "big_gap": false,
      "home_side": {
       "team": "DET",
@@ -7951,7 +7951,7 @@ window.SITE_DATA = {
      "our_line": "DAL \u22128.1",
      "expected_margin": 8.1,
      "vegas_line_at_lock": "DAL \u22128.5",
-     "closing_line": null,
+     "closing_line": "DAL \u22127.5",
      "big_gap": false,
      "home_side": {
       "team": "DAL",

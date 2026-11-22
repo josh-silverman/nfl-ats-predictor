@@ -1,0 +1,2 @@
+mode,season,week,game_id,kickoff_et,home_team,away_team,location,home_elo,away_elo,elo_spread,p_elo,p_v2,home_moneyline,away_moneyline,p_market_at_pull,spread_line_at_pull,pulled_at_et,games_skipped_already_started,home_qb,home_qb_out,home_qb_reason,home_roster_week,away_qb,away_qb_out,away_qb_reason,away_roster_week,qb_pts,elo_spread_qb,p_elo_qb
+qb,2026,11,2026_11_CIN_WAS,2026-11-23 20:15,WAS,CIN,Home,1443.1,1617.7,-5.1,0.3255,0.3243,241.0,-296.0,0.2818,-6.0,2026-11-22 15:25:08,0,Jayden Daniels,0,,11,Joe Burrow,0,,11,90,-5.1,0.3255

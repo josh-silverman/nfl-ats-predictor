@@ -7,7 +7,7 @@ It started as an attempt to beat the point spread. Rigorous testing showed publi
 > **Live site: [josh-silverman.github.io/nfl-ats-predictor](https://josh-silverman.github.io/nfl-ats-predictor/)** shows this week's picks, the live record, and power rankings with playoff odds (10,000 simulated seasons; at midseason in 2019–2025, teams given 75%+ made it 84% of the time).
 
 <!-- live:start -->
-> **Live 2026 (auto-updated Nov 17, 2026):** 71 decided games so far (Weeks 6–10 complete): the headline pick (QB-adjusted Elo from Week 8) picked **66.2%** of winners; the betting market at our lock time picked **71.8%**. Log loss vs. that market: +0.0187 [-0.0250, +0.0628] (positive = the market was better). S4 (≥ 8 locked weeks scored): in progress, 5 of 8. Details: [`reports/live_2026.md`](reports/live_2026.md).
+> **Live 2026 (auto-updated Nov 24, 2026):** 84 decided games so far (Weeks 6–11 complete): the headline pick (QB-adjusted Elo from Week 8) picked **66.7%** of winners; the betting market at our lock time picked **71.4%**. Log loss vs. that market: +0.0191 [-0.0200, +0.0605] (positive = the market was better). S4 (≥ 8 locked weeks scored): in progress, 6 of 8. Details: [`reports/live_2026.md`](reports/live_2026.md).
 <!-- live:end -->
 
 ## Headline results (walk-forward 2019–2025, 1,865 games, 95% bootstrap CIs)

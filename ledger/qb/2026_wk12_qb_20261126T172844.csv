@@ -1,0 +1,2 @@
+mode,season,week,game_id,kickoff_et,home_team,away_team,location,home_elo,away_elo,elo_spread,p_elo,p_v2,home_moneyline,away_moneyline,p_market_at_pull,spread_line_at_pull,pulled_at_et,games_skipped_already_started,home_qb,home_qb_out,home_qb_reason,home_roster_week,away_qb,away_qb_out,away_qb_reason,away_roster_week,qb_pts,elo_spread_qb,p_elo_qb
+qb,2026,12,2026_12_KC_BUF,2026-11-26 20:20,BUF,KC,Home,1707.0,1597.7,6.3,0.7121,0.6891,-154.0,130.0,0.5824,3.0,2026-11-26 17:28:44,0,Josh Allen,0,,12,Patrick Mahomes,0,,12,90,6.3,0.7121

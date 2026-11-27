@@ -4,7 +4,7 @@ window.SITE_DATA = {
   "title": "Josh's NFL Elo",
   "season": 2026,
   "repo": "https://github.com/josh-silverman/nfl-ats-predictor",
-  "generated": "Nov 26, 2026 5:29 PM ET",
+  "generated": "Nov 27, 2026 2:57 PM ET",
   "current_week": 12
  },
  "teams": {
@@ -8430,7 +8430,13 @@ window.SITE_DATA = {
       "qb_teams": [],
       "edge": 99
      },
-     "result": null,
+     "result": {
+      "home_score": 38,
+      "away_score": 39,
+      "winner": "PHI",
+      "we_were_right": false,
+      "vegas_was_right": false
+     },
      "qb_adjusted": true,
      "rest": null,
      "qb_out": []
@@ -8449,7 +8455,7 @@ window.SITE_DATA = {
      "our_line": "BUF \u22126.3",
      "expected_margin": 6.3,
      "vegas_line_at_lock": "BUF \u22123.0",
-     "closing_line": null,
+     "closing_line": "BUF \u22123.0",
      "big_gap": false,
      "home_side": {
       "team": "BUF",
@@ -8471,7 +8477,13 @@ window.SITE_DATA = {
       "qb_teams": [],
       "edge": 157
      },
-     "result": null,
+     "result": {
+      "home_score": 13,
+      "away_score": 10,
+      "winner": "BUF",
+      "we_were_right": true,
+      "vegas_was_right": true
+     },
      "qb_adjusted": true,
      "rest": null,
      "qb_out": []
@@ -9008,7 +9020,7 @@ window.SITE_DATA = {
   }
  ],
  "record": {
-  "games": 86,
+  "games": 88,
   "by_week": [
    {
     "week": 6,
@@ -9054,16 +9066,16 @@ window.SITE_DATA = {
    },
    {
     "week": 12,
-    "games": 86,
-    "ours": 57,
-    "vegas": 62,
-    "vegas_games": 86
+    "games": 88,
+    "ours": 58,
+    "vegas": 63,
+    "vegas_games": 88
    }
   ],
   "extra": [
-   "When we disagreed with Vegas by a point or more, the betting line later moved our way in 12 of 22 games where it moved (42 didn't move). About half would mean no edge.",
+   "When we disagreed with Vegas by a point or more, the betting line later moved our way in 12 of 22 games where it moved (44 didn't move). About half would mean no edge.",
    "Honest range for our hit rate so far: 56% to 76% (small samples swing a lot).",
-   "When we gave a team 60%+ to win, we expected about 71% of them to win. 69% did (45 of 65).",
+   "When we gave a team 60%+ to win, we expected about 71% of them to win. 69% did (46 of 67).",
    "Full details: reports/live_2026.md on GitHub."
   ],
   "calibration": [
@@ -9075,15 +9087,15 @@ window.SITE_DATA = {
    },
    {
     "label": "60\u201370%",
-    "games": 33,
+    "games": 34,
     "expected": 0.654,
-    "actual": 0.545
+    "actual": 0.529
    },
    {
     "label": "70\u201380%",
-    "games": 18,
-    "expected": 0.733,
-    "actual": 0.778
+    "games": 19,
+    "expected": 0.732,
+    "actual": 0.789
    },
    {
     "label": "80%+",
@@ -9097,21 +9109,17 @@ window.SITE_DATA = {
   {
    "rank": 1,
    "team": "BUF",
-   "rating": 1707.0,
+   "rating": 1714.5,
    "rank_change": 0,
-   "record": "9-1",
-   "next": {
-    "opp": "KC",
-    "home": true,
-    "p_win": 0.712
-   },
+   "record": "10-1",
+   "next": null,
    "bye": false,
    "odds": {
-    "wins": 14.0,
-    "losses": 3.0,
-    "playoff": 0.999,
-    "division": 0.989,
-    "top_seed": 0.546
+    "wins": 14.3,
+    "losses": 2.7,
+    "playoff": 1.0,
+    "division": 0.994,
+    "top_seed": 0.644
    }
   },
   {
@@ -9129,9 +9137,9 @@ window.SITE_DATA = {
    "odds": {
     "wins": 14.0,
     "losses": 3.0,
-    "playoff": 0.994,
-    "division": 0.902,
-    "top_seed": 0.674
+    "playoff": 0.995,
+    "division": 0.906,
+    "top_seed": 0.678
    }
   },
   {
@@ -9149,9 +9157,9 @@ window.SITE_DATA = {
    "odds": {
     "wins": 13.0,
     "losses": 4.0,
-    "playoff": 0.992,
-    "division": 0.696,
-    "top_seed": 0.288
+    "playoff": 0.993,
+    "division": 0.762,
+    "top_seed": 0.286
    }
   },
   {
@@ -9165,9 +9173,9 @@ window.SITE_DATA = {
    "odds": {
     "wins": 12.6,
     "losses": 4.4,
-    "playoff": 0.956,
-    "division": 0.479,
-    "top_seed": 0.184
+    "playoff": 0.957,
+    "division": 0.473,
+    "top_seed": 0.183
    }
   },
   {
@@ -9179,10 +9187,10 @@ window.SITE_DATA = {
    "next": null,
    "bye": false,
    "odds": {
-    "wins": 10.4,
-    "losses": 6.6,
-    "playoff": 0.632,
-    "division": 0.049,
+    "wins": 10.5,
+    "losses": 6.5,
+    "playoff": 0.641,
+    "division": 0.046,
     "top_seed": 0.017
    }
   },
@@ -9201,9 +9209,9 @@ window.SITE_DATA = {
    "odds": {
     "wins": 11.7,
     "losses": 5.3,
-    "playoff": 0.975,
-    "division": 0.921,
-    "top_seed": 0.031
+    "playoff": 0.978,
+    "division": 0.922,
+    "top_seed": 0.024
    }
   },
   {
@@ -9221,9 +9229,9 @@ window.SITE_DATA = {
    "odds": {
     "wins": 10.2,
     "losses": 6.8,
-    "playoff": 0.477,
-    "division": 0.049,
-    "top_seed": 0.006
+    "playoff": 0.468,
+    "division": 0.048,
+    "top_seed": 0.005
    }
   },
   {
@@ -9237,9 +9245,9 @@ window.SITE_DATA = {
    "odds": {
     "wins": 11.7,
     "losses": 5.3,
-    "playoff": 0.881,
-    "division": 0.238,
-    "top_seed": 0.067
+    "playoff": 0.887,
+    "division": 0.241,
+    "top_seed": 0.066
    }
   },
   {
@@ -9255,11 +9263,11 @@ window.SITE_DATA = {
    },
    "bye": false,
    "odds": {
-    "wins": 11.9,
-    "losses": 5.1,
-    "playoff": 0.966,
-    "division": 0.757,
-    "top_seed": 0.045
+    "wins": 11.8,
+    "losses": 5.2,
+    "playoff": 0.963,
+    "division": 0.747,
+    "top_seed": 0.033
    }
   },
   {
@@ -9277,29 +9285,25 @@ window.SITE_DATA = {
    "odds": {
     "wins": 11.6,
     "losses": 5.4,
-    "playoff": 0.878,
-    "division": 0.278,
-    "top_seed": 0.047
+    "playoff": 0.88,
+    "division": 0.281,
+    "top_seed": 0.046
    }
   },
   {
    "rank": 11,
    "team": "KC",
-   "rating": 1597.7,
+   "rating": 1590.2,
    "rank_change": 0,
-   "record": "8-2",
-   "next": {
-    "opp": "BUF",
-    "home": false,
-    "p_win": 0.288
-   },
+   "record": "8-3",
+   "next": null,
    "bye": false,
    "odds": {
-    "wins": 11.7,
-    "losses": 5.3,
-    "playoff": 0.96,
-    "division": 0.303,
-    "top_seed": 0.085
+    "wins": 11.4,
+    "losses": 5.6,
+    "playoff": 0.949,
+    "division": 0.237,
+    "top_seed": 0.009
    }
   },
   {
@@ -9317,9 +9321,9 @@ window.SITE_DATA = {
    "odds": {
     "wins": 10.0,
     "losses": 7.0,
-    "playoff": 0.679,
-    "division": 0.101,
-    "top_seed": 0.003
+    "playoff": 0.694,
+    "division": 0.106,
+    "top_seed": 0.002
    }
   },
   {
@@ -9337,8 +9341,8 @@ window.SITE_DATA = {
    "odds": {
     "wins": 8.1,
     "losses": 8.9,
-    "playoff": 0.256,
-    "division": 0.079,
+    "playoff": 0.253,
+    "division": 0.078,
     "top_seed": 0.0
    }
   },
@@ -9353,7 +9357,7 @@ window.SITE_DATA = {
    "odds": {
     "wins": 9.0,
     "losses": 8.0,
-    "playoff": 0.142,
+    "playoff": 0.138,
     "division": 0.005,
     "top_seed": 0.0
    }
@@ -9373,9 +9377,9 @@ window.SITE_DATA = {
    "odds": {
     "wins": 8.6,
     "losses": 8.4,
-    "playoff": 0.457,
-    "division": 0.011,
-    "top_seed": 0.0
+    "playoff": 0.455,
+    "division": 0.006,
+    "top_seed": 0.001
    }
   },
   {
@@ -9391,11 +9395,11 @@ window.SITE_DATA = {
    },
    "bye": false,
    "odds": {
-    "wins": 9.6,
-    "losses": 7.4,
-    "playoff": 0.668,
-    "division": 0.653,
-    "top_seed": 0.005
+    "wins": 9.7,
+    "losses": 7.3,
+    "playoff": 0.712,
+    "division": 0.699,
+    "top_seed": 0.004
    }
   },
   {
@@ -9414,35 +9418,15 @@ window.SITE_DATA = {
     "wins": 6.9,
     "losses": 10.1,
     "playoff": 0.352,
-    "division": 0.352,
+    "division": 0.351,
     "top_seed": 0.0
    }
   },
   {
    "rank": 18,
-   "team": "DAL",
-   "rating": 1468.5,
-   "rank_change": 0,
-   "record": "5-6",
-   "next": {
-    "opp": "PHI",
-    "home": true,
-    "p_win": 0.639
-   },
-   "bye": false,
-   "odds": {
-    "wins": 7.4,
-    "losses": 9.6,
-    "playoff": 0.125,
-    "division": 0.117,
-    "top_seed": 0.0
-   }
-  },
-  {
-   "rank": 19,
    "team": "CLE",
    "rating": 1463.4,
-   "rank_change": 0,
+   "rank_change": 1,
    "record": "6-4",
    "next": {
     "opp": "LV",
@@ -9453,9 +9437,25 @@ window.SITE_DATA = {
    "odds": {
     "wins": 9.5,
     "losses": 7.5,
-    "playoff": 0.636,
-    "division": 0.14,
+    "playoff": 0.633,
+    "division": 0.146,
     "top_seed": 0.001
+   }
+  },
+  {
+   "rank": 19,
+   "team": "DAL",
+   "rating": 1459.2,
+   "rank_change": -1,
+   "record": "5-7",
+   "next": null,
+   "bye": false,
+   "odds": {
+    "wins": 6.7,
+    "losses": 10.3,
+    "playoff": 0.05,
+    "division": 0.047,
+    "top_seed": 0.0
    }
   },
   {
@@ -9473,8 +9473,8 @@ window.SITE_DATA = {
    "odds": {
     "wins": 7.9,
     "losses": 9.1,
-    "playoff": 0.229,
-    "division": 0.216,
+    "playoff": 0.236,
+    "division": 0.225,
     "top_seed": 0.0
    }
   },
@@ -9493,8 +9493,8 @@ window.SITE_DATA = {
    "odds": {
     "wins": 7.9,
     "losses": 9.1,
-    "playoff": 0.484,
-    "division": 0.483,
+    "playoff": 0.49,
+    "division": 0.488,
     "top_seed": 0.0
    }
   },
@@ -9513,16 +9513,32 @@ window.SITE_DATA = {
    "odds": {
     "wins": 6.2,
     "losses": 10.8,
-    "playoff": 0.037,
-    "division": 0.002,
+    "playoff": 0.035,
+    "division": 0.001,
     "top_seed": 0.0
    }
   },
   {
    "rank": 23,
+   "team": "PHI",
+   "rating": 1426.6,
+   "rank_change": 1,
+   "record": "4-7",
+   "next": null,
+   "bye": false,
+   "odds": {
+    "wins": 6.4,
+    "losses": 10.6,
+    "playoff": 0.03,
+    "division": 0.03,
+    "top_seed": 0.0
+   }
+  },
+  {
+   "rank": 24,
    "team": "ATL",
    "rating": 1422.1,
-   "rank_change": 0,
+   "rank_change": -1,
    "record": "3-7",
    "next": {
     "opp": "MIN",
@@ -9535,26 +9551,6 @@ window.SITE_DATA = {
     "losses": 11.3,
     "playoff": 0.092,
     "division": 0.091,
-    "top_seed": 0.0
-   }
-  },
-  {
-   "rank": 24,
-   "team": "PHI",
-   "rating": 1417.4,
-   "rank_change": 0,
-   "record": "3-7",
-   "next": {
-    "opp": "DAL",
-    "home": false,
-    "p_win": 0.361
-   },
-   "bye": false,
-   "odds": {
-    "wins": 5.7,
-    "losses": 11.3,
-    "playoff": 0.015,
-    "division": 0.014,
     "top_seed": 0.0
    }
   },
@@ -9573,8 +9569,8 @@ window.SITE_DATA = {
    "odds": {
     "wins": 5.7,
     "losses": 11.3,
-    "playoff": 0.074,
-    "division": 0.074,
+    "playoff": 0.07,
+    "division": 0.07,
     "top_seed": 0.0
    }
   },
@@ -9593,7 +9589,7 @@ window.SITE_DATA = {
    "odds": {
     "wins": 6.5,
     "losses": 10.5,
-    "playoff": 0.037,
+    "playoff": 0.041,
     "division": 0.0,
     "top_seed": 0.0
    }
@@ -9633,7 +9629,7 @@ window.SITE_DATA = {
    "odds": {
     "wins": 5.2,
     "losses": 11.8,
-    "playoff": 0.004,
+    "playoff": 0.005,
     "division": 0.0,
     "top_seed": 0.0
    }
@@ -9671,8 +9667,8 @@ window.SITE_DATA = {
    },
    "bye": false,
    "odds": {
-    "wins": 2.9,
-    "losses": 14.1,
+    "wins": 2.8,
+    "losses": 14.2,
     "playoff": 0.0,
     "division": 0.0,
     "top_seed": 0.0
@@ -9693,7 +9689,7 @@ window.SITE_DATA = {
    "odds": {
     "wins": 4.8,
     "losses": 12.2,
-    "playoff": 0.001,
+    "playoff": 0.002,
     "division": 0.0,
     "top_seed": 0.0
    }
@@ -9933,7 +9929,7 @@ window.SITE_DATA = {
    ],
    [
     12,
-    1707.0
+    1714.5
    ]
   ],
   "CAR": [
@@ -10203,7 +10199,7 @@ window.SITE_DATA = {
    ],
    [
     12,
-    1468.5
+    1459.2
    ]
   ],
   "DEN": [
@@ -10581,7 +10577,7 @@ window.SITE_DATA = {
    ],
    [
     12,
-    1597.7
+    1590.2
    ]
   ],
   "LA": [
@@ -11121,7 +11117,7 @@ window.SITE_DATA = {
    ],
    [
     12,
-    1417.4
+    1426.6
    ]
   ],
   "PIT": [
@@ -11457,16 +11453,16 @@ window.SITE_DATA = {
  },
  "example": {
   "week": 12,
-  "home": "LA",
-  "away": "GB",
-  "home_rating": 1617,
-  "away_rating": 1552,
+  "home": "BUF",
+  "away": "KC",
+  "home_rating": 1707,
+  "away_rating": 1598,
   "home_field": 48,
-  "gap": 113,
-  "p_home": 0.657,
-  "home_score": 26,
-  "away_score": 13,
-  "home_after": 1634,
-  "away_after": 1535
+  "gap": 157,
+  "p_home": 0.712,
+  "home_score": 13,
+  "away_score": 10,
+  "home_after": 1714,
+  "away_after": 1590
  }
 };
